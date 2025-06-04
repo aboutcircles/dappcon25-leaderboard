@@ -1,12 +1,14 @@
 import { create } from 'zustand';
 import circlesData from '@/lib/circlesData';
 import { CirclesEvent, TransactionHistoryRow } from '@circles-sdk/data';
-import { parseEther } from 'ethers';
 import { CrcV2_StreamCompleted } from '@circles-sdk/data/dist/events/events';
+import { MIN_CIRCLES, ORG_ADDRESS, START_BLOCK } from '@/const';
+import { getAddress } from 'ethers';
 
 interface Player {
   address: string;
   transactionHash: string;
+  blockNumber: number;
   amount: bigint;
 }
 
@@ -17,12 +19,6 @@ interface PlayersStore {
   fetchPlayers: () => Promise<void>;
   subscribeToNewEvents: () => Promise<void>;
 }
-
-const orgAddress = (process.env.NEXT_PUBLIC_ORG_ADDRESS || '').toLowerCase();
-const minCircles = parseEther(process.env.NEXT_PUBLIC_MIN_CIRCLES || '1');
-const startTimestamp = parseInt(
-  process.env.NEXT_PUBLIC_START_TIMESTAMP || '1749023345'
-);
 
 function isTransferEvent(event: CirclesEvent) {
   if (event.$event === 'CrcV2_StreamCompleted') {
@@ -39,7 +35,7 @@ export const usePlayersStore = create<PlayersStore>(set => ({
     set({ loading: true, error: null });
     try {
       const query = circlesData.getTransactionHistory(
-        orgAddress as `0x${string}`,
+        ORG_ADDRESS as `0x${string}`,
         25
       );
       let hasResults = true;
@@ -49,15 +45,17 @@ export const usePlayersStore = create<PlayersStore>(set => ({
         if (!hasResults || !query.currentPage) break;
         const rows = query.currentPage.results;
         rows.forEach((row: TransactionHistoryRow) => {
+          const from = getAddress(row.from);
           if (
-            row.attoCircles >= minCircles &&
-            row.timestamp >= startTimestamp
+            row.attoCircles >= MIN_CIRCLES &&
+            row.blockNumber >= START_BLOCK
           ) {
-            if (!playerMap.has(row.from)) {
-              playerMap.set(row.from, {
-                address: row.from,
+            if (!playerMap.has(from)) {
+              playerMap.set(from, {
+                address: from,
                 transactionHash: row.transactionHash,
                 amount: row.attoCircles,
+                blockNumber: row.blockNumber,
               });
             }
           }
@@ -77,25 +75,30 @@ export const usePlayersStore = create<PlayersStore>(set => ({
   subscribeToNewEvents: async () => {
     try {
       const avatarEvents = await circlesData.subscribeToEvents(
-        orgAddress as `0x${string}`
+        ORG_ADDRESS as `0x${string}`
       );
       avatarEvents.subscribe((event: CirclesEvent) => {
         if (event && isTransferEvent(event)) {
-          const { from, transactionHash, amount, timestamp } =
+          const { from, transactionHash, amount, timestamp, blockNumber } =
             event as CrcV2_StreamCompleted;
           if (
             typeof from === 'string' &&
             typeof transactionHash === 'string' &&
             typeof amount === 'bigint' &&
             typeof timestamp === 'number' &&
-            amount >= minCircles &&
-            timestamp >= startTimestamp &&
+            amount >= MIN_CIRCLES &&
+            blockNumber >= START_BLOCK &&
             !usePlayersStore.getState().players.some(p => p.address === from)
           ) {
             set(state => ({
               players: [
                 ...state.players,
-                { address: from, transactionHash, amount },
+                {
+                  address: from,
+                  transactionHash,
+                  amount,
+                  blockNumber,
+                },
               ],
             }));
           }
