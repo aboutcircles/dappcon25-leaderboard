@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 import circlesData from '@/lib/circlesData';
-import { TransactionHistoryRow } from '@circles-sdk/data';
+import { CirclesEvent, TransactionHistoryRow } from '@circles-sdk/data';
 import { parseEther } from 'ethers';
+import { CrcV2_StreamCompleted } from '@circles-sdk/data/dist/events/events';
 
 interface Player {
   address: string;
@@ -14,6 +15,7 @@ interface PlayersStore {
   loading: boolean;
   error: string | null;
   fetchPlayers: () => Promise<void>;
+  subscribeToNewEvents: () => Promise<void>;
 }
 
 const orgAddress = (process.env.NEXT_PUBLIC_ORG_ADDRESS || '').toLowerCase();
@@ -21,6 +23,13 @@ const minCircles = parseEther(process.env.NEXT_PUBLIC_MIN_CIRCLES || '1');
 const startTimestamp = parseInt(
   process.env.NEXT_PUBLIC_START_TIMESTAMP || '1749023345'
 );
+
+function isTransferEvent(event: CirclesEvent) {
+  if (event.$event === 'CrcV2_StreamCompleted') {
+    return true;
+  }
+  return false;
+}
 
 export const usePlayersStore = create<PlayersStore>(set => ({
   players: [],
@@ -63,6 +72,37 @@ export const usePlayersStore = create<PlayersStore>(set => ({
             : String(error) || 'Unknown error',
         loading: false,
       });
+    }
+  },
+  subscribeToNewEvents: async () => {
+    try {
+      const avatarEvents = await circlesData.subscribeToEvents(
+        orgAddress as `0x${string}`
+      );
+      avatarEvents.subscribe((event: CirclesEvent) => {
+        if (event && isTransferEvent(event)) {
+          const { from, transactionHash, amount, timestamp } =
+            event as CrcV2_StreamCompleted;
+          if (
+            typeof from === 'string' &&
+            typeof transactionHash === 'string' &&
+            typeof amount === 'bigint' &&
+            typeof timestamp === 'number' &&
+            amount >= minCircles &&
+            timestamp >= startTimestamp &&
+            !usePlayersStore.getState().players.some(p => p.address === from)
+          ) {
+            set(state => ({
+              players: [
+                ...state.players,
+                { address: from, transactionHash, amount },
+              ],
+            }));
+          }
+        }
+      });
+    } catch (error) {
+      set({ error: error instanceof Error ? error.message : String(error) });
     }
   },
 }));
