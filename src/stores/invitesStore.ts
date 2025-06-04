@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { fetchInvites, subscribeToInvites } from '@/lib/envioInvites';
 import { usePlayersStore } from '@/stores/playersStore';
-import { START_BLOCK } from '@/const';
 
 export interface InvitesStats {
   player: string;
@@ -69,7 +68,6 @@ export const useInvitesStore = create<InvitesStore>(set => ({
     const playerAddresses = players.map(p => p.address);
     const subscription = subscribeToInvites(
       playerAddresses,
-      START_BLOCK,
       ({ invitesRedeemed, invitesSent }) => {
         const invitesRedeemedMap = new Map<string, number>();
         invitesRedeemed.forEach(a => {

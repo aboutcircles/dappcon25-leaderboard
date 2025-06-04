@@ -1,14 +1,19 @@
 import { gql } from 'urql';
 import { urqlClient } from '@/lib/envioClient';
-import { START_BLOCK } from '@/const';
+import { START_BLOCK, TIMESTAMP_END } from '@/const';
 
 export const INVITES_QUERY = gql`
-  query getInvitesData($addressList: [String!], $blockNumber: Int) {
+  query getInvitesData(
+    $addressList: [String!]
+    $blockNumber: Int
+    $timestampEnd: Int
+  ) {
     invitesRedeemed: Avatar(
       where: {
         invitedBy: { _in: $addressList }
         version: { _eq: 2 }
         blockNumber: { _gte: $blockNumber }
+        timestamp: { _lte: $timestampEnd }
       }
     ) {
       profile {
@@ -25,6 +30,7 @@ export const INVITES_QUERY = gql`
         expiryTime: { _neq: 0 }
         version: { _eq: 2 }
         blockNumber: { _gte: $blockNumber }
+        timestamp: { _lte: $timestampEnd }
       }
     ) {
       trustee {
@@ -40,12 +46,17 @@ export const INVITES_QUERY = gql`
 `;
 
 export const INVITES_SUBSCRIPTION = gql`
-  subscription onInvitesData($addressList: [String!], $blockNumber: Int) {
+  subscription onInvitesData(
+    $addressList: [String!]
+    $blockNumber: Int
+    $timestampEnd: Int
+  ) {
     invitesRedeemed: Avatar(
       where: {
         invitedBy: { _in: $addressList }
         version: { _eq: 2 }
         blockNumber: { _gte: $blockNumber }
+        timestamp: { _lte: $timestampEnd }
       }
     ) {
       profile {
@@ -61,6 +72,8 @@ export const INVITES_SUBSCRIPTION = gql`
         limit: { _neq: 0 }
         expiryTime: { _neq: 0 }
         version: { _eq: 2 }
+        blockNumber: { _gte: $blockNumber }
+        timestamp: { _lte: $timestampEnd }
       }
     ) {
       trustee {
@@ -88,15 +101,16 @@ export interface InviteSent {
   truster_id: string;
 }
 
-export async function fetchInvites(
-  addressList: string[],
-  blockNumber: number = START_BLOCK
-): Promise<{
+export async function fetchInvites(addressList: string[]): Promise<{
   invitesRedeemed: InvitesRedeemed[];
   invitesSent: InviteSent[];
 }> {
   const result = await urqlClient
-    .query(INVITES_QUERY, { addressList, blockNumber })
+    .query(INVITES_QUERY, {
+      addressList,
+      blockNumber: START_BLOCK,
+      timestampEnd: TIMESTAMP_END,
+    })
     .toPromise();
   if (result.error) throw result.error;
   return {
@@ -107,14 +121,17 @@ export async function fetchInvites(
 
 export function subscribeToInvites(
   addressList: string[],
-  blockNumber: number = START_BLOCK,
   handler: (data: {
     invitesRedeemed: InvitesRedeemed[];
     invitesSent: InviteSent[];
   }) => void
 ) {
   return urqlClient
-    .subscription(INVITES_SUBSCRIPTION, { addressList, blockNumber })
+    .subscription(INVITES_SUBSCRIPTION, {
+      addressList,
+      blockNumber: START_BLOCK,
+      timestampEnd: TIMESTAMP_END,
+    })
     .subscribe(result => {
       if (result.data) {
         handler({
