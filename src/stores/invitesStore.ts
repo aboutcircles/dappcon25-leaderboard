@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { fetchInvites, subscribeToInvites } from '@/lib/envioInvites';
+import { fetchInvites, subscribeToInvites } from '@/lib/invites';
 import { usePlayersStore } from '@/stores/playersStore';
 
 export interface InvitesStats {

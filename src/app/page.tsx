@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { usePlayersStore } from '@/stores/playersStore';
 import { useInvitesStore } from '@/stores/invitesStore';
+import { useTrustsStore } from '@/stores/trustsStore';
 
 export default function Home() {
   const players = usePlayersStore(state => state.players);
@@ -17,21 +18,35 @@ export default function Home() {
   const stats = useInvitesStore(state => state.stats);
   const subscribeToStats = useInvitesStore(state => state.subscribeToStats);
 
+  const fetchTrustStats = useTrustsStore(state => state.fetchStats);
+  const trustStats = useTrustsStore(state => state.stats);
+  const subscribeToTrustStats = useTrustsStore(state => state.subscribeToStats);
+
   console.log('players', players);
 
   useEffect(() => {
     const init = async () => {
       await fetchPlayers();
       await fetchStats();
+      await fetchTrustStats();
     };
     init();
     subscribeToNewEvents();
 
-    const sub = subscribeToStats();
+    const subInvites = subscribeToStats();
+    const subTrusts = subscribeToTrustStats();
     return () => {
-      sub.unsubscribe();
+      subInvites.unsubscribe();
+      subTrusts.unsubscribe();
     };
-  }, [fetchPlayers, subscribeToNewEvents, fetchStats, subscribeToStats]);
+  }, [
+    fetchPlayers,
+    subscribeToNewEvents,
+    fetchStats,
+    subscribeToStats,
+    fetchTrustStats,
+    subscribeToTrustStats,
+  ]);
 
   console.log('stats', stats);
   return (
@@ -44,9 +59,14 @@ export default function Home() {
             {players.map(player => (
               <li key={player.address}>
                 <div>
-                  <strong>Address:</strong> {player.address} invites redeemed:{' '}
-                  {stats[player.address]?.invitesRedeemed} invites sent:{' '}
-                  {stats[player.address]?.invitesSent}
+                  <strong>Address:</strong> {player.address} <br />
+                  invites redeemed: {
+                    stats[player.address]?.invitesRedeemed
+                  }{' '}
+                  <br />
+                  invites sent: {stats[player.address]?.invitesSent} <br />
+                  trusts: {trustStats[player.address]?.trusts} <br />
+                  mutual trusts: {trustStats[player.address]?.mutualTrusts}
                 </div>
               </li>
             ))}
