@@ -10,6 +10,8 @@ interface Player {
   transactionHash: string;
   blockNumber: number;
   amount: bigint;
+  name?: string;
+  avatar?: string;
 }
 
 interface PlayersStore {
@@ -17,7 +19,7 @@ interface PlayersStore {
   loading: boolean;
   error: string | null;
   fetchPlayers: () => Promise<void>;
-  subscribeToNewEvents: () => Promise<void>;
+  subscribeToPlayersUpdates: () => Promise<void>;
 }
 
 function isTransferEvent(event: CirclesEvent) {
@@ -31,6 +33,7 @@ export const usePlayersStore = create<PlayersStore>(set => ({
   players: [],
   loading: false,
   error: null,
+
   fetchPlayers: async () => {
     set({ loading: true, error: null });
     try {
@@ -72,7 +75,8 @@ export const usePlayersStore = create<PlayersStore>(set => ({
       });
     }
   },
-  subscribeToNewEvents: async () => {
+
+  subscribeToPlayersUpdates: async () => {
     try {
       const avatarEvents = await circlesData.subscribeToEvents(
         ORG_ADDRESS as `0x${string}`
