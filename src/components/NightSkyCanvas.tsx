@@ -270,7 +270,7 @@ const NightSkyCanvas: React.FC = () => {
             .sort((a, b) => b - a);
 
           const verticalSpacing =
-            (height - 2 * ROCKET_SIZE) / (sortedScores.length - 1 || 1);
+            (height * 0.7 - 2 * ROCKET_SIZE) / (sortedScores.length - 1 || 1);
 
           sortedScores.forEach((score, groupIdx) => {
             const group = scoreGroups[score];
