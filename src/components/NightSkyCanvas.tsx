@@ -51,6 +51,7 @@ const NightSkyCanvas: React.FC = () => {
   const p5Instance = useRef<p5 | null>(null);
   const resizeTimeout = useRef<NodeJS.Timeout | null>(null);
   const rocketImgRef = useRef<p5.Image | null>(null);
+  const placeholderImgRef = useRef<p5.Image | null>(null);
 
   const top10Invites = useInvitesStore(state => state.top10);
   const top10Trusts = useTrustsStore(state => state.top10);
@@ -84,8 +85,8 @@ const NightSkyCanvas: React.FC = () => {
           image: null,
           xOffset: 0,
           yOffset: 0,
-          xSpeed: (Math.random() - 0.5) * 0.06,
-          ySpeed: (Math.random() - 0.5) * 0.04,
+          xSpeed: (Math.random() - 0.5) * 0.08,
+          ySpeed: (Math.random() - 0.5) * 0.06,
         }));
 
         if (inviteData.length === 0) {
@@ -199,6 +200,10 @@ const NightSkyCanvas: React.FC = () => {
           p.loadImage('images/rocket.png', img => resolve(img));
         });
 
+        placeholderImgRef.current = await new Promise<p5.Image>(resolve => {
+          p.loadImage('images/circles.png', img => resolve(img));
+        });
+
         // Stars
         stars = Array.from({ length: STAR_COUNT }, () => ({
           x: Math.random() * width,
@@ -303,6 +308,14 @@ const NightSkyCanvas: React.FC = () => {
               if (img) {
                 p.image(
                   img,
+                  x + WINDOW_OFFSET,
+                  y + WINDOW_OFFSET,
+                  WINDOW_SIZE,
+                  WINDOW_SIZE
+                );
+              } else if (placeholderImgRef.current) {
+                p.image(
+                  placeholderImgRef.current,
                   x + WINDOW_OFFSET,
                   y + WINDOW_OFFSET,
                   WINDOW_SIZE,
