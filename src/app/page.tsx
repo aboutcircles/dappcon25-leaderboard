@@ -5,10 +5,8 @@ import { usePlayersStore } from '@/stores/playersStore';
 import { useInvitesStore } from '@/stores/invitesStore';
 import { useTrustsStore } from '@/stores/trustsStore';
 import NightSkyCanvas from '@/components/NightSkyCanvas';
-// import { getProfiles } from '@/lib/getProfiles';
 
 export default function Home() {
-  // const players = usePlayersStore(state => state.players);
   const loading = usePlayersStore(state => state.loading);
   const error = usePlayersStore(state => state.error);
   const fetchPlayers = usePlayersStore(state => state.fetchPlayers);
@@ -17,22 +15,12 @@ export default function Home() {
   );
 
   const fetchInvitesStats = useInvitesStore(state => state.fetchStats);
-  // const invitesStats = useInvitesStore(state => state.stats);
   const subscribeToInvitesStats = useInvitesStore(
     state => state.subscribeToStats
   );
 
   const fetchTrustStats = useTrustsStore(state => state.fetchStats);
-  // const trustStats = useTrustsStore(state => state.stats);
   const subscribeToTrustStats = useTrustsStore(state => state.subscribeToStats);
-
-  // console.log('players', players);
-
-  const top10Invites = useInvitesStore(state => state.top10);
-  const top10Trusts = useTrustsStore(state => state.top10);
-
-  console.log('top10Invites', top10Invites);
-  console.log('top10Trusts', top10Trusts);
 
   useEffect(() => {
     const init = async () => {
