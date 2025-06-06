@@ -11,6 +11,9 @@ const STAR_MAX_RADIUS = 2.2;
 const STAR_MIN_SPEED = 0.2;
 const STAR_MAX_SPEED = 1.1;
 
+const TOP_MARGIN = 200;
+const BOTTOM_MARGIN = 100;
+
 function randomBetween(a: number, b: number) {
   return a + Math.random() * (b - a);
 }
@@ -302,13 +305,19 @@ const NightSkyCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
             .map(Number)
             .sort((a, b) => b - a);
 
+          const availableHeight =
+            height - TOP_MARGIN - BOTTOM_MARGIN - ROCKET_SIZE;
+
           const verticalSpacing =
-            (height * 0.9 - 2 * ROCKET_SIZE) / (sortedScores.length - 1 || 1);
+            sortedScores.length > 1
+              ? availableHeight / (sortedScores.length - 1)
+              : 0;
 
           sortedScores.forEach((score, groupIdx) => {
             const group = scoreGroups[score];
             const n = group.length;
-            const yBase = ROCKET_SIZE + groupIdx * verticalSpacing;
+            // Start at TOP_MARGIN
+            const yBase = TOP_MARGIN + groupIdx * verticalSpacing;
 
             group.forEach((data: T, i: number) => {
               // Evenly distribute across half width
@@ -367,7 +376,11 @@ const NightSkyCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
 
               // Draw name/score below
               p.fill(255);
-              p.textSize(12);
+              if (height < 1000) {
+                p.textSize(6);
+              } else {
+                p.textSize(12);
+              }
               p.textAlign(p.CENTER, p.TOP);
               p.text(
                 getName(data) || '',
