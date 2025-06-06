@@ -74,6 +74,8 @@ const NightSkyCanvas: React.FC = () => {
     let imagesLoadedInvites = false;
     let imagesLoadedTrusts = false;
 
+    let pressStartFont: p5.Font | null = null;
+
     const sketch = (p: p5) => {
       const loadInviteImages = (invites: TopPlayer[]) => {
         let loadedCount = 0;
@@ -189,6 +191,10 @@ const NightSkyCanvas: React.FC = () => {
         p.createCanvas(width, height);
         p.noStroke();
 
+        pressStartFont = await new Promise<p5.Font>(resolve => {
+          p.loadFont('/fonts/PressStart2P-Regular.ttf', font => resolve(font));
+        });
+
         rocketImgRef.current = await new Promise<p5.Image>(resolve => {
           p.loadImage('images/rocket.png', img => resolve(img));
         });
@@ -215,6 +221,9 @@ const NightSkyCanvas: React.FC = () => {
 
       p.draw = () => {
         p.background(10, 14, 40, 255);
+        if (pressStartFont) {
+          p.textFont(pressStartFont);
+        }
 
         // Draw stars
         for (const star of stars) {

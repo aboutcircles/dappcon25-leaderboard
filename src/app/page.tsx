@@ -68,8 +68,13 @@ export default function Home() {
         <main className="flex flex-col flex-1 h-full">
           {loading && <div>Loading players...</div>}
           {error && <div className="text-red-500">Error: {error}</div>}
-          <div className="text-white">
-            <h1>Hello</h1>
+          <div className="text-white flex flex-row gap-2 justify-evenly mt-4">
+            <h1 className="text-xl sm:text-3xl font-bold text-center">
+              Top inviters
+            </h1>
+            <h1 className="text-xl sm:text-3xl font-bold text-center">
+              Top trusters
+            </h1>
           </div>
         </main>
       </div>
