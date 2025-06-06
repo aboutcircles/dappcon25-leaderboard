@@ -8,7 +8,7 @@ const STAR_COUNT = 120;
 const STAR_MIN_RADIUS = 0.5;
 const STAR_MAX_RADIUS = 2.2;
 const STAR_MIN_SPEED = 0.2;
-const STAR_MAX_SPEED = 0.9;
+const STAR_MAX_SPEED = 1.1;
 
 function randomBetween(a: number, b: number) {
   return a + Math.random() * (b - a);
@@ -42,7 +42,7 @@ type TrustData = {
   groupYOffset: number;
 };
 
-const NightSkyCanvas: React.FC = () => {
+const NightSkyCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const p5Instance = useRef<p5 | null>(null);
   const resizeTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -287,7 +287,7 @@ const NightSkyCanvas: React.FC = () => {
             .sort((a, b) => b - a);
 
           const verticalSpacing =
-            (height * 0.7 - 2 * ROCKET_SIZE) / (sortedScores.length - 1 || 1);
+            (height * 0.9 - 2 * ROCKET_SIZE) / (sortedScores.length - 1 || 1);
 
           sortedScores.forEach((score, groupIdx) => {
             const group = scoreGroups[score];
@@ -296,7 +296,7 @@ const NightSkyCanvas: React.FC = () => {
 
             group.forEach((data: T, i: number) => {
               // Evenly distribute across half width
-              const halfWidth = width / 2;
+              const halfWidth = (width - (tableWidth ?? 0)) / 2;
               const xBase = left
                 ? ((halfWidth - ROCKET_SIZE) * (i + 0.5)) / n
                 : halfWidth + ((halfWidth - ROCKET_SIZE) * (i + 0.5)) / n;
@@ -452,7 +452,7 @@ const NightSkyCanvas: React.FC = () => {
       }
       if (resizeTimeout.current) clearTimeout(resizeTimeout.current);
     };
-  }, [top10Invites, top10Trusts]);
+  }, [tableWidth, top10Invites, top10Trusts]);
 
   useEffect(() => {
     if (

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { usePlayersStore } from '@/stores/playersStore';
 import { useInvitesStore } from '@/stores/invitesStore';
 import { useTrustsStore } from '@/stores/trustsStore';
@@ -8,6 +8,7 @@ import NightSkyCanvas from '@/components/NightSkyCanvas';
 import PlayersList from '@/components/PlayersList';
 
 export default function Home() {
+  const [tableWidth, setTableWidth] = useState(0);
   // const loading = usePlayersStore(state => state.loading);
   // const error = usePlayersStore(state => state.error);
   const fetchPlayers = usePlayersStore(state => state.fetchPlayers);
@@ -51,20 +52,22 @@ export default function Home() {
   return (
     <div className="relative w-full h-screen min-h-screen">
       <div className="absolute inset-0 z-0 w-full h-full">
-        <NightSkyCanvas />
+        <NightSkyCanvas tableWidth={tableWidth} />
       </div>
       <div className="relative z-10 w-full h-full flex flex-col flex-1">
         <main className="flex flex-row flex-1 h-full">
-          <PlayersList />
           {/* {loading && <div>Loading players...</div>}
           {error && <div className="text-red-500">Error: {error}</div>} */}
-          <div className="text-white flex flex-row flex-1 gap-2 justify-evenly mt-4 h-full">
-            <h1 className="text-xl sm:text-3xl font-bold text-center">
-              Top inviters
-            </h1>
-            <h1 className="text-xl sm:text-3xl font-bold text-center">
-              Top trusters
-            </h1>
+          <div className="text-white flex flex-row justify-between w-full">
+            <div className="flex flex-row gap-2 justify-evenly w-full mt-8">
+              <h1 className="text-lg sm:text-2xl font-bold text-center w-1/2">
+                Top inviters
+              </h1>
+              <h1 className="text-lg sm:text-2xl font-bold text-center w-1/2">
+                Top trusters
+              </h1>
+            </div>
+            <PlayersList setTableWidth={setTableWidth} />
           </div>
         </main>
       </div>
