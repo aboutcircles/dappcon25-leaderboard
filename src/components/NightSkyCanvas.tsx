@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import p5 from 'p5';
 import { useInvitesStore } from '@/stores/invitesStore';
 import type { TopPlayer } from '@/types';
+import { useTrustsStore } from '@/stores/trustsStore';
 
 const STAR_COUNT = 120;
 const STAR_MIN_RADIUS = 0.5;
@@ -20,9 +21,29 @@ function randomBetween(a: number, b: number) {
 }
 
 type P5WithCustomHandler = p5 & {
-  myCustomRedrawAccordingToNewPropsHandler: (props: {
+  myCustomRedrawAccordingToNewPropsHandlerInvites: (props: {
     invites: TopPlayer[];
   }) => void;
+  myCustomRedrawAccordingToNewPropsHandlerTrusts: (props: {
+    trusts: TopPlayer[];
+  }) => void;
+};
+
+type RocketData = {
+  invite: TopPlayer;
+  image: p5.Image | null;
+  xOffset: number;
+  yOffset: number;
+  xSpeed: number;
+  ySpeed: number;
+};
+type TrustData = {
+  trust: TopPlayer;
+  image: p5.Image | null;
+  xOffset: number;
+  yOffset: number;
+  xSpeed: number;
+  ySpeed: number;
 };
 
 const NightSkyCanvas: React.FC = () => {
@@ -32,6 +53,7 @@ const NightSkyCanvas: React.FC = () => {
   const rocketImgRef = useRef<p5.Image | null>(null);
 
   const top10Invites = useInvitesStore(state => state.top10);
+  const top10Trusts = useTrustsStore(state => state.top10);
 
   useEffect(() => {
     const containerNode = containerRef.current;
@@ -46,15 +68,11 @@ const NightSkyCanvas: React.FC = () => {
     }[] = [];
 
     // Holds { invite, image, xOffset, yOffset, xSpeed, ySpeed }
-    let inviteData: {
-      invite: TopPlayer;
-      image: p5.Image | null;
-      xOffset: number;
-      yOffset: number;
-      xSpeed: number;
-      ySpeed: number;
-    }[] = [];
-    let imagesLoaded = false;
+    let inviteData: RocketData[] = [];
+    let trustData: TrustData[] = [];
+
+    let imagesLoadedInvites = false;
+    let imagesLoadedTrusts = false;
 
     const sketch = (p: p5) => {
       const loadInviteImages = (invites: TopPlayer[]) => {
@@ -69,7 +87,7 @@ const NightSkyCanvas: React.FC = () => {
         }));
 
         if (inviteData.length === 0) {
-          imagesLoaded = true;
+          imagesLoadedInvites = true;
           return;
         }
 
@@ -83,7 +101,7 @@ const NightSkyCanvas: React.FC = () => {
                 inviteData[index].image = img;
                 loadedCount++;
                 if (loadedCount === inviteData.length) {
-                  imagesLoaded = true;
+                  imagesLoadedInvites = true;
                   console.log('All images loaded');
                 }
               },
@@ -95,7 +113,7 @@ const NightSkyCanvas: React.FC = () => {
                 inviteData[index].image = null;
                 loadedCount++;
                 if (loadedCount === inviteData.length) {
-                  imagesLoaded = true;
+                  imagesLoadedInvites = true;
                   console.log('All images attempted');
                 }
               }
@@ -103,7 +121,60 @@ const NightSkyCanvas: React.FC = () => {
           } else {
             loadedCount++;
             if (loadedCount === inviteData.length) {
-              imagesLoaded = true;
+              imagesLoadedInvites = true;
+              console.log('All images attempted');
+            }
+          }
+        });
+      };
+
+      const loadTrustImages = (trusts: TopPlayer[]) => {
+        let loadedCount = 0;
+        trustData = trusts.map(trust => ({
+          trust,
+          image: null,
+          xOffset: 0,
+          yOffset: 0,
+          xSpeed: (Math.random() - 0.5) * 0.06,
+          ySpeed: (Math.random() - 0.5) * 0.04,
+        }));
+
+        if (trustData.length === 0) {
+          imagesLoadedTrusts = true;
+          return;
+        }
+
+        trustData.forEach((data, index) => {
+          const { trust } = data;
+          if (trust.image) {
+            p.loadImage(
+              trust.image,
+              img => {
+                console.log(`Loaded image for trust ${trust.name}`);
+                trustData[index].image = img;
+                loadedCount++;
+                if (loadedCount === trustData.length) {
+                  imagesLoadedTrusts = true;
+                  console.log('All images loaded');
+                }
+              },
+              err => {
+                console.error(
+                  `Failed to load image for trust ${trust.name}:`,
+                  err
+                );
+                trustData[index].image = null;
+                loadedCount++;
+                if (loadedCount === trustData.length) {
+                  imagesLoadedTrusts = true;
+                  console.log('All images attempted');
+                }
+              }
+            );
+          } else {
+            loadedCount++;
+            if (loadedCount === trustData.length) {
+              imagesLoadedTrusts = true;
               console.log('All images attempted');
             }
           }
@@ -136,6 +207,10 @@ const NightSkyCanvas: React.FC = () => {
           (a, b) => a.score - b.score
         );
         loadInviteImages(sortedInvites);
+
+        // Sort trust here, once, and load images in same order
+        const sortedTrusts = [...top10Trusts].sort((a, b) => a.score - b.score);
+        loadTrustImages(sortedTrusts);
       };
 
       p.draw = () => {
@@ -155,12 +230,22 @@ const NightSkyCanvas: React.FC = () => {
           }
         }
 
-        // Draw invites
-        if (imagesLoaded) {
-          // 1. Group invites by score
-          const scoreGroups: Record<number, typeof inviteData> = {};
-          inviteData.forEach(data => {
-            const score = data.invite.score;
+        // Helper function to draw a group (invites or trusts)
+        function drawRocketGroup<T extends RocketData | TrustData>(
+          p: p5,
+          imagesLoaded: boolean,
+          dataArray: T[],
+          getName: (item: T) => string,
+          getScore: (item: T) => number,
+          getImage: (item: T) => p5.Image | null,
+          left: boolean
+        ) {
+          if (!imagesLoaded) return;
+
+          // 1. Group by score
+          const scoreGroups: Record<number, T[]> = {};
+          dataArray.forEach((data: T) => {
+            const score = getScore(data);
             if (!scoreGroups[score]) scoreGroups[score] = [];
             scoreGroups[score].push(data);
           });
@@ -176,22 +261,23 @@ const NightSkyCanvas: React.FC = () => {
           sortedScores.forEach((score, groupIdx) => {
             const group = scoreGroups[score];
             const n = group.length;
-            // y position for this score line
             const yBase = ROCKET_SIZE + groupIdx * verticalSpacing;
 
-            group.forEach((data, i) => {
-              // Evenly distribute across width
-              const xBase = ((width - ROCKET_SIZE) * (i + 0.5)) / n;
+            group.forEach((data: T, i: number) => {
+              // Evenly distribute across half width
+              const halfWidth = width / 2;
+              const xBase = left
+                ? ((halfWidth - ROCKET_SIZE) * (i + 0.5)) / n
+                : halfWidth + ((halfWidth - ROCKET_SIZE) * (i + 0.5)) / n;
               // Update rocket position
               data.xOffset += data.xSpeed;
               data.yOffset += data.ySpeed;
-              // Optionally, keep within bounds or bounce
               if (Math.abs(data.xOffset) > 30) data.xSpeed *= -1;
               if (Math.abs(data.yOffset) > 10) data.ySpeed *= -1;
               const x = xBase + data.xOffset;
               const y = yBase + data.yOffset - 50;
 
-              // Draw invite image clipped to window (centered in rocket)
+              // Draw invite/trust image clipped to window (centered in rocket)
               p.push();
               p.ellipseMode(p.CORNER);
               p.drawingContext.save();
@@ -204,9 +290,10 @@ const NightSkyCanvas: React.FC = () => {
                 2 * Math.PI
               );
               p.drawingContext.clip();
-              if (data.image) {
+              const img = getImage(data);
+              if (img) {
                 p.image(
-                  data.image,
+                  img,
                   x + WINDOW_OFFSET,
                   y + WINDOW_OFFSET,
                   WINDOW_SIZE,
@@ -226,38 +313,74 @@ const NightSkyCanvas: React.FC = () => {
               p.textSize(12);
               p.textAlign(p.CENTER, p.TOP);
               p.text(
-                data.invite.name || '',
+                getName(data) || '',
                 x + ROCKET_SIZE / 2,
                 y + ROCKET_SIZE + 4
               );
               p.text(
-                data.invite.score || '',
+                getScore(data) || '',
                 x + ROCKET_SIZE / 2,
                 y + ROCKET_SIZE + 20
               );
             });
           });
+        }
+
+        // Draw invites (left)
+        drawRocketGroup<RocketData>(
+          p,
+          imagesLoadedInvites,
+          inviteData,
+          data => data.invite.name || '',
+          data => data.invite.score,
+          data => data.image,
+          true
+        );
+        // Draw trusts (right)
+        drawRocketGroup<TrustData>(
+          p,
+          imagesLoadedTrusts,
+          trustData,
+          data => data.trust.name || '',
+          data => data.trust.score,
+          data => data.image,
+          false
+        );
+      };
+
+      (
+        p as P5WithCustomHandler
+      ).myCustomRedrawAccordingToNewPropsHandlerInvites = (newProps: {
+        invites: typeof top10Invites;
+      }) => {
+        imagesLoadedInvites = false;
+        if (newProps.invites && newProps.invites.length > 0) {
+          const sortedInvites = [...newProps.invites].sort(
+            (a, b) => a.score - b.score
+          );
+          loadInviteImages(sortedInvites);
         } else {
-          p.fill(255);
-          p.textSize(20);
-          p.textAlign(p.CENTER, p.CENTER);
-          p.text('Loading images...', width / 2, height / 2);
+          inviteData = [];
+          imagesLoadedInvites = true;
         }
       };
 
-      (p as P5WithCustomHandler).myCustomRedrawAccordingToNewPropsHandler =
-        (newProps: { invites: typeof top10Invites }) => {
-          imagesLoaded = false;
-          if (newProps.invites && newProps.invites.length > 0) {
-            const sortedInvites = [...newProps.invites].sort(
-              (a, b) => a.score - b.score
-            );
-            loadInviteImages(sortedInvites);
-          } else {
-            inviteData = [];
-            imagesLoaded = true;
-          }
-        };
+      (
+        p as P5WithCustomHandler
+      ).myCustomRedrawAccordingToNewPropsHandlerTrusts = (newProps: {
+        trusts: typeof top10Trusts;
+      }) => {
+        imagesLoadedTrusts = false;
+        if (newProps.trusts && newProps.trusts.length > 0) {
+          const sortedTrusts = [...newProps.trusts].sort(
+            (a, b) => a.score - b.score
+          );
+          loadTrustImages(sortedTrusts);
+        } else {
+          trustData = [];
+          imagesLoadedTrusts = true;
+        }
+      };
     };
 
     p5Instance.current = new p5(sketch, containerNode!);
@@ -288,18 +411,31 @@ const NightSkyCanvas: React.FC = () => {
       }
       if (resizeTimeout.current) clearTimeout(resizeTimeout.current);
     };
+  }, [top10Invites, top10Trusts]);
+
+  useEffect(() => {
+    if (
+      p5Instance.current &&
+      'myCustomRedrawAccordingToNewPropsHandlerInvites' in p5Instance.current
+    ) {
+      (
+        p5Instance.current as P5WithCustomHandler
+      ).myCustomRedrawAccordingToNewPropsHandlerInvites({
+        invites: top10Invites,
+      });
+    }
   }, [top10Invites]);
 
   useEffect(() => {
     if (
       p5Instance.current &&
-      'myCustomRedrawAccordingToNewPropsHandler' in p5Instance.current
+      'myCustomRedrawAccordingToNewPropsHandlerTrusts' in p5Instance.current
     ) {
       (
         p5Instance.current as P5WithCustomHandler
-      ).myCustomRedrawAccordingToNewPropsHandler({ invites: top10Invites });
+      ).myCustomRedrawAccordingToNewPropsHandlerTrusts({ trusts: top10Trusts });
     }
-  }, [top10Invites]);
+  }, [top10Trusts]);
 
   return (
     <div
