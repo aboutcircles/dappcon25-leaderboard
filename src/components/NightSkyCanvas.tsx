@@ -316,8 +316,12 @@ const NightSkyCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
           sortedScores.forEach((score, groupIdx) => {
             const group = scoreGroups[score];
             const n = group.length;
+
             // Start at TOP_MARGIN
-            const yBase = TOP_MARGIN + groupIdx * verticalSpacing;
+            const yBase =
+              TOP_MARGIN +
+              groupIdx * verticalSpacing +
+              (sortedScores.length > 1 ? 0 : availableHeight / 2);
 
             group.forEach((data: T, i: number) => {
               // Evenly distribute across half width
