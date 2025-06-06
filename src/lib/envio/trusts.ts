@@ -1,5 +1,5 @@
 import { gql } from 'urql';
-import { urqlClient } from '@/lib/envioClient';
+import { urqlClient } from '@/lib/envio/envioClient';
 import { TIMESTAMP_START, TIMESTAMP_END } from '@/const';
 
 export const TRUSTS_QUERY = gql`

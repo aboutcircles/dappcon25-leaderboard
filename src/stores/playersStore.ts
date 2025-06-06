@@ -4,15 +4,7 @@ import { CirclesEvent, TransactionHistoryRow } from '@circles-sdk/data';
 import { CrcV2_StreamCompleted } from '@circles-sdk/data/dist/events/events';
 import { MIN_CIRCLES, ORG_ADDRESS, START_BLOCK } from '@/const';
 import { getAddress } from 'ethers';
-
-interface Player {
-  address: string;
-  transactionHash: string;
-  blockNumber: number;
-  amount: bigint;
-  name?: string;
-  avatar?: string;
-}
+import { Player } from '@/types';
 
 interface PlayersStore {
   players: Player[];
