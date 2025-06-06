@@ -4,7 +4,7 @@ export interface Player {
   blockNumber: number;
   amount: bigint;
   name?: string;
-  avatar?: string;
+  image?: string;
 }
 
 export interface InvitesStats {

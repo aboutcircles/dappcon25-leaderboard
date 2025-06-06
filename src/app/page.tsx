@@ -5,10 +5,11 @@ import { usePlayersStore } from '@/stores/playersStore';
 import { useInvitesStore } from '@/stores/invitesStore';
 import { useTrustsStore } from '@/stores/trustsStore';
 import NightSkyCanvas from '@/components/NightSkyCanvas';
+import PlayersList from '@/components/PlayersList';
 
 export default function Home() {
-  const loading = usePlayersStore(state => state.loading);
-  const error = usePlayersStore(state => state.error);
+  // const loading = usePlayersStore(state => state.loading);
+  // const error = usePlayersStore(state => state.error);
   const fetchPlayers = usePlayersStore(state => state.fetchPlayers);
   const subscribeToPlayersUpdates = usePlayersStore(
     state => state.subscribeToPlayersUpdates
@@ -53,10 +54,11 @@ export default function Home() {
         <NightSkyCanvas />
       </div>
       <div className="relative z-10 w-full h-full flex flex-col flex-1">
-        <main className="flex flex-col flex-1 h-full">
-          {loading && <div>Loading players...</div>}
-          {error && <div className="text-red-500">Error: {error}</div>}
-          <div className="text-white flex flex-row gap-2 justify-evenly mt-4">
+        <main className="flex flex-row flex-1 h-full">
+          <PlayersList />
+          {/* {loading && <div>Loading players...</div>}
+          {error && <div className="text-red-500">Error: {error}</div>} */}
+          <div className="text-white flex flex-row flex-1 gap-2 justify-evenly mt-4 h-full">
             <h1 className="text-xl sm:text-3xl font-bold text-center">
               Top inviters
             </h1>

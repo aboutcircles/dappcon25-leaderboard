@@ -10,12 +10,6 @@ const STAR_MAX_RADIUS = 2.2;
 const STAR_MIN_SPEED = 0.2;
 const STAR_MAX_SPEED = 0.9;
 
-const IMAGE_SIZE = 20;
-const ROCKET_SCALE = 10;
-const ROCKET_SIZE = IMAGE_SIZE * ROCKET_SCALE;
-const WINDOW_SIZE = ROCKET_SIZE * 0.2;
-const WINDOW_OFFSET = (ROCKET_SIZE - WINDOW_SIZE) / 2;
-
 function randomBetween(a: number, b: number) {
   return a + Math.random() * (b - a);
 }
@@ -36,6 +30,7 @@ type RocketData = {
   yOffset: number;
   xSpeed: number;
   ySpeed: number;
+  groupYOffset: number;
 };
 type TrustData = {
   trust: TopPlayer;
@@ -44,6 +39,7 @@ type TrustData = {
   yOffset: number;
   xSpeed: number;
   ySpeed: number;
+  groupYOffset: number;
 };
 
 const NightSkyCanvas: React.FC = () => {
@@ -77,6 +73,23 @@ const NightSkyCanvas: React.FC = () => {
 
     let pressStartFont: p5.Font | null = null;
 
+    // Store sizes here
+    let sizes = {
+      IMAGE_SIZE: 20,
+      ROCKET_SIZE: 200,
+      WINDOW_SIZE: 40,
+      WINDOW_OFFSET: 80,
+    };
+
+    function recalcSizes(h: number) {
+      const IMAGE_SIZE = h / 100;
+      const ROCKET_SCALE = 10;
+      const ROCKET_SIZE = IMAGE_SIZE * ROCKET_SCALE;
+      const WINDOW_SIZE = ROCKET_SIZE * 0.2;
+      const WINDOW_OFFSET = (ROCKET_SIZE - WINDOW_SIZE) / 2;
+      sizes = { IMAGE_SIZE, ROCKET_SIZE, WINDOW_SIZE, WINDOW_OFFSET };
+    }
+
     const sketch = (p: p5) => {
       const loadInviteImages = (invites: TopPlayer[]) => {
         let loadedCount = 0;
@@ -87,6 +100,7 @@ const NightSkyCanvas: React.FC = () => {
           yOffset: 0,
           xSpeed: (Math.random() - 0.5) * 0.08,
           ySpeed: (Math.random() - 0.5) * 0.06,
+          groupYOffset: (Math.random() - 0.5) * sizes.ROCKET_SIZE,
         }));
 
         if (inviteData.length === 0) {
@@ -100,12 +114,12 @@ const NightSkyCanvas: React.FC = () => {
             p.loadImage(
               invite.image,
               img => {
-                console.log(`Loaded image for invite ${invite.name}`);
+                // console.log(`Loaded image for invite ${invite.name}`);
                 inviteData[index].image = img;
                 loadedCount++;
                 if (loadedCount === inviteData.length) {
                   imagesLoadedInvites = true;
-                  console.log('All images loaded');
+                  // console.log('All images loaded');
                 }
               },
               err => {
@@ -117,7 +131,7 @@ const NightSkyCanvas: React.FC = () => {
                 loadedCount++;
                 if (loadedCount === inviteData.length) {
                   imagesLoadedInvites = true;
-                  console.log('All images attempted');
+                  // console.log('All images attempted');
                 }
               }
             );
@@ -125,7 +139,7 @@ const NightSkyCanvas: React.FC = () => {
             loadedCount++;
             if (loadedCount === inviteData.length) {
               imagesLoadedInvites = true;
-              console.log('All images attempted');
+              // console.log('All images attempted');
             }
           }
         });
@@ -140,6 +154,7 @@ const NightSkyCanvas: React.FC = () => {
           yOffset: 0,
           xSpeed: (Math.random() - 0.5) * 0.06,
           ySpeed: (Math.random() - 0.5) * 0.04,
+          groupYOffset: (Math.random() - 0.7) * sizes.ROCKET_SIZE,
         }));
 
         if (trustData.length === 0) {
@@ -153,12 +168,12 @@ const NightSkyCanvas: React.FC = () => {
             p.loadImage(
               trust.image,
               img => {
-                console.log(`Loaded image for trust ${trust.name}`);
+                // console.log(`Loaded image for trust ${trust.name}`);
                 trustData[index].image = img;
                 loadedCount++;
                 if (loadedCount === trustData.length) {
                   imagesLoadedTrusts = true;
-                  console.log('All images loaded');
+                  // console.log('All images loaded');
                 }
               },
               err => {
@@ -170,7 +185,7 @@ const NightSkyCanvas: React.FC = () => {
                 loadedCount++;
                 if (loadedCount === trustData.length) {
                   imagesLoadedTrusts = true;
-                  console.log('All images attempted');
+                  // console.log('All images attempted');
                 }
               }
             );
@@ -178,7 +193,7 @@ const NightSkyCanvas: React.FC = () => {
             loadedCount++;
             if (loadedCount === trustData.length) {
               imagesLoadedTrusts = true;
-              console.log('All images attempted');
+              // console.log('All images attempted');
             }
           }
         });
@@ -189,6 +204,7 @@ const NightSkyCanvas: React.FC = () => {
           width = containerNode.offsetWidth;
           height = containerNode.offsetHeight;
         }
+        recalcSizes(height);
         p.createCanvas(width, height);
         p.noStroke();
 
@@ -225,6 +241,7 @@ const NightSkyCanvas: React.FC = () => {
       };
 
       p.draw = () => {
+        const { ROCKET_SIZE, WINDOW_SIZE, WINDOW_OFFSET } = sizes;
         p.background(10, 14, 40, 255);
         if (pressStartFont) {
           p.textFont(pressStartFont);
@@ -289,7 +306,8 @@ const NightSkyCanvas: React.FC = () => {
               if (Math.abs(data.xOffset) > 30) data.xSpeed *= -1;
               if (Math.abs(data.yOffset) > 10) data.ySpeed *= -1;
               const x = xBase + data.xOffset;
-              const y = yBase + data.yOffset - 50;
+              // Use the fixed groupYOffset for each rocket
+              const y = yBase + data.yOffset + data.groupYOffset - 50;
 
               // Draw invite/trust image clipped to window (centered in rocket)
               p.push();
@@ -419,6 +437,7 @@ const NightSkyCanvas: React.FC = () => {
             p5Instance.current.resizeCanvas(w, h);
             width = w;
             height = h;
+            recalcSizes(h);
           }
         }, 50);
       });

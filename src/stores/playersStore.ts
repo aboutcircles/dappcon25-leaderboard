@@ -5,6 +5,7 @@ import { CrcV2_StreamCompleted } from '@circles-sdk/data/dist/events/events';
 import { MIN_CIRCLES, ORG_ADDRESS, START_BLOCK } from '@/const';
 import { getAddress } from 'ethers';
 import { Player } from '@/types';
+import { getProfiles } from '@/lib/getProfiles';
 
 interface PlayersStore {
   players: Player[];
@@ -56,7 +57,20 @@ export const usePlayersStore = create<PlayersStore>(set => ({
           }
         });
       }
-      set({ players: Array.from(playerMap.values()), loading: false });
+
+      const players = Array.from(playerMap.values());
+      const profilesMap = await getProfiles(players.map(p => p.address));
+      const playersWithProfiles = players.map(player => {
+        const profile = profilesMap.get(player.address);
+        return {
+          ...player,
+          name: profile?.name || undefined,
+          image: profile?.image || undefined,
+        };
+      });
+      playersWithProfiles.sort((a, b) => b.blockNumber - a.blockNumber);
+
+      set({ players: playersWithProfiles, loading: false });
     } catch (error: unknown) {
       set({
         error:
@@ -73,7 +87,7 @@ export const usePlayersStore = create<PlayersStore>(set => ({
       const avatarEvents = await circlesData.subscribeToEvents(
         ORG_ADDRESS as `0x${string}`
       );
-      avatarEvents.subscribe((event: CirclesEvent) => {
+      avatarEvents.subscribe(async (event: CirclesEvent) => {
         if (event && isTransferEvent(event)) {
           const { from, transactionHash, amount, timestamp, blockNumber } =
             event as CrcV2_StreamCompleted;
@@ -86,15 +100,20 @@ export const usePlayersStore = create<PlayersStore>(set => ({
             blockNumber >= START_BLOCK &&
             !usePlayersStore.getState().players.some(p => p.address === from)
           ) {
+            // Fetch profile for the new player
+            const profilesMap = await getProfiles([from]);
+            const profile = profilesMap.get(from);
             set(state => ({
               players: [
-                ...state.players,
                 {
                   address: from,
                   transactionHash,
                   amount,
                   blockNumber,
+                  name: profile?.name || undefined,
+                  image: profile?.image || undefined,
                 },
+                ...state.players,
               ],
             }));
           }

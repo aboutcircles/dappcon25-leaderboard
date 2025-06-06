@@ -2,6 +2,12 @@ import { fetchProfiles } from '@/lib/envio/profiles';
 import { Profile } from '@/types';
 import { getProfileFromDB, setProfilesToDB } from '@/lib/profileDb';
 
+// Add this type above the getProfiles function
+interface ProfileImageData {
+  previewImageUrl: string;
+  // add other properties if needed
+}
+
 export async function getProfiles(
   addressList: string[]
 ): Promise<Map<string, Profile>> {
@@ -23,17 +29,25 @@ export async function getProfiles(
     const { profiles } = await fetchProfiles(missingAddresses);
     const cids = profiles.map(profile => profile.cidV0).filter(Boolean);
 
-    const url = `https://rpc.aboutcircles.com/profiles/getBatch?cids=${encodeURIComponent(
-      cids.join(',')
-    )}`;
-    const response = await fetch(url);
-    if (!response.ok) throw new Error('Failed to fetch batch profiles by CIDs');
+    // Batch requests if cids.length > 50
+    const BATCH_SIZE = 50;
+    let imgData: ProfileImageData[] = [];
+    for (let i = 0; i < cids.length; i += BATCH_SIZE) {
+      const batch = cids.slice(i, i + BATCH_SIZE);
+      const url = `https://rpc.aboutcircles.com/profiles/getBatch?cids=${encodeURIComponent(
+        batch.join(',')
+      )}`;
+      const response = await fetch(url);
+      if (!response.ok)
+        throw new Error('Failed to fetch batch profiles by CIDs');
+      const batchImgData: ProfileImageData[] = await response.json();
+      imgData = imgData.concat(batchImgData);
+    }
 
-    const imgData = await response.json();
     fetchedProfiles = profiles.map((profile, index) => ({
       ...profile,
       address: profile.id,
-      image: imgData[index].previewImageUrl,
+      image: imgData[index]?.previewImageUrl,
     }));
 
     // 3. Store new profiles in IndexedDB
