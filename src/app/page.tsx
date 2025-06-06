@@ -31,6 +31,10 @@ export default function Home() {
   const fetchTrustStats = useTrustsStore(state => state.fetchStats);
   const subscribeToTrustStats = useTrustsStore(state => state.subscribeToStats);
 
+  const players = usePlayersStore(state => state.players);
+  const playerAddresses = players.map(p => p.address);
+  const playerAddressesString = playerAddresses.join(',');
+
   useEffect(() => {
     const init = async () => {
       await fetchPlayers();
@@ -39,21 +43,26 @@ export default function Home() {
     };
     init();
     subscribeToPlayersUpdates();
+  }, [
+    fetchPlayers,
+    subscribeToPlayersUpdates,
+    fetchInvitesStats,
+    fetchTrustStats,
+  ]);
 
-    const subInvites = subscribeToInvitesStats();
-    const subTrusts = subscribeToTrustStats();
+  useEffect(() => {
+    const subInvites = subscribeToInvitesStats(playerAddresses);
+    const subTrusts = subscribeToTrustStats(playerAddresses);
 
     return () => {
       subInvites.unsubscribe();
       subTrusts.unsubscribe();
     };
   }, [
-    fetchPlayers,
-    subscribeToPlayersUpdates,
-    fetchInvitesStats,
     subscribeToInvitesStats,
-    fetchTrustStats,
     subscribeToTrustStats,
+    playerAddresses,
+    playerAddressesString,
   ]);
 
   return (

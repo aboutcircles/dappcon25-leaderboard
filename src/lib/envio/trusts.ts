@@ -9,8 +9,8 @@ export const TRUSTS_QUERY = gql`
         truster_id: { _in: $addressList }
         timestamp: { _gte: $fromTime, _lte: $toTime }
         _or: [
-          { trustee: { acceptedInviteTimestamp: { _gt: $fromTime } } }
-          { trustee: { avatarType: { _eq: "Invite" } } }
+          { truster_id: { _in: $addressList } }
+          { trustee_id: { _in: $addressList } }
         ]
         limit: { _neq: 0 }
         expiryTime: { _neq: 0 }
@@ -41,8 +41,8 @@ export const TRUSTS_SUBSCRIPTION = gql`
         truster_id: { _in: $addressList }
         timestamp: { _gte: $fromTime, _lte: $toTime }
         _or: [
-          { trustee: { acceptedInviteTimestamp: { _gt: $fromTime } } }
-          { trustee: { avatarType: { _eq: "Invite" } } }
+          { truster_id: { _in: $addressList } }
+          { trustee_id: { _in: $addressList } }
         ]
         limit: { _neq: 0 }
         expiryTime: { _neq: 0 }

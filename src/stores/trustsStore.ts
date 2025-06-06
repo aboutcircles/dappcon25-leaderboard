@@ -11,20 +11,20 @@ interface TrustsStore {
   top10: TopPlayer[];
 
   fetchStats: () => Promise<void>;
-  subscribeToStats: () => { unsubscribe: () => void };
+  subscribeToStats: (playerAddresses: string[]) => { unsubscribe: () => void };
 }
 
 export const useTrustsStore = create<TrustsStore>(set => {
   async function updateTop10(stats: Record<string, TrustsStats>) {
     const sorted = Object.values(stats)
-      .sort((a, b) => b.mutualTrusts - a.mutualTrusts)
-      .slice(0, 10)
-      .filter(player => player.mutualTrusts > 0)
       .map(player => ({
         address: player.player,
-        score: player.mutualTrusts,
-      }));
-    // set({ top10: sorted });
+        score: player.mutualTrusts * 3 + player.trusts * 0.5,
+      }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 10)
+      .filter(player => player.score > 0);
+
     const profiles = await getProfiles(sorted.map(player => player.address));
     set({
       top10: sorted.map(player => ({
@@ -76,9 +76,7 @@ export const useTrustsStore = create<TrustsStore>(set => {
       }
     },
 
-    subscribeToStats: () => {
-      const players = usePlayersStore.getState().players;
-      const playerAddresses = players.map(p => p.address);
+    subscribeToStats: (playerAddresses: string[]) => {
       const subscription = subscribeToTrusts(
         playerAddresses,
         async (trusts: Trust[]) => {

@@ -102,12 +102,13 @@ export const usePlayersStore = create<PlayersStore>(set => ({
             !usePlayersStore.getState().players.some(p => p.address === from)
           ) {
             // Fetch profile for the new player
-            const profilesMap = await getProfiles([from]);
-            const profile = profilesMap.get(from);
+            const _from = getAddress(from);
+            const profilesMap = await getProfiles([_from]);
+            const profile = profilesMap.get(_from);
             set(state => ({
               players: [
                 {
-                  address: from,
+                  address: _from,
                   transactionHash,
                   amount,
                   blockNumber,

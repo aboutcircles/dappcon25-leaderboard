@@ -11,19 +11,19 @@ interface InvitesStore {
   top10: TopPlayer[];
 
   fetchStats: () => Promise<void>;
-  subscribeToStats: () => { unsubscribe: () => void };
+  subscribeToStats: (playerAddresses: string[]) => { unsubscribe: () => void };
 }
 
 export const useInvitesStore = create<InvitesStore>(set => {
   async function updateTop10(stats: Record<string, InvitesStats>) {
     const sorted = Object.values(stats)
-      .sort((a, b) => b.invitesRedeemed - a.invitesRedeemed)
-      .slice(0, 10)
-      .filter(player => player.invitesRedeemed > 0)
       .map(player => ({
         address: player.player,
-        score: player.invitesRedeemed,
-      }));
+        score: player.invitesRedeemed * 3 + player.invitesSent * 0.5,
+      }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 10)
+      .filter(player => player.score > 0);
 
     const profiles = await getProfiles(sorted.map(player => player.address));
     set({
@@ -86,10 +86,7 @@ export const useInvitesStore = create<InvitesStore>(set => {
       }
     },
 
-    subscribeToStats: () => {
-      const players = usePlayersStore.getState().players;
-      const playerAddresses = players.map(p => p.address);
-
+    subscribeToStats: (playerAddresses: string[]) => {
       const subscription = subscribeToInvites(
         playerAddresses,
         async ({ invitesRedeemed, invitesSent }) => {
