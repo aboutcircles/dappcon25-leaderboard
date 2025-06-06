@@ -5,6 +5,7 @@ export interface Player {
   amount: bigint;
   name?: string;
   image?: string;
+  timestamp: number;
 }
 
 export interface InvitesStats {
@@ -33,4 +34,19 @@ export interface Profile {
   name: string;
   isImageAvailable?: boolean;
   image?: string;
+}
+
+export interface InvitesRedeemed {
+  profile: { name: string; id: string };
+  timestamp: number;
+  invitedBy: string;
+}
+
+export interface InviteSent {
+  trustee: {
+    profile: { name: string; id: string };
+    transactionHash: string;
+  };
+  truster_id: string;
+  timestamp: number;
 }

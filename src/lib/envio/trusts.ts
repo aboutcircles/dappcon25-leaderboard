@@ -29,6 +29,7 @@ export const TRUSTS_QUERY = gql`
           name
         }
       }
+      timestamp
     }
   }
 `;
@@ -71,6 +72,7 @@ export interface Trust {
     };
   };
   isMutual: boolean;
+  timestamp: number;
   truster: {
     id: string;
     profile: {

@@ -1,6 +1,8 @@
 import { gql } from 'urql';
 import { urqlClient } from '@/lib/envio/envioClient';
 import { TIMESTAMP_START, TIMESTAMP_END } from '@/const';
+import { InvitesRedeemed } from '@/types';
+import { InviteSent } from '@/types';
 
 export const INVITES_QUERY = gql`
   query getInvitesData($addressList: [String!], $fromTime: Int, $toTime: Int) {
@@ -35,6 +37,7 @@ export const INVITES_QUERY = gql`
         transactionHash
       }
       truster_id
+      timestamp
     }
   }
 `;
@@ -54,6 +57,7 @@ export const INVITES_SUBSCRIPTION = gql`
     ) {
       profile {
         name
+        id
       }
       timestamp
       invitedBy
@@ -75,23 +79,11 @@ export const INVITES_SUBSCRIPTION = gql`
         }
         transactionHash
       }
+      truster_id
+      timestamp
     }
   }
 `;
-
-export interface InvitesRedeemed {
-  profile: { name: string };
-  timestamp: number;
-  invitedBy: string;
-}
-
-export interface InviteSent {
-  trustee: {
-    profile: { name: string; id: string };
-    transactionHash: string;
-  };
-  truster_id: string;
-}
 
 export async function fetchInvites(addressList: string[]): Promise<{
   invitesRedeemed: InvitesRedeemed[];
@@ -104,6 +96,7 @@ export async function fetchInvites(addressList: string[]): Promise<{
       toTime: TIMESTAMP_END,
     })
     .toPromise();
+
   if (result.error) throw result.error;
   return {
     invitesRedeemed: result.data?.invitesRedeemed || [],

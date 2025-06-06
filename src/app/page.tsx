@@ -4,8 +4,15 @@ import { useEffect, useState } from 'react';
 import { usePlayersStore } from '@/stores/playersStore';
 import { useInvitesStore } from '@/stores/invitesStore';
 import { useTrustsStore } from '@/stores/trustsStore';
-import NightSkyCanvas from '@/components/NightSkyCanvas';
+// import NightSkyCanvas from '@/components/NightSkyCanvas';
 import PlayersList from '@/components/PlayersList';
+
+import dynamic from 'next/dynamic';
+
+const NightSkyCanvas = dynamic(() => import('@/components/NightSkyCanvas'), {
+  ssr: false,
+  loading: () => null,
+});
 
 export default function Home() {
   const [tableWidth, setTableWidth] = useState(0);
@@ -59,7 +66,7 @@ export default function Home() {
           {/* {loading && <div>Loading players...</div>}
           {error && <div className="text-red-500">Error: {error}</div>} */}
           <div className="text-white flex flex-row justify-between w-full">
-            <div className="flex flex-row gap-2 justify-evenly w-full mt-8">
+            <div className="flex flex-row gap-2 justify-evenly mt-8 flex-1">
               <h1 className="text-lg sm:text-2xl font-bold text-center w-1/2">
                 Top inviters
               </h1>

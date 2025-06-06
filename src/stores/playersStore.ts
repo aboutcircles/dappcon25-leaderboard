@@ -52,6 +52,7 @@ export const usePlayersStore = create<PlayersStore>(set => ({
                 transactionHash: row.transactionHash,
                 amount: row.attoCircles,
                 blockNumber: row.blockNumber,
+                timestamp: row.timestamp,
               });
             }
           }
@@ -112,6 +113,7 @@ export const usePlayersStore = create<PlayersStore>(set => ({
                   blockNumber,
                   name: profile?.name || undefined,
                   image: profile?.image || undefined,
+                  timestamp: timestamp,
                 },
                 ...state.players,
               ],

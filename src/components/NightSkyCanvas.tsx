@@ -1,3 +1,4 @@
+'use client';
 import React, { useRef, useEffect } from 'react';
 import p5 from 'p5';
 import { useInvitesStore } from '@/stores/invitesStore';
@@ -31,6 +32,7 @@ type RocketData = {
   xSpeed: number;
   ySpeed: number;
   groupYOffset: number;
+  singleGroupXOffset: number;
 };
 type TrustData = {
   trust: TopPlayer;
@@ -40,6 +42,7 @@ type TrustData = {
   xSpeed: number;
   ySpeed: number;
   groupYOffset: number;
+  singleGroupXOffset: number;
 };
 
 const NightSkyCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
@@ -54,6 +57,17 @@ const NightSkyCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
 
   useEffect(() => {
     const containerNode = containerRef.current;
+
+    // --- CLEANUP FIRST ---
+    if (p5Instance.current) {
+      p5Instance.current.remove();
+      p5Instance.current = null;
+    }
+    if (containerNode) {
+      const canvases = containerNode.querySelectorAll('canvas');
+      canvases.forEach(canvas => canvas.remove());
+    }
+
     let width = 400;
     let height = 200;
     let stars: {
@@ -101,6 +115,7 @@ const NightSkyCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
           xSpeed: (Math.random() - 0.5) * 0.08,
           ySpeed: (Math.random() - 0.5) * 0.06,
           groupYOffset: (Math.random() - 0.5) * sizes.ROCKET_SIZE,
+          singleGroupXOffset: (Math.random() - 0.5) * sizes.ROCKET_SIZE,
         }));
 
         if (inviteData.length === 0) {
@@ -155,6 +170,7 @@ const NightSkyCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
           xSpeed: (Math.random() - 0.5) * 0.06,
           ySpeed: (Math.random() - 0.5) * 0.04,
           groupYOffset: (Math.random() - 0.7) * sizes.ROCKET_SIZE,
+          singleGroupXOffset: (Math.random() - 0.5) * sizes.ROCKET_SIZE * 2,
         }));
 
         if (trustData.length === 0) {
@@ -305,7 +321,8 @@ const NightSkyCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
               data.yOffset += data.ySpeed;
               if (Math.abs(data.xOffset) > 30) data.xSpeed *= -1;
               if (Math.abs(data.yOffset) > 10) data.ySpeed *= -1;
-              const x = xBase + data.xOffset;
+              const x =
+                xBase + data.xOffset + (n === 1 ? data.singleGroupXOffset : 0);
               // Use the fixed groupYOffset for each rocket
               const y = yBase + data.yOffset + data.groupYOffset - 50;
 
@@ -444,13 +461,20 @@ const NightSkyCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
       resizeObserver.observe(containerNode);
     }
 
+    // Cleanup function (for unmount)
     return () => {
-      p5Instance.current?.remove();
-      p5Instance.current = null;
+      if (p5Instance.current) {
+        p5Instance.current.remove();
+        p5Instance.current = null;
+      }
       if (resizeObserver && containerNode) {
         resizeObserver.disconnect();
       }
       if (resizeTimeout.current) clearTimeout(resizeTimeout.current);
+      if (containerNode) {
+        const canvases = containerNode.querySelectorAll('canvas');
+        canvases.forEach(canvas => canvas.remove());
+      }
     };
   }, [tableWidth, top10Invites, top10Trusts]);
 
@@ -483,7 +507,7 @@ const NightSkyCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
       ref={containerRef}
       style={{
         width: '100%',
-        height: '100vh',
+        height: '100%',
         position: 'relative',
       }}
     />
