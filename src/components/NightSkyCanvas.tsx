@@ -9,10 +9,10 @@ const STAR_MAX_RADIUS = 2.2;
 const STAR_MIN_SPEED = 0.2;
 const STAR_MAX_SPEED = 0.9;
 
-const IMAGE_SIZE = 8;
+const IMAGE_SIZE = 20;
 const ROCKET_SCALE = 10;
 const ROCKET_SIZE = IMAGE_SIZE * ROCKET_SCALE;
-const WINDOW_SIZE = ROCKET_SIZE * 0.2; // 40% of rocket size
+const WINDOW_SIZE = ROCKET_SIZE * 0.2;
 const WINDOW_OFFSET = (ROCKET_SIZE - WINDOW_SIZE) / 2;
 
 function randomBetween(a: number, b: number) {
@@ -45,8 +45,15 @@ const NightSkyCanvas: React.FC = () => {
       alpha: number;
     }[] = [];
 
-    // Holds { invite, image }
-    let inviteData: { invite: TopPlayer; image: p5.Image | null }[] = [];
+    // Holds { invite, image, xOffset, yOffset, xSpeed, ySpeed }
+    let inviteData: {
+      invite: TopPlayer;
+      image: p5.Image | null;
+      xOffset: number;
+      yOffset: number;
+      xSpeed: number;
+      ySpeed: number;
+    }[] = [];
     let imagesLoaded = false;
 
     const sketch = (p: p5) => {
@@ -55,6 +62,10 @@ const NightSkyCanvas: React.FC = () => {
         inviteData = invites.map(invite => ({
           invite,
           image: null,
+          xOffset: 0,
+          yOffset: 0,
+          xSpeed: (Math.random() - 0.5) * 0.06,
+          ySpeed: (Math.random() - 0.5) * 0.04,
         }));
 
         if (inviteData.length === 0) {
@@ -107,7 +118,6 @@ const NightSkyCanvas: React.FC = () => {
         p.createCanvas(width, height);
         p.noStroke();
 
-        // Load rocket image asynchronously
         rocketImgRef.current = await new Promise<p5.Image>(resolve => {
           p.loadImage('images/rocket.png', img => resolve(img));
         });
@@ -147,47 +157,85 @@ const NightSkyCanvas: React.FC = () => {
 
         // Draw invites
         if (imagesLoaded) {
-          inviteData.forEach((data, index) => {
-            const { image, invite } = data;
-            // Center rocket horizontally
-            const x = width / 2 - ROCKET_SIZE / 2;
-            const y = height - (index + 1) * (ROCKET_SIZE + 10);
+          // 1. Group invites by score
+          const scoreGroups: Record<number, typeof inviteData> = {};
+          inviteData.forEach(data => {
+            const score = data.invite.score;
+            if (!scoreGroups[score]) scoreGroups[score] = [];
+            scoreGroups[score].push(data);
+          });
 
-            // Draw invite image clipped to window (centered in rocket)
-            p.push();
-            p.ellipseMode(p.CORNER);
-            p.drawingContext.save();
-            p.drawingContext.beginPath();
-            p.drawingContext.arc(
-              x + WINDOW_OFFSET + WINDOW_SIZE / 2,
-              y + WINDOW_OFFSET + WINDOW_SIZE / 2,
-              WINDOW_SIZE / 2,
-              0,
-              2 * Math.PI
-            );
-            p.drawingContext.clip();
-            if (image) {
-              p.image(
-                image,
-                x + WINDOW_OFFSET,
-                y + WINDOW_OFFSET,
-                WINDOW_SIZE,
-                WINDOW_SIZE
+          // 2. Sort scores descending (highest score at the top)
+          const sortedScores = Object.keys(scoreGroups)
+            .map(Number)
+            .sort((a, b) => b - a);
+
+          const verticalSpacing =
+            (height - 2 * ROCKET_SIZE) / (sortedScores.length - 1 || 1);
+
+          sortedScores.forEach((score, groupIdx) => {
+            const group = scoreGroups[score];
+            const n = group.length;
+            // y position for this score line
+            const yBase = ROCKET_SIZE + groupIdx * verticalSpacing;
+
+            group.forEach((data, i) => {
+              // Evenly distribute across width
+              const xBase = ((width - ROCKET_SIZE) * (i + 0.5)) / n;
+              // Update rocket position
+              data.xOffset += data.xSpeed;
+              data.yOffset += data.ySpeed;
+              // Optionally, keep within bounds or bounce
+              if (Math.abs(data.xOffset) > 30) data.xSpeed *= -1;
+              if (Math.abs(data.yOffset) > 10) data.ySpeed *= -1;
+              const x = xBase + data.xOffset;
+              const y = yBase + data.yOffset - 50;
+
+              // Draw invite image clipped to window (centered in rocket)
+              p.push();
+              p.ellipseMode(p.CORNER);
+              p.drawingContext.save();
+              p.drawingContext.beginPath();
+              p.drawingContext.arc(
+                x + WINDOW_OFFSET + WINDOW_SIZE / 2,
+                y + WINDOW_OFFSET + WINDOW_SIZE / 2,
+                WINDOW_SIZE / 2,
+                0,
+                2 * Math.PI
               );
-            }
-            p.drawingContext.restore();
-            p.pop();
+              p.drawingContext.clip();
+              if (data.image) {
+                p.image(
+                  data.image,
+                  x + WINDOW_OFFSET,
+                  y + WINDOW_OFFSET,
+                  WINDOW_SIZE,
+                  WINDOW_SIZE
+                );
+              }
+              p.drawingContext.restore();
+              p.pop();
 
-            // Draw rocket overlay
-            if (rocketImgRef.current) {
-              p.image(rocketImgRef.current, x, y, ROCKET_SIZE, ROCKET_SIZE);
-            }
+              // Draw rocket overlay
+              if (rocketImgRef.current) {
+                p.image(rocketImgRef.current, x, y, ROCKET_SIZE, ROCKET_SIZE);
+              }
 
-            // Draw name/score below
-            p.fill(255);
-            p.textSize(12);
-            p.textAlign(p.CENTER, p.TOP);
-            p.text(invite.name || '', x + ROCKET_SIZE / 2, y + ROCKET_SIZE + 4);
+              // Draw name/score below
+              p.fill(255);
+              p.textSize(12);
+              p.textAlign(p.CENTER, p.TOP);
+              p.text(
+                data.invite.name || '',
+                x + ROCKET_SIZE / 2,
+                y + ROCKET_SIZE + 4
+              );
+              p.text(
+                data.invite.score || '',
+                x + ROCKET_SIZE / 2,
+                y + ROCKET_SIZE + 20
+              );
+            });
           });
         } else {
           p.fill(255);
