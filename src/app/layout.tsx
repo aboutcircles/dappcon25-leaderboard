@@ -10,7 +10,7 @@ const pressStart2P = Press_Start_2P({
 
 export const metadata: Metadata = {
   title: 'Circles Leaderboard',
-  description: 'Circles Leaderboard / DappCon 2025',
+  description: 'Circles Leaderboard /DappCon 2025/',
 };
 
 export default function RootLayout({
