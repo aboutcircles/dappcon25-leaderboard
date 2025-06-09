@@ -7,7 +7,7 @@ import { useTrustsStore } from '@/stores/trustsStore';
 import { drawRocketGroup } from '@/lib/draw/drawRocketGroup';
 
 const TOP_MARGIN = 200;
-const BOTTOM_MARGIN = 200;
+const BOTTOM_MARGIN = 300;
 
 type P5WithCustomHandler = p5 & {
   myCustomRedrawAccordingToNewPropsHandlerInvites: (props: {

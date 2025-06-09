@@ -20,7 +20,7 @@ export function drawRocketGroup<T extends RocketData | TrustData>(
   WINDOW_OFFSET: number,
   rocketImgRef: React.RefObject<p5.Image> | React.RefObject<null> | null,
   placeholderImgRef: React.RefObject<p5.Image> | React.RefObject<null>,
-  RANGE: number = 10
+  RANGE: number = 5
 ) {
   if (!imagesLoaded) return;
 
@@ -41,6 +41,10 @@ export function drawRocketGroup<T extends RocketData | TrustData>(
     .sort((a, b) => b - a);
 
   const availableHeight = height - TOP_MARGIN - BOTTOM_MARGIN - ROCKET_SIZE;
+  console.log('height', height);
+  console.log('availableHeight', availableHeight);
+  console.log('TOP_MARGIN', TOP_MARGIN);
+  console.log('BOTTOM_MARGIN', BOTTOM_MARGIN);
 
   const verticalSpacing =
     sortedScores.length > 1 ? availableHeight / (sortedScores.length - 1) : 0;
@@ -56,42 +60,21 @@ export function drawRocketGroup<T extends RocketData | TrustData>(
     maxN = Math.max(maxN, n);
 
     // Start at TOP_MARGIN
-    const yBase =
-      TOP_MARGIN +
-      groupIdx * verticalSpacing +
-      (sortedScores.length > 1 ? 0 : availableHeight / 2);
-
-    p.push();
-    p.stroke('red');
-    p.strokeWeight(2);
-    p.line(xStart, 0, xStart, height);
-    p.line(xEnd, 0, xEnd, height);
-    p.pop();
-
-    // Center for the group
-    const groupCenter = (xEnd - xStart) / 2 + xStart;
-
-    p.push();
-    p.stroke('red');
-    p.strokeWeight(2);
-    p.line(groupCenter, 0, groupCenter, height);
-    p.line(xEnd, 0, xEnd, height);
-    p.pop();
+    const yBase = TOP_MARGIN + groupIdx * verticalSpacing; // +
+    // (sortedScores.length > 1 ? 0 : availableHeight / 2);
 
     // Assign a persistent random x value for each element in the group
     group.forEach((data: T) => {
       if (data.randomXBase === undefined) {
-        data.randomXBase =
-          xStart + Math.random() * (xEnd - xStart - ROCKET_SIZE);
+        data.randomXBase = xStart + Math.random() * (xEnd - xStart);
       }
     });
     const basePositions: number[] = group.map(data => data.randomXBase!);
 
     // Assign a persistent random offset to each rocket
-    group.forEach((data: T, i: number) => {
+    group.forEach((data: T) => {
       if (data.randomXOffset === undefined) {
-        data.randomXOffset =
-          ((Math.sin(i * 999) + Math.random()) / 2 - 0.5) * 40;
+        data.randomXOffset = ((Math.sin(999) + Math.random()) / 2 - 0.5) * 60;
       }
     });
 
@@ -110,7 +93,7 @@ export function drawRocketGroup<T extends RocketData | TrustData>(
       x = Math.max(xStart, Math.min(x, xEnd - ROCKET_SIZE));
 
       // Use the fixed groupYOffset for each rocket
-      const y = yBase + data.yOffset + data.groupYOffset - 50;
+      const y = yBase + data.yOffset + data.groupYOffset;
 
       // Draw invite/trust image clipped to window (centered in rocket)
       p.push();
