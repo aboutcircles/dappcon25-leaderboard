@@ -4,6 +4,7 @@ import p5 from 'p5';
 import { useInvitesStore } from '@/stores/invitesStore';
 import type { TopPlayer } from '@/types';
 import { useTrustsStore } from '@/stores/trustsStore';
+import { COLORS } from '../const';
 
 const STAR_COUNT = 120;
 const STAR_MIN_RADIUS = 0.5;
@@ -12,7 +13,7 @@ const STAR_MIN_SPEED = 0.2;
 const STAR_MAX_SPEED = 1.1;
 
 const TOP_MARGIN = 200;
-const BOTTOM_MARGIN = 100;
+const BOTTOM_MARGIN = 200;
 
 function randomBetween(a: number, b: number) {
   return a + Math.random() * (b - a);
@@ -379,7 +380,7 @@ const NightSkyCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
               }
 
               // Draw name/score below
-              p.fill(255);
+              p.fill(COLORS[left ? 1 : 2]);
               if (height < 1000) {
                 p.textSize(6);
               } else {

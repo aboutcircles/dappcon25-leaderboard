@@ -20,3 +20,8 @@ export const TIMESTAMP_END = parseInt(
 
 // export const QR_CODE_VALUE = `https://app.metri.xyz/transfer/${process.env.NEXT_PUBLIC_ORG_ADDRESS}/crc`;
 export const QR_CODE_VALUE = `https://app.metri.xyz/${process.env.NEXT_PUBLIC_ORG_ADDRESS}`;
+
+export const COLORS = {
+  1: '#00e2ff',
+  2: '#71ff49',
+};

@@ -9,6 +9,7 @@ import PlayersList from '@/components/PlayersList';
 
 import dynamic from 'next/dynamic';
 import QRcodeBanner from '@/components/QRcodeBanner';
+import { COLORS } from '@/const';
 
 const NightSkyCanvas = dynamic(() => import('@/components/NightSkyCanvas'), {
   ssr: false,
@@ -17,8 +18,8 @@ const NightSkyCanvas = dynamic(() => import('@/components/NightSkyCanvas'), {
 
 export default function Home() {
   const [tableWidth, setTableWidth] = useState(0);
-  // const loading = usePlayersStore(state => state.loading);
-  // const error = usePlayersStore(state => state.error);
+  const loading = usePlayersStore(state => state.loading);
+  const error = usePlayersStore(state => state.error);
   const fetchPlayers = usePlayersStore(state => state.fetchPlayers);
   const subscribeToPlayersUpdates = usePlayersStore(
     state => state.subscribeToPlayersUpdates
@@ -72,25 +73,31 @@ export default function Home() {
         <NightSkyCanvas tableWidth={tableWidth} />
       </div>
       <div className="relative z-10 w-full h-full flex flex-col flex-1">
-        <main className="flex flex-row flex-1 h-full">
-          {/* {loading && <div>Loading players...</div>}
-          {error && <div className="text-red-500">Error: {error}</div>} */}
-          <div className="text-white flex flex-row justify-between w-full">
-            <div className="flex flex-col justify-between w-full">
-              <div className="flex flex-row gap-2 justify-evenly mt-8 flex-1">
-                <h1 className="text-lg sm:text-2xl font-bold text-center w-1/2">
-                  Top inviters
-                </h1>
-                <h1 className="text-lg sm:text-2xl font-bold text-center w-1/2">
-                  Top trusters
-                </h1>
+        <main className="flex flex-row flex-1 h-full z-10 min-w-screen">
+          {loading && <div>Loading players...</div>}
+          {error && <div className="text-red-500">Error: {error}</div>}
+          {!loading && !error && (
+            <div className="text-white flex flex-row justify-between w-full">
+              <div className="flex flex-col justify-between flex-1">
+                <div className="flex flex-row gap-2 justify-evenly mt-8 flex-1">
+                  <h1
+                    className={`text-lg sm:text-2xl font-bold text-center w-1/2 text-[${COLORS[1]}]`}
+                  >
+                    Top inviters
+                  </h1>
+                  <h1
+                    className={`text-lg sm:text-2xl font-bold text-center w-1/2 text-[${COLORS[2]}]`}
+                  >
+                    Top trusters
+                  </h1>
+                </div>
+
+                <QRcodeBanner />
               </div>
 
-              <QRcodeBanner />
+              <PlayersList setTableWidth={setTableWidth} />
             </div>
-
-            <PlayersList setTableWidth={setTableWidth} />
-          </div>
+          )}
         </main>
       </div>
     </div>
