@@ -67,6 +67,9 @@ export default function Home() {
     playerAddressesString,
   ]);
 
+  const color1 = COLORS[1];
+  const color2 = COLORS[2];
+
   return (
     <div className="relative w-full h-screen min-h-screen">
       <div className="absolute inset-0 z-0 w-full h-full">
@@ -81,12 +84,12 @@ export default function Home() {
               <div className="flex flex-col justify-between flex-1">
                 <div className="flex flex-row gap-2 justify-evenly mt-8 flex-1">
                   <h1
-                    className={`text-lg sm:text-2xl font-bold text-center w-1/2 text-[${COLORS[1]}]`}
+                    className={`text-lg sm:text-2xl font-bold text-center w-1/2 text-[${color1}]`}
                   >
                     Top inviters
                   </h1>
                   <h1
-                    className={`text-lg sm:text-2xl font-bold text-center w-1/2 text-[${COLORS[2]}]`}
+                    className={`text-lg sm:text-2xl font-bold text-center w-1/2 text-[${color2}]`}
                   >
                     Top trusters
                   </h1>
