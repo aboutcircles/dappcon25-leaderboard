@@ -10,7 +10,7 @@ const STAR_COUNT = 120;
 const STAR_MIN_RADIUS = 0.5;
 const STAR_MAX_RADIUS = 2.2;
 const STAR_MIN_SPEED = 0.2;
-const STAR_MAX_SPEED = 1.1;
+const STAR_MAX_SPEED = 1.4;
 
 const TOP_MARGIN = 200;
 const BOTTOM_MARGIN = 200;
