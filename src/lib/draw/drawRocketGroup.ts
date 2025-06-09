@@ -41,10 +41,6 @@ export function drawRocketGroup<T extends RocketData | TrustData>(
     .sort((a, b) => b - a);
 
   const availableHeight = height - TOP_MARGIN - BOTTOM_MARGIN - ROCKET_SIZE;
-  console.log('height', height);
-  console.log('availableHeight', availableHeight);
-  console.log('TOP_MARGIN', TOP_MARGIN);
-  console.log('BOTTOM_MARGIN', BOTTOM_MARGIN);
 
   const verticalSpacing =
     sortedScores.length > 1 ? availableHeight / (sortedScores.length - 1) : 0;
