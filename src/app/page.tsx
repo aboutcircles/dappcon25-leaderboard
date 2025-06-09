@@ -8,6 +8,7 @@ import { useTrustsStore } from '@/stores/trustsStore';
 import PlayersList from '@/components/PlayersList';
 
 import dynamic from 'next/dynamic';
+import QRcodeBanner from '@/components/QRcodeBanner';
 
 const NightSkyCanvas = dynamic(() => import('@/components/NightSkyCanvas'), {
   ssr: false,
@@ -75,14 +76,19 @@ export default function Home() {
           {/* {loading && <div>Loading players...</div>}
           {error && <div className="text-red-500">Error: {error}</div>} */}
           <div className="text-white flex flex-row justify-between w-full">
-            <div className="flex flex-row gap-2 justify-evenly mt-8 flex-1">
-              <h1 className="text-lg sm:text-2xl font-bold text-center w-1/2">
-                Top inviters
-              </h1>
-              <h1 className="text-lg sm:text-2xl font-bold text-center w-1/2">
-                Top trusters
-              </h1>
+            <div className="flex flex-col justify-between w-full">
+              <div className="flex flex-row gap-2 justify-evenly mt-8 flex-1">
+                <h1 className="text-lg sm:text-2xl font-bold text-center w-1/2">
+                  Top inviters
+                </h1>
+                <h1 className="text-lg sm:text-2xl font-bold text-center w-1/2">
+                  Top trusters
+                </h1>
+              </div>
+
+              <QRcodeBanner />
             </div>
+
             <PlayersList setTableWidth={setTableWidth} />
           </div>
         </main>
