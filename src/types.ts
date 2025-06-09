@@ -1,3 +1,5 @@
+import p5 from 'p5';
+
 export interface Player {
   address: string;
   transactionHash: string;
@@ -50,3 +52,29 @@ export interface InviteSent {
   truster_id: string;
   timestamp: number;
 }
+
+export type RocketData = {
+  invite: TopPlayer;
+  image: p5.Image | null;
+  xOffset: number;
+  yOffset: number;
+  xSpeed: number;
+  ySpeed: number;
+  groupYOffset: number;
+  singleGroupXOffset: number;
+  randomXOffset?: number;
+  randomXBase?: number;
+};
+
+export type TrustData = {
+  trust: TopPlayer;
+  image: p5.Image | null;
+  xOffset: number;
+  yOffset: number;
+  xSpeed: number;
+  ySpeed: number;
+  groupYOffset: number;
+  singleGroupXOffset: number;
+  randomXOffset?: number;
+  randomXBase?: number;
+};

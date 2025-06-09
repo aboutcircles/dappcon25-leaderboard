@@ -2,22 +2,12 @@
 import React, { useRef, useEffect } from 'react';
 import p5 from 'p5';
 import { useInvitesStore } from '@/stores/invitesStore';
-import type { TopPlayer } from '@/types';
+import type { RocketData, TopPlayer, TrustData } from '@/types';
 import { useTrustsStore } from '@/stores/trustsStore';
-import { COLORS } from '../const';
-
-const STAR_COUNT = 120;
-const STAR_MIN_RADIUS = 0.5;
-const STAR_MAX_RADIUS = 2.2;
-const STAR_MIN_SPEED = 0.2;
-const STAR_MAX_SPEED = 1.4;
+import { drawRocketGroup } from '@/lib/draw/drawRocketGroup';
 
 const TOP_MARGIN = 200;
 const BOTTOM_MARGIN = 200;
-
-function randomBetween(a: number, b: number) {
-  return a + Math.random() * (b - a);
-}
 
 type P5WithCustomHandler = p5 & {
   myCustomRedrawAccordingToNewPropsHandlerInvites: (props: {
@@ -28,28 +18,7 @@ type P5WithCustomHandler = p5 & {
   }) => void;
 };
 
-type RocketData = {
-  invite: TopPlayer;
-  image: p5.Image | null;
-  xOffset: number;
-  yOffset: number;
-  xSpeed: number;
-  ySpeed: number;
-  groupYOffset: number;
-  singleGroupXOffset: number;
-};
-type TrustData = {
-  trust: TopPlayer;
-  image: p5.Image | null;
-  xOffset: number;
-  yOffset: number;
-  xSpeed: number;
-  ySpeed: number;
-  groupYOffset: number;
-  singleGroupXOffset: number;
-};
-
-const NightSkyCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
+const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const p5Instance = useRef<p5 | null>(null);
   const resizeTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -74,13 +43,6 @@ const NightSkyCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
 
     let width = 400;
     let height = 200;
-    let stars: {
-      x: number;
-      y: number;
-      r: number;
-      speed: number;
-      alpha: number;
-    }[] = [];
 
     // Holds { invite, image, xOffset, yOffset, xSpeed, ySpeed }
     let inviteData: RocketData[] = [];
@@ -93,14 +55,14 @@ const NightSkyCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
 
     // Store sizes here
     let sizes = {
-      IMAGE_SIZE: 20,
-      ROCKET_SIZE: 200,
-      WINDOW_SIZE: 40,
-      WINDOW_OFFSET: 80,
+      IMAGE_SIZE: 0,
+      ROCKET_SIZE: 0,
+      WINDOW_SIZE: 0,
+      WINDOW_OFFSET: 0,
     };
 
     function recalcSizes(h: number) {
-      const IMAGE_SIZE = h / 100;
+      const IMAGE_SIZE = h / 80;
       const ROCKET_SCALE = 10;
       const ROCKET_SIZE = IMAGE_SIZE * ROCKET_SCALE;
       const WINDOW_SIZE = ROCKET_SIZE * 0.2;
@@ -240,15 +202,6 @@ const NightSkyCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
           p.loadImage('images/circles.png', img => resolve(img));
         });
 
-        // Stars
-        stars = Array.from({ length: STAR_COUNT }, () => ({
-          x: Math.random() * width,
-          y: Math.random() * height,
-          r: randomBetween(STAR_MIN_RADIUS, STAR_MAX_RADIUS),
-          speed: randomBetween(STAR_MIN_SPEED, STAR_MAX_SPEED),
-          alpha: randomBetween(120, 255),
-        }));
-
         // Sort invites here, once, and load images in same order
         const sortedInvites = [...top10Invites].sort(
           (a, b) => a.score - b.score
@@ -262,143 +215,10 @@ const NightSkyCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
 
       p.draw = () => {
         const { ROCKET_SIZE, WINDOW_SIZE, WINDOW_OFFSET } = sizes;
-        p.background(10, 14, 40, 255);
+        // p.background(10, 14, 40, 255);
+        p.clear();
         if (pressStartFont) {
           p.textFont(pressStartFont);
-        }
-
-        // Draw stars
-        for (const star of stars) {
-          p.fill(255, 255, 255, star.alpha);
-          p.ellipse(star.x, star.y, star.r, star.r);
-          star.y += star.speed;
-          if (star.y > height + star.r) {
-            star.x = Math.random() * width;
-            star.y = -star.r;
-            star.r = randomBetween(STAR_MIN_RADIUS, STAR_MAX_RADIUS);
-            star.speed = randomBetween(STAR_MIN_SPEED, STAR_MAX_SPEED);
-            star.alpha = randomBetween(120, 255);
-          }
-        }
-
-        // Helper function to draw a group (invites or trusts)
-        function drawRocketGroup<T extends RocketData | TrustData>(
-          p: p5,
-          imagesLoaded: boolean,
-          dataArray: T[],
-          getName: (item: T) => string,
-          getScore: (item: T) => number,
-          getImage: (item: T) => p5.Image | null,
-          left: boolean
-        ) {
-          if (!imagesLoaded) return;
-
-          // 1. Group by score
-          const scoreGroups: Record<number, T[]> = {};
-          dataArray.forEach((data: T) => {
-            const score = getScore(data);
-            if (!scoreGroups[score]) scoreGroups[score] = [];
-            scoreGroups[score].push(data);
-          });
-
-          // 2. Sort scores descending (highest score at the top)
-          const sortedScores = Object.keys(scoreGroups)
-            .map(Number)
-            .sort((a, b) => b - a);
-
-          const availableHeight =
-            height - TOP_MARGIN - BOTTOM_MARGIN - ROCKET_SIZE;
-
-          const verticalSpacing =
-            sortedScores.length > 1
-              ? availableHeight / (sortedScores.length - 1)
-              : 0;
-
-          sortedScores.forEach((score, groupIdx) => {
-            const group = scoreGroups[score];
-            const n = group.length;
-
-            // Start at TOP_MARGIN
-            const yBase =
-              TOP_MARGIN +
-              groupIdx * verticalSpacing +
-              (sortedScores.length > 1 ? 0 : availableHeight / 2);
-
-            group.forEach((data: T, i: number) => {
-              // Evenly distribute across half width
-              const halfWidth = (width - (tableWidth ?? 0)) / 2;
-              const xBase = left
-                ? ((halfWidth - ROCKET_SIZE) * (i + 0.5)) / n
-                : halfWidth + ((halfWidth - ROCKET_SIZE) * (i + 0.5)) / n;
-              // Update rocket position
-              data.xOffset += data.xSpeed;
-              data.yOffset += data.ySpeed;
-              if (Math.abs(data.xOffset) > 30) data.xSpeed *= -1;
-              if (Math.abs(data.yOffset) > 10) data.ySpeed *= -1;
-              const x =
-                xBase + data.xOffset + (n === 1 ? data.singleGroupXOffset : 0);
-              // Use the fixed groupYOffset for each rocket
-              const y = yBase + data.yOffset + data.groupYOffset - 50;
-
-              // Draw invite/trust image clipped to window (centered in rocket)
-              p.push();
-              p.ellipseMode(p.CORNER);
-              p.drawingContext.save();
-              p.drawingContext.beginPath();
-              p.drawingContext.arc(
-                x + WINDOW_OFFSET + WINDOW_SIZE / 2,
-                y + WINDOW_OFFSET + WINDOW_SIZE / 2,
-                WINDOW_SIZE / 2,
-                0,
-                2 * Math.PI
-              );
-              p.drawingContext.clip();
-              const img = getImage(data);
-              if (img) {
-                p.image(
-                  img,
-                  x + WINDOW_OFFSET,
-                  y + WINDOW_OFFSET,
-                  WINDOW_SIZE,
-                  WINDOW_SIZE
-                );
-              } else if (placeholderImgRef.current) {
-                p.image(
-                  placeholderImgRef.current,
-                  x + WINDOW_OFFSET,
-                  y + WINDOW_OFFSET,
-                  WINDOW_SIZE,
-                  WINDOW_SIZE
-                );
-              }
-              p.drawingContext.restore();
-              p.pop();
-
-              // Draw rocket overlay
-              if (rocketImgRef.current) {
-                p.image(rocketImgRef.current, x, y, ROCKET_SIZE, ROCKET_SIZE);
-              }
-
-              // Draw name/score below
-              p.fill(COLORS[left ? 1 : 2]);
-              if (height < 1000) {
-                p.textSize(6);
-              } else {
-                p.textSize(12);
-              }
-              p.textAlign(p.CENTER, p.TOP);
-              p.text(
-                getName(data) || '',
-                x + ROCKET_SIZE / 2,
-                y + ROCKET_SIZE + 4
-              );
-              p.text(
-                getScore(data) || '',
-                x + ROCKET_SIZE / 2,
-                y + ROCKET_SIZE + 20
-              );
-            });
-          });
         }
 
         // Draw invites (left)
@@ -409,7 +229,17 @@ const NightSkyCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
           data => data.invite.name || '',
           data => data.invite.score,
           data => data.image,
-          true
+          true,
+          width,
+          tableWidth,
+          height,
+          ROCKET_SIZE,
+          TOP_MARGIN,
+          BOTTOM_MARGIN,
+          WINDOW_SIZE,
+          WINDOW_OFFSET,
+          rocketImgRef,
+          placeholderImgRef
         );
         // Draw trusts (right)
         drawRocketGroup<TrustData>(
@@ -419,7 +249,17 @@ const NightSkyCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
           data => data.trust.name || '',
           data => data.trust.score,
           data => data.image,
-          false
+          false,
+          width,
+          tableWidth,
+          height,
+          ROCKET_SIZE,
+          TOP_MARGIN,
+          BOTTOM_MARGIN,
+          WINDOW_SIZE,
+          WINDOW_OFFSET,
+          rocketImgRef,
+          placeholderImgRef
         );
       };
 
@@ -532,4 +372,4 @@ const NightSkyCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
   );
 };
 
-export default NightSkyCanvas;
+export default RocketCanvas;
