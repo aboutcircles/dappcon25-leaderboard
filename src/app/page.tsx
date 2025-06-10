@@ -4,12 +4,10 @@ import { useEffect, useState } from 'react';
 import { usePlayersStore } from '@/stores/playersStore';
 import { useInvitesStore } from '@/stores/invitesStore';
 import { useTrustsStore } from '@/stores/trustsStore';
-// import NightSkyCanvas from '@/components/NightSkyCanvas';
 import PlayersList from '@/components/PlayersList';
 
 import dynamic from 'next/dynamic';
 import QRcodeBanner from '@/components/QRcodeBanner';
-import Starry from '@/components/Starry';
 
 const RocketCanvas = dynamic(() => import('@/components/RocketCanvas'), {
   ssr: false,
@@ -70,7 +68,6 @@ export default function Home() {
   return (
     <div className="relative w-full h-screen min-h-screen">
       <div className="absolute inset-0 z-0 w-full h-full">
-        <Starry />
         <RocketCanvas tableWidth={tableWidth} />
       </div>
       <div className="relative z-10 w-full h-full flex flex-col flex-1">

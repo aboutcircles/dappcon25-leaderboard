@@ -6,6 +6,16 @@ import type { RocketData, TopPlayer, TrustData } from '@/types';
 import { useTrustsStore } from '@/stores/trustsStore';
 import { drawRocketGroup } from '@/lib/draw/drawRocketGroup';
 
+const STAR_COUNT = 120;
+const STAR_MIN_RADIUS = 0.5;
+const STAR_MAX_RADIUS = 2.2;
+const STAR_MIN_SPEED = 0.2;
+const STAR_MAX_SPEED = 1.4;
+
+function randomBetween(a: number, b: number) {
+  return a + Math.random() * (b - a);
+}
+
 const TOP_MARGIN = 200;
 const BOTTOM_MARGIN = 300;
 
@@ -71,6 +81,14 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
     }
 
     const sketch = (p: p5) => {
+      let stars: {
+        x: number;
+        y: number;
+        r: number;
+        speed: number;
+        alpha: number;
+      }[] = [];
+
       const loadInviteImages = (invites: TopPlayer[]) => {
         let loadedCount = 0;
         inviteData = invites.map(invite => ({
@@ -202,6 +220,15 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
           p.loadImage('images/circles.png', img => resolve(img));
         });
 
+        // Stars
+        stars = Array.from({ length: STAR_COUNT }, () => ({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          r: randomBetween(STAR_MIN_RADIUS, STAR_MAX_RADIUS),
+          speed: randomBetween(STAR_MIN_SPEED, STAR_MAX_SPEED),
+          alpha: randomBetween(120, 255),
+        }));
+
         // Sort invites here, once, and load images in same order
         const sortedInvites = [...top10Invites].sort(
           (a, b) => a.score - b.score
@@ -219,6 +246,20 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
         p.clear();
         if (pressStartFont) {
           p.textFont(pressStartFont);
+        }
+
+        // Draw stars
+        for (const star of stars) {
+          p.fill(255, 255, 255, star.alpha);
+          p.ellipse(star.x, star.y, star.r, star.r);
+          star.y += star.speed;
+          if (star.y > height + star.r) {
+            star.x = Math.random() * width;
+            star.y = -star.r;
+            star.r = randomBetween(STAR_MIN_RADIUS, STAR_MAX_RADIUS);
+            star.speed = randomBetween(STAR_MIN_SPEED, STAR_MAX_SPEED);
+            star.alpha = randomBetween(120, 255);
+          }
         }
 
         // Draw invites (left)
@@ -363,6 +404,7 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
   return (
     <div
       ref={containerRef}
+      className="starry-bg"
       style={{
         width: '100%',
         height: '100%',
