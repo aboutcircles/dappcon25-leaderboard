@@ -80,10 +80,6 @@ export function drawRocketGroup<T extends RocketData | TrustData>(
       if (data.randomXBase === undefined) {
         data.randomXBase =
           xStart + Math.random() * (xEnd - ROCKET_SIZE - xStart);
-        if (left) {
-          console.log('=============xStart', xStart, xEnd);
-          console.log('data.randomXBase', data.randomXBase);
-        }
       }
     });
     const basePositions: number[] = group.map(data => data.randomXBase!);

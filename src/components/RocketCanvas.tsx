@@ -91,6 +91,7 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
         TOP_MARGIN,
         BOTTOM_MARGIN,
       };
+      console.log('=============sizes', sizes);
     }
 
     const sketch = (p: p5) => {
