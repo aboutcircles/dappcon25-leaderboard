@@ -78,8 +78,8 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
     function recalcSizes(w: number, h: number) {
       const IMAGE_SIZE = h / 80;
       const ROCKET_SCALE = 10;
-      const BOTTOM_MARGIN = h / 10;
-      const TOP_MARGIN = BOTTOM_MARGIN * 2;
+      const BOTTOM_MARGIN = h < 900 ? (h / 10) * 2 : h / 10;
+      const TOP_MARGIN = (h / 10) * 2;
       const ROCKET_SIZE = IMAGE_SIZE * ROCKET_SCALE;
       const WINDOW_SIZE = ROCKET_SIZE * 0.2;
       const WINDOW_OFFSET = (ROCKET_SIZE - WINDOW_SIZE) / 2;
@@ -91,7 +91,7 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
         TOP_MARGIN,
         BOTTOM_MARGIN,
       };
-      console.log('=============sizes', sizes);
+      console.log('=============h, sizes', h, sizes);
     }
 
     const sketch = (p: p5) => {

@@ -24,8 +24,6 @@ export function drawRocketGroup<T extends RocketData | TrustData>(
 ) {
   if (!imagesLoaded) return;
 
-  // console.log(dataArray);
-
   const centerX = (width - (tableWidth ?? 0)) / 2;
 
   // 1. Group by score bucket
@@ -42,14 +40,7 @@ export function drawRocketGroup<T extends RocketData | TrustData>(
     .map(Number)
     .sort((a, b) => b - a);
 
-  // console.log('sortedScores', sortedScores);
-
-  // console.log('scoreGroups', scoreGroups);
   const availableHeight = height - TOP_MARGIN - BOTTOM_MARGIN - ROCKET_SIZE;
-
-  // console.log('availableHeight', availableHeight);
-  // console.log('height', height);
-  // console.log(TOP_MARGIN, BOTTOM_MARGIN);
 
   const verticalSpacing =
     sortedScores.length > 1
@@ -58,10 +49,6 @@ export function drawRocketGroup<T extends RocketData | TrustData>(
       : 0;
 
   let maxN = 0;
-
-  // if (sortedScores.length > 0) {
-  //   console.log('sorted scores', left, JSON.stringify(scoreGroups));
-  // }
 
   const xStart = left ? 0 : centerX;
   const xEnd = left ? centerX : width - (tableWidth ?? 0);
@@ -91,8 +78,6 @@ export function drawRocketGroup<T extends RocketData | TrustData>(
       }
     });
 
-    // console.log('basePositions', basePositions);
-
     group.forEach((data: T, i: number) => {
       // Use the calculated base position and persistent random offset
       let x = basePositions[i]; // + data.randomXOffset!;
@@ -104,9 +89,6 @@ export function drawRocketGroup<T extends RocketData | TrustData>(
       if (Math.abs(data.xOffset) > 30) data.xSpeed *= -1;
       if (Math.abs(data.yOffset) > 10) data.ySpeed *= -1;
       x += data.xOffset;
-      // console.log('x', x, xStart, xEnd);
-      // Clamp x so the rocket stays within [xStart, xEnd - ROCKET_SIZE]
-      // x = Math.max(xStart, Math.min(x, xEnd - ROCKET_SIZE));
 
       // Use the fixed groupYOffset for each rocket
       const y = yBase + data.yOffset + data.groupYOffset / 10;

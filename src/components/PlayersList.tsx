@@ -5,9 +5,10 @@ import { useInvitesStore } from '@/stores/invitesStore';
 import Image from 'next/image';
 import { TopPlayer } from '@/types';
 
-const PlayersList: React.FC<{ setTableWidth: (width: number) => void }> = ({
-  setTableWidth,
-}) => {
+const PlayersList: React.FC<{
+  setTableWidth?: (width: number) => void;
+  forceShow?: boolean;
+}> = ({ setTableWidth, forceShow = false }) => {
   // const players = usePlayersStore(state => state.players);
   const invites = useInvitesStore(state => state.stats);
   const trusts = useTrustsStore(state => state.stats);
@@ -20,7 +21,7 @@ const PlayersList: React.FC<{ setTableWidth: (width: number) => void }> = ({
     const table = tableRef.current;
     if (!table) return;
 
-    const handleResize = () => setTableWidth(table.clientWidth);
+    const handleResize = () => setTableWidth?.(table.clientWidth);
 
     // Initial measurement
     handleResize();
@@ -88,7 +89,9 @@ const PlayersList: React.FC<{ setTableWidth: (width: number) => void }> = ({
 
   return (
     <div
-      className="hidden sm:flex flex-col h-[100vh] overflow-y-hidden"
+      className={`${
+        forceShow ? 'flex' : 'hidden'
+      } sm:flex flex-col h-[100vh] overflow-y-hidden`}
       style={{ fontSize: '10px', fontFamily: 'monospace' }}
       ref={tableRef}
     >
