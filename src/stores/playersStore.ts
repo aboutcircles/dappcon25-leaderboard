@@ -34,6 +34,7 @@ export const usePlayersStore = create<PlayersStore>(set => ({
         ORG_ADDRESS as `0x${string}`,
         25
       );
+
       let hasResults = true;
       const playerMap = new Map<string, Player>();
       while (hasResults) {

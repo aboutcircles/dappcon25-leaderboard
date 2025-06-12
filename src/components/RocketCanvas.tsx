@@ -6,6 +6,8 @@ import type { RocketData, TopPlayer, TrustData } from '@/types';
 import { useTrustsStore } from '@/stores/trustsStore';
 import { drawRocketGroup } from '@/lib/draw/drawRocketGroup';
 
+// import { left } from '@/components/left';
+
 const STAR_COUNT = 120;
 const STAR_MIN_RADIUS = 0.5;
 const STAR_MAX_RADIUS = 2.2;
@@ -15,9 +17,6 @@ const STAR_MAX_SPEED = 1.4;
 function randomBetween(a: number, b: number) {
   return a + Math.random() * (b - a);
 }
-
-const TOP_MARGIN = 200;
-const BOTTOM_MARGIN = 300;
 
 type P5WithCustomHandler = p5 & {
   myCustomRedrawAccordingToNewPropsHandlerInvites: (props: {
@@ -34,8 +33,11 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
   const resizeTimeout = useRef<NodeJS.Timeout | null>(null);
   const rocketImgRef = useRef<p5.Image | null>(null);
   const placeholderImgRef = useRef<p5.Image | null>(null);
+  const prevTableWidth = useRef<number | null>(null);
 
   const top10Invites = useInvitesStore(state => state.top10);
+
+  // const top10Invites = left;
   const top10Trusts = useTrustsStore(state => state.top10);
 
   useEffect(() => {
@@ -69,15 +71,26 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
       ROCKET_SIZE: 0,
       WINDOW_SIZE: 0,
       WINDOW_OFFSET: 0,
+      TOP_MARGIN: 200,
+      BOTTOM_MARGIN: 300,
     };
 
-    function recalcSizes(h: number) {
+    function recalcSizes(w: number, h: number) {
       const IMAGE_SIZE = h / 80;
       const ROCKET_SCALE = 10;
+      const BOTTOM_MARGIN = h / 10;
+      const TOP_MARGIN = BOTTOM_MARGIN * 2;
       const ROCKET_SIZE = IMAGE_SIZE * ROCKET_SCALE;
       const WINDOW_SIZE = ROCKET_SIZE * 0.2;
       const WINDOW_OFFSET = (ROCKET_SIZE - WINDOW_SIZE) / 2;
-      sizes = { IMAGE_SIZE, ROCKET_SIZE, WINDOW_SIZE, WINDOW_OFFSET };
+      sizes = {
+        IMAGE_SIZE,
+        ROCKET_SIZE,
+        WINDOW_SIZE,
+        WINDOW_OFFSET,
+        TOP_MARGIN,
+        BOTTOM_MARGIN,
+      };
     }
 
     const sketch = (p: p5) => {
@@ -113,12 +126,10 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
             p.loadImage(
               invite.image,
               img => {
-                // console.log(`Loaded image for invite ${invite.name}`);
                 inviteData[index].image = img;
                 loadedCount++;
                 if (loadedCount === inviteData.length) {
                   imagesLoadedInvites = true;
-                  // console.log('All images loaded');
                 }
               },
               err => {
@@ -130,7 +141,6 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
                 loadedCount++;
                 if (loadedCount === inviteData.length) {
                   imagesLoadedInvites = true;
-                  // console.log('All images attempted');
                 }
               }
             );
@@ -138,7 +148,6 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
             loadedCount++;
             if (loadedCount === inviteData.length) {
               imagesLoadedInvites = true;
-              // console.log('All images attempted');
             }
           }
         });
@@ -153,7 +162,7 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
           yOffset: 0,
           xSpeed: (Math.random() - 0.5) * 0.06,
           ySpeed: (Math.random() - 0.5) * 0.04,
-          groupYOffset: (Math.random() - 0.7) * sizes.ROCKET_SIZE,
+          groupYOffset: ((Math.random() - 0.7) * sizes.ROCKET_SIZE) / 10,
           singleGroupXOffset: (Math.random() - 0.5) * sizes.ROCKET_SIZE * 2,
         }));
 
@@ -168,12 +177,10 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
             p.loadImage(
               trust.image,
               img => {
-                // console.log(`Loaded image for trust ${trust.name}`);
                 trustData[index].image = img;
                 loadedCount++;
                 if (loadedCount === trustData.length) {
                   imagesLoadedTrusts = true;
-                  // console.log('All images loaded');
                 }
               },
               err => {
@@ -185,7 +192,6 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
                 loadedCount++;
                 if (loadedCount === trustData.length) {
                   imagesLoadedTrusts = true;
-                  // console.log('All images attempted');
                 }
               }
             );
@@ -193,7 +199,6 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
             loadedCount++;
             if (loadedCount === trustData.length) {
               imagesLoadedTrusts = true;
-              // console.log('All images attempted');
             }
           }
         });
@@ -204,7 +209,7 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
           width = containerNode.offsetWidth;
           height = containerNode.offsetHeight;
         }
-        recalcSizes(height);
+        recalcSizes(width, height);
         p.createCanvas(width, height);
         p.noStroke();
 
@@ -241,8 +246,13 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
       };
 
       p.draw = () => {
-        const { ROCKET_SIZE, WINDOW_SIZE, WINDOW_OFFSET } = sizes;
-        // p.background(10, 14, 40, 255);
+        const {
+          ROCKET_SIZE,
+          WINDOW_SIZE,
+          WINDOW_OFFSET,
+          TOP_MARGIN,
+          BOTTOM_MARGIN,
+        } = sizes;
         p.clear();
         if (pressStartFont) {
           p.textFont(pressStartFont);
@@ -261,6 +271,28 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
             star.alpha = randomBetween(120, 255);
           }
         }
+
+        // console.log('=========== invite data');
+        // console.log(JSON.stringify(inviteData));
+        // drawRocketGroup<RocketData>(
+        //   p,
+        //   true, // imagesLoadedInvites,
+        //   left,
+        //   data => data.invite.name || '',
+        //   data => data.invite.score,
+        //   data => data.image,
+        //   true,
+        //   width,
+        //   tableWidth,
+        //   height,
+        //   ROCKET_SIZE,
+        //   TOP_MARGIN,
+        //   BOTTOM_MARGIN,
+        //   WINDOW_SIZE,
+        //   WINDOW_OFFSET,
+        //   rocketImgRef,
+        //   placeholderImgRef
+        // );
 
         // Draw invites (left)
         drawRocketGroup<RocketData>(
@@ -350,10 +382,20 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
           if (containerNode && p5Instance.current) {
             const w = containerNode.offsetWidth;
             const h = containerNode.offsetHeight;
-            p5Instance.current.resizeCanvas(w, h);
+            // Reset if width or tableWidth changed
+            if (w !== width || prevTableWidth.current !== tableWidth) {
+              inviteData.forEach(d => {
+                d.randomXBase = undefined;
+              });
+              trustData.forEach(d => {
+                d.randomXBase = undefined;
+              });
+            }
+            prevTableWidth.current = tableWidth;
             width = w;
             height = h;
-            recalcSizes(h);
+
+            recalcSizes(w, h);
           }
         }, 50);
       });

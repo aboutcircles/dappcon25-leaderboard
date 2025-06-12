@@ -6,7 +6,6 @@ export const TRUSTS_QUERY = gql`
   query getTrusts($addressList: [String!], $fromTime: Int, $toTime: Int) {
     TrustRelation(
       where: {
-        truster_id: { _in: $addressList }
         timestamp: { _gte: $fromTime, _lte: $toTime }
         _or: [
           { truster_id: { _in: $addressList } }
@@ -18,6 +17,7 @@ export const TRUSTS_QUERY = gql`
       }
     ) {
       trustee {
+        id
         profile {
           name
         }
@@ -38,7 +38,6 @@ export const TRUSTS_SUBSCRIPTION = gql`
   subscription onTrusts($addressList: [String!], $fromTime: Int, $toTime: Int) {
     TrustRelation(
       where: {
-        truster_id: { _in: $addressList }
         timestamp: { _gte: $fromTime, _lte: $toTime }
         _or: [
           { truster_id: { _in: $addressList } }
@@ -50,6 +49,7 @@ export const TRUSTS_SUBSCRIPTION = gql`
       }
     ) {
       trustee {
+        id
         profile {
           name
         }

@@ -77,13 +77,17 @@ export default function Home() {
           {!loading && !error && (
             <div className="text-white flex flex-row justify-between w-full">
               <div className="flex flex-col justify-between flex-1">
-                <div className="flex flex-row gap-2 justify-evenly mt-8 flex-1">
-                  <h1 className="text-lg sm:text-2xl font-bold text-center w-1/2 text-[#00e2ff]">
-                    Top inviters
-                  </h1>
-                  <h1 className="text-lg sm:text-2xl font-bold text-center w-1/2 text-[#71ff49]">
-                    Top trusters
-                  </h1>
+                <div className="flex flex-row justify-evenly flex-1 w-full">
+                  <div className="border-r border-white/80 w-1/2">
+                    <h1 className="text-lg sm:text-2xl mt-8 font-bold text-center text-[#00e2ff]">
+                      Top inviters
+                    </h1>
+                  </div>
+                  <div className="border-l border-white/80 w-1/2">
+                    <h1 className="text-lg sm:text-2xl mt-8 font-bold text-center text-[#71ff49]">
+                      Top trusters
+                    </h1>
+                  </div>
                 </div>
 
                 <QRcodeBanner />
