@@ -1,15 +1,19 @@
 import React, { useEffect, useRef } from 'react';
-import { usePlayersStore } from '@/stores/playersStore';
+// import { usePlayersStore } from '@/stores/playersStore';
 import { useTrustsStore } from '@/stores/trustsStore';
 import { useInvitesStore } from '@/stores/invitesStore';
 import Image from 'next/image';
+import { TopPlayer } from '@/types';
 
 const PlayersList: React.FC<{ setTableWidth: (width: number) => void }> = ({
   setTableWidth,
 }) => {
-  const players = usePlayersStore(state => state.players);
+  // const players = usePlayersStore(state => state.players);
   const invites = useInvitesStore(state => state.stats);
   const trusts = useTrustsStore(state => state.stats);
+
+  const inviteScores = useInvitesStore(state => state.scores);
+  const trustScores = useTrustsStore(state => state.scores);
   const tableRef = useRef<HTMLTableElement>(null);
 
   useEffect(() => {
@@ -29,10 +33,8 @@ const PlayersList: React.FC<{ setTableWidth: (width: number) => void }> = ({
     return () => resizeObserver.disconnect();
   }, [setTableWidth]);
 
-  const length = players.length;
-
   // Helper to render the table
-  const renderTable = () => (
+  const renderTable = (scores: TopPlayer[], type: 'invites' | 'trusts') => (
     <table className="border-b border-r border-l border-white/80 border-collapse bg-transparent w-full">
       <thead>
         <tr>
@@ -43,22 +45,17 @@ const PlayersList: React.FC<{ setTableWidth: (width: number) => void }> = ({
             Name
           </th>
           <th className="px-1 py-1 border-b border-white/80 text-left text-white font-semibold">
-            Invites
-          </th>
-          <th className="px-1 py-1 border-b border-white/80 text-left text-white font-semibold">
-            Trusts
+            {type === 'invites' ? 'Invites' : 'Trusts'}
           </th>
         </tr>
       </thead>
       <tbody>
-        {players.map((profile, idx) => (
+        {scores.map((profile, idx) => (
           <tr
             key={profile.address}
             className="hover:bg-white/10 transition border-b border-white/80"
           >
-            <td className="px-1 py-1 text-white align-middle">
-              {length - idx}
-            </td>
+            <td className="px-1 py-1 text-white align-middle">{idx + 1}</td>
             <td className="px-1 py-1 text-white flex items-center gap-2 align-middle">
               <Image
                 src={profile.image || '/images/circles.png'}
@@ -71,14 +68,18 @@ const PlayersList: React.FC<{ setTableWidth: (width: number) => void }> = ({
                 {profile.name}
               </span>
             </td>
-            <td className="px-1 py-1  text-white align-middle">
-              {invites[profile.address]?.invitesSent || ''}/
-              {invites[profile.address]?.invitesRedeemed || ''}
-            </td>
-            <td className="px-1 py-1  text-white align-middle">
-              {trusts[profile.address]?.trusts || ''}/
-              {trusts[profile.address]?.mutualTrusts || ''}
-            </td>
+            {type === 'invites' && (
+              <td className="px-1 py-1  text-white align-middle">
+                {invites[profile.address]?.invitesSent || ''}/
+                {invites[profile.address]?.invitesRedeemed || ''}
+              </td>
+            )}
+            {type === 'trusts' && (
+              <td className="px-1 py-1  text-white align-middle">
+                {trusts[profile.address]?.trusts || ''}/
+                {trusts[profile.address]?.mutualTrusts || ''}
+              </td>
+            )}
           </tr>
         ))}
       </tbody>
@@ -91,9 +92,13 @@ const PlayersList: React.FC<{ setTableWidth: (width: number) => void }> = ({
       style={{ fontSize: '10px', fontFamily: 'monospace' }}
       ref={tableRef}
     >
-      <div className="flex-1 overflow-y-auto">{renderTable()}</div>
+      <div className="flex-1 overflow-y-auto">
+        {renderTable(inviteScores, 'invites')}
+      </div>
       <div className="h-4 border-t border-b border-dashed border-white/80"></div>
-      <div className="flex-1 overflow-y-auto">{renderTable()}</div>
+      <div className="flex-1 overflow-y-auto">
+        {renderTable(trustScores, 'trusts')}
+      </div>
     </div>
   );
 };

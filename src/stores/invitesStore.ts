@@ -9,6 +9,7 @@ interface InvitesStore {
   loading: boolean;
   error: string | null;
   top10: TopPlayer[];
+  scores: TopPlayer[];
 
   fetchStats: () => Promise<void>;
   subscribeToStats: (playerAddresses: string[]) => { unsubscribe: () => void };
@@ -21,13 +22,18 @@ export const useInvitesStore = create<InvitesStore>(set => {
         address: player.player,
         score: player.invitesRedeemed * 3 + player.invitesSent * 0.5,
       }))
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 10)
-      .filter(player => player.score > 0);
+      .sort((a, b) => b.score - a.score);
+
+    const top10 = sorted.slice(0, 10).filter(player => player.score > 0);
 
     const profiles = await getProfiles(sorted.map(player => player.address));
     set({
-      top10: sorted.map(player => ({
+      top10: top10.map(player => ({
+        ...player,
+        name: profiles.get(player.address)?.name,
+        image: profiles.get(player.address)?.image,
+      })),
+      scores: sorted.map(player => ({
         ...player,
         name: profiles.get(player.address)?.name,
         image: profiles.get(player.address)?.image,
@@ -40,6 +46,7 @@ export const useInvitesStore = create<InvitesStore>(set => {
     loading: false,
     error: null,
     top10: [],
+    scores: [],
 
     fetchStats: async () => {
       set({ loading: true, error: null });

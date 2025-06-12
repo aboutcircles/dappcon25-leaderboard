@@ -9,6 +9,7 @@ interface TrustsStore {
   loading: boolean;
   error: string | null;
   top10: TopPlayer[];
+  scores: TopPlayer[];
 
   fetchStats: () => Promise<void>;
   subscribeToStats: (playerAddresses: string[]) => { unsubscribe: () => void };
@@ -21,13 +22,18 @@ export const useTrustsStore = create<TrustsStore>(set => {
         address: player.player,
         score: player.mutualTrusts * 3 + player.trusts * 0.5,
       }))
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 10)
-      .filter(player => player.score > 0);
+      .sort((a, b) => b.score - a.score);
+
+    const top10 = sorted.slice(0, 10).filter(player => player.score > 0);
 
     const profiles = await getProfiles(sorted.map(player => player.address));
     set({
-      top10: sorted.map(player => ({
+      top10: top10.map(player => ({
+        ...player,
+        name: profiles.get(player.address)?.name,
+        image: profiles.get(player.address)?.image,
+      })),
+      scores: sorted.map(player => ({
         ...player,
         name: profiles.get(player.address)?.name,
         image: profiles.get(player.address)?.image,
@@ -39,6 +45,7 @@ export const useTrustsStore = create<TrustsStore>(set => {
     loading: false,
     error: null,
     top10: [],
+    scores: [],
 
     fetchStats: async () => {
       set({ loading: true, error: null });
