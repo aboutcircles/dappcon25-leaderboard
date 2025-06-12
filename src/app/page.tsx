@@ -78,13 +78,13 @@ export default function Home() {
             <div className="text-white flex flex-row justify-between w-full">
               <div className="flex flex-col justify-between flex-1">
                 <div className="flex flex-row justify-evenly flex-1 w-full">
-                  <div className="border-r border-white/80 w-1/2">
-                    <h1 className="text-lg sm:text-2xl mt-8 font-bold text-center text-[#00e2ff]">
+                  <div className="border-r border-dashed border-white/80 w-1/2 mt-4">
+                    <h1 className="text-lg sm:text-2xl mt-4 font-bold text-center text-[#00e2ff]">
                       Top inviters
                     </h1>
                   </div>
-                  <div className="border-l border-white/80 w-1/2">
-                    <h1 className="text-lg sm:text-2xl mt-8 font-bold text-center text-[#71ff49]">
+                  <div className="w-1/2 mt-4">
+                    <h1 className="text-lg sm:text-2xl mt-4 font-bold text-center text-[#71ff49]">
                       Top trusters
                     </h1>
                   </div>
