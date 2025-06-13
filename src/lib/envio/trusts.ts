@@ -67,6 +67,7 @@ export const TRUSTS_SUBSCRIPTION = gql`
 
 export interface Trust {
   trustee: {
+    id: string;
     profile: {
       name: string;
     };

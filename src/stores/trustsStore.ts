@@ -81,28 +81,50 @@ export const useTrustsStore = create<TrustsStore>(set => {
       const subscription = subscribeToTrusts(
         playerAddresses,
         async (trusts: Trust[]) => {
-          // const trustsMap = new Map<string, number>();
-          // const mutualTrustsMap = new Map<string, number>();
-          // trusts.forEach(t => {
-          //   const truster = t.truster.id;
-          //   trustsMap.set(truster, (trustsMap.get(truster) || 0) + 1);
-          //   if (t.isMutual) {
-          //     mutualTrustsMap.set(
-          //       truster,
-          //       (mutualTrustsMap.get(truster) || 0) + 1
-          //     );
-          //   }
-          // });
-          // const stats: Record<string, TrustsStats> = {};
-          // playerAddresses.forEach(addr => {
-          //   stats[addr] = {
-          //     player: addr,
-          //     trusts: trustsMap.get(addr) || 0,
-          //     mutualTrusts: mutualTrustsMap.get(addr) || 0,
-          //   };
-          // });
-          // set({ stats });
-          // await updateTop10(stats);
+          const _trustMap = useTrustsStore.getState().trustMap;
+          trusts.forEach(t => {
+            const truster = t.truster.id;
+            const trustee = t.trustee.id;
+            if (
+              _trustMap[truster] &&
+              !_trustMap[truster].out.includes(trustee)
+            ) {
+              _trustMap[truster].out.push(trustee);
+
+              if (
+                _trustMap[truster].in.includes(trustee) &&
+                !_trustMap[truster].mutual.includes(trustee)
+              ) {
+                _trustMap[truster].mutual.push(trustee);
+              }
+            }
+            if (
+              _trustMap[trustee] &&
+              !_trustMap[trustee].in.includes(truster)
+            ) {
+              _trustMap[trustee].in.push(truster);
+
+              if (
+                _trustMap[trustee].out.includes(truster) &&
+                !_trustMap[trustee].mutual.includes(truster)
+              ) {
+                _trustMap[trustee].mutual.push(truster);
+              }
+            }
+          });
+
+          const stats: Record<string, TrustsStats> = {};
+          const _players = usePlayersStore.getState().players;
+          _players.forEach(player => {
+            const addr = player.address.toLowerCase();
+            stats[player.address] = {
+              player: player.address,
+              trusts: _trustMap[addr].out.length,
+              mutualTrusts: _trustMap[addr].mutual.length,
+            };
+          });
+          set({ stats, loading: false, trustMap: _trustMap });
+          await updateTop10(stats);
         }
       );
       return subscription;

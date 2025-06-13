@@ -6,8 +6,6 @@ import type { RocketData, TopPlayer, TrustData } from '@/types';
 import { useTrustsStore } from '@/stores/trustsStore';
 import { drawRocketGroup } from '@/lib/draw/drawRocketGroup';
 
-// import { left } from '@/components/left';
-
 const STAR_COUNT = 120;
 const STAR_MIN_RADIUS = 0.5;
 const STAR_MAX_RADIUS = 2.2;
@@ -36,11 +34,7 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
   const prevTableWidth = useRef<number | null>(null);
 
   const top10Invites = useInvitesStore(state => state.top10);
-  console.log('=============top10Invites', top10Invites);
-
-  // const top10Invites = left;
   const top10Trusts = useTrustsStore(state => state.top10);
-  console.log('=============top10Trusts', top10Trusts);
 
   useEffect(() => {
     const containerNode = containerRef.current;
@@ -275,28 +269,6 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
           }
         }
 
-        // console.log('=========== invite data');
-        // console.log(JSON.stringify(inviteData));
-        // drawRocketGroup<RocketData>(
-        //   p,
-        //   true, // imagesLoadedInvites,
-        //   left,
-        //   data => data.invite.name || '',
-        //   data => data.invite.score,
-        //   data => data.image,
-        //   true,
-        //   width,
-        //   tableWidth,
-        //   height,
-        //   ROCKET_SIZE,
-        //   TOP_MARGIN,
-        //   BOTTOM_MARGIN,
-        //   WINDOW_SIZE,
-        //   WINDOW_OFFSET,
-        //   rocketImgRef,
-        //   placeholderImgRef
-        // );
-
         // Draw invites (left)
         drawRocketGroup<RocketData>(
           p,
@@ -405,7 +377,6 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
       resizeObserver.observe(containerNode);
     }
 
-    // Cleanup function (for unmount)
     return () => {
       if (p5Instance.current) {
         p5Instance.current.remove();
