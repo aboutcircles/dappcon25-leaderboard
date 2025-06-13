@@ -1,8 +1,9 @@
 import { create } from 'zustand';
-import { fetchTrusts, subscribeToTrusts, Trust } from '@/lib/envio/trusts';
+import { subscribeToTrusts, Trust } from '@/lib/envio/trusts';
 import { usePlayersStore } from '@/stores/playersStore';
 import { TopPlayer, TrustsStats } from '@/types';
 import { getProfiles } from '@/lib/getProfiles';
+import getTrustInits from '@/lib/nethermindIndexer/trustInits';
 
 interface TrustsStore {
   stats: Record<string, TrustsStats>;
@@ -10,6 +11,8 @@ interface TrustsStore {
   error: string | null;
   top10: TopPlayer[];
   scores: TopPlayer[];
+
+  trustMap: Record<string, { in: string[]; out: string[]; mutual: string[] }>;
 
   fetchStats: () => Promise<void>;
   subscribeToStats: (playerAddresses: string[]) => { unsubscribe: () => void };
@@ -46,34 +49,25 @@ export const useTrustsStore = create<TrustsStore>(set => {
     error: null,
     top10: [],
     scores: [],
+    trustMap: {},
 
     fetchStats: async () => {
       set({ loading: true, error: null });
       const players = usePlayersStore.getState().players;
-      const playerAddresses = players.map(p => p.address);
+      const playerAddresses = players.map(p => p.address.toLowerCase());
       try {
-        const trusts = await fetchTrusts(playerAddresses);
-        const trustsMap = new Map<string, number>();
-        const mutualTrustsMap = new Map<string, number>();
-        trusts.forEach(t => {
-          const truster = t.truster.id;
-          trustsMap.set(truster, (trustsMap.get(truster) || 0) + 1);
-          if (t.isMutual) {
-            mutualTrustsMap.set(
-              truster,
-              (mutualTrustsMap.get(truster) || 0) + 1
-            );
-          }
-        });
+        const _trustMap = await getTrustInits(playerAddresses);
+
         const stats: Record<string, TrustsStats> = {};
-        playerAddresses.forEach(addr => {
-          stats[addr] = {
-            player: addr,
-            trusts: trustsMap.get(addr) || 0,
-            mutualTrusts: mutualTrustsMap.get(addr) || 0,
+        players.forEach(player => {
+          const addr = player.address.toLowerCase();
+          stats[player.address] = {
+            player: player.address,
+            trusts: _trustMap[addr].out.length,
+            mutualTrusts: _trustMap[addr].mutual.length,
           };
         });
-        set({ stats, loading: false });
+        set({ stats, loading: false, trustMap: _trustMap });
         await updateTop10(stats);
       } catch (error) {
         set({
@@ -87,28 +81,28 @@ export const useTrustsStore = create<TrustsStore>(set => {
       const subscription = subscribeToTrusts(
         playerAddresses,
         async (trusts: Trust[]) => {
-          const trustsMap = new Map<string, number>();
-          const mutualTrustsMap = new Map<string, number>();
-          trusts.forEach(t => {
-            const truster = t.truster.id;
-            trustsMap.set(truster, (trustsMap.get(truster) || 0) + 1);
-            if (t.isMutual) {
-              mutualTrustsMap.set(
-                truster,
-                (mutualTrustsMap.get(truster) || 0) + 1
-              );
-            }
-          });
-          const stats: Record<string, TrustsStats> = {};
-          playerAddresses.forEach(addr => {
-            stats[addr] = {
-              player: addr,
-              trusts: trustsMap.get(addr) || 0,
-              mutualTrusts: mutualTrustsMap.get(addr) || 0,
-            };
-          });
-          set({ stats });
-          await updateTop10(stats);
+          // const trustsMap = new Map<string, number>();
+          // const mutualTrustsMap = new Map<string, number>();
+          // trusts.forEach(t => {
+          //   const truster = t.truster.id;
+          //   trustsMap.set(truster, (trustsMap.get(truster) || 0) + 1);
+          //   if (t.isMutual) {
+          //     mutualTrustsMap.set(
+          //       truster,
+          //       (mutualTrustsMap.get(truster) || 0) + 1
+          //     );
+          //   }
+          // });
+          // const stats: Record<string, TrustsStats> = {};
+          // playerAddresses.forEach(addr => {
+          //   stats[addr] = {
+          //     player: addr,
+          //     trusts: trustsMap.get(addr) || 0,
+          //     mutualTrusts: mutualTrustsMap.get(addr) || 0,
+          //   };
+          // });
+          // set({ stats });
+          // await updateTop10(stats);
         }
       );
       return subscription;

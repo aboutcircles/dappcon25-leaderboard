@@ -83,6 +83,7 @@ export const useInvitesStore = create<InvitesStore>(set => {
             invitesSent: invitesSentMap.get(addr) || 0,
           };
         });
+        console.log('=============INVITE stats', stats);
         set({ stats, loading: false });
         await updateTop10(stats);
       } catch (error) {

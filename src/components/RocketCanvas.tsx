@@ -36,9 +36,11 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
   const prevTableWidth = useRef<number | null>(null);
 
   const top10Invites = useInvitesStore(state => state.top10);
+  console.log('=============top10Invites', top10Invites);
 
   // const top10Invites = left;
   const top10Trusts = useTrustsStore(state => state.top10);
+  console.log('=============top10Trusts', top10Trusts);
 
   useEffect(() => {
     const containerNode = containerRef.current;
@@ -91,7 +93,7 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
         TOP_MARGIN,
         BOTTOM_MARGIN,
       };
-      console.log('=============h, sizes', h, sizes);
+      // console.log('=============h, sizes', h, sizes);
     }
 
     const sketch = (p: p5) => {
