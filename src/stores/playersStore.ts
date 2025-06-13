@@ -35,6 +35,8 @@ export const usePlayersStore = create<PlayersStore>(set => ({
         25
       );
 
+      console.log('=============MIN_CIRCLES', MIN_CIRCLES);
+
       let hasResults = true;
       const playerMap = new Map<string, Player>();
       while (hasResults) {

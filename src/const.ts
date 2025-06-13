@@ -1,8 +1,9 @@
 import { parseEther } from 'ethers';
 
-export const MIN_CIRCLES = parseEther(
-  process.env.NEXT_PUBLIC_MIN_CIRCLES || '1'
-);
+const minCirclesEnv = process.env.NEXT_PUBLIC_MIN_CIRCLES || '1';
+const minCirclesValue = (parseFloat(minCirclesEnv) * 0.9).toString();
+
+export const MIN_CIRCLES = parseEther(minCirclesValue);
 
 export const MIN_CIRCLES_TO_JOIN = process.env.NEXT_PUBLIC_MIN_CIRCLES;
 
