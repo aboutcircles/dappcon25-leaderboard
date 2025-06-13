@@ -23,7 +23,7 @@ export const useTrustsStore = create<TrustsStore>(set => {
     const sorted = Object.values(stats)
       .map(player => ({
         address: player.player,
-        score: player.mutualTrusts * 3 + player.trusts * 0.5,
+        score: player.mutualTrusts,
       }))
       .sort((a, b) => b.score - a.score);
 

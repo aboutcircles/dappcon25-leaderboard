@@ -55,7 +55,7 @@ export default function MobileScores({
       </button>
       <div className="flex flex-col justify-center items-center w-full h-[100vh]">
         <div className="w-full bg-black bg-opacity-80 flex flex-col h-full items-center">
-          <div className="w-full px-2 pb-2 flex-1 pt-15 overflow-y-scroll">
+          <div className="w-full px-2 flex-1 pt-15 overflow-y-scroll pb-12">
             {tab === 'invites' && (
               <ScoreTable type="invites" forceShow={true} />
             )}

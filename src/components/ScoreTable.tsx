@@ -71,13 +71,11 @@ const ScoreTable: React.FC<{
             </td>
             {type === 'invites' && (
               <td className="px-1 py-1  text-white align-middle">
-                {invites[profile.address]?.invitesSent || ''}/
                 {invites[profile.address]?.invitesRedeemed || ''}
               </td>
             )}
             {type === 'trusts' && (
               <td className="px-1 py-1  text-white align-middle">
-                {trusts[profile.address]?.trusts || ''}/
                 {trusts[profile.address]?.mutualTrusts || ''}
               </td>
             )}

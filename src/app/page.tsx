@@ -84,6 +84,7 @@ export default function Home() {
           {!loading && !error && (
             <div className="text-white flex-1 flex flex-row justify-between w-full">
               <ScoreTable setTableWidth={setLeftTableWidth} type="invites" />
+
               <div className="flex flex-col justify-between flex-1">
                 <div className="flex flex-row justify-evenly flex-1 w-full">
                   <div className="border-r border-dashed border-white/80 w-1/2 mt-4">

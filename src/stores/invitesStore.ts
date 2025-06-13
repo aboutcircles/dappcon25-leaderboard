@@ -20,7 +20,7 @@ export const useInvitesStore = create<InvitesStore>(set => {
     const sorted = Object.values(stats)
       .map(player => ({
         address: player.player,
-        score: player.invitesRedeemed * 3 + player.invitesSent * 0.5,
+        score: player.invitesRedeemed,
       }))
       .sort((a, b) => b.score - a.score);
 
