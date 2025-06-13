@@ -21,7 +21,14 @@ export default function QRcodeBanner() {
         />
       </div>
       <div className="text-white text-sm ml-5">
-        Send {MIN_CIRCLES_TO_JOIN} CRC to join the Circles leaderboard
+        <a
+          href={QR_CODE_VALUE}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline hover:text-white"
+        >
+          Send {MIN_CIRCLES_TO_JOIN} CRC to join the Circles leaderboard
+        </a>
       </div>
     </div>
   );
