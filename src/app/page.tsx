@@ -111,11 +111,12 @@ export default function Home() {
           )}
           <div className="w-full flex flex-row items-center justify-between">
             <QRcodeBanner />
-            <div className="hidden sm:flex flex-row">
-              {' '}
-              <Rewards />{' '}
+            <div className="hidden sm:flex flex-row items-end h-full">
+              <Rewards />
             </div>
-            <Countdown />
+            <div className="hidden sm:flex flex-row items-end h-full">
+              <Countdown />
+            </div>
           </div>
           <button
             className="sm:hidden h-10 border-t border-white/80 flex items-center justify-center text-white"

@@ -1,11 +1,11 @@
 export default function Rewards() {
   return (
     <div
-      className="flex flex-col items-center justify-center text-white text-center"
+      className="flex flex-col items-center justify-baseline text-white text-center p-2"
       style={{ fontSize: '0.5rem' }}
     >
-      <div>Rewards (for each leaderboard)</div>
-      <div className="flex flex-row items-center justify-center mt-5 gap-3">
+      <div className="text-yellow-400">Rewards (for each leaderboard)</div>
+      <div className="flex flex-row items-center justify-center gap-3">
         <p>🥇 300 EURe</p>
         <p>🥈 200 EURe</p>
         <p>🥉 100 EURe</p>
