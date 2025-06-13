@@ -20,7 +20,7 @@ export function drawRocketGroup<T extends RocketData | TrustData>(
   WINDOW_OFFSET: number,
   rocketImgRef: React.RefObject<p5.Image> | React.RefObject<null> | null,
   placeholderImgRef: React.RefObject<p5.Image> | React.RefObject<null>,
-  RANGE: number = 10
+  RANGE: number = 3
 ) {
   if (!imagesLoaded) return;
 

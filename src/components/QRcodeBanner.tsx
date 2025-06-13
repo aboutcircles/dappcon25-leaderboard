@@ -3,7 +3,7 @@ import { MIN_CIRCLES_TO_JOIN, QR_CODE_VALUE } from '@/const';
 
 export default function QRcodeBanner() {
   return (
-    <div className="flex flex-row p-2 m-2 items-end">
+    <div className="flex flex-row p-2 items-end shrink">
       <div
         className="m-5 bg-white p-1"
         style={{
@@ -20,14 +20,15 @@ export default function QRcodeBanner() {
           viewBox={`0 0 256 256`}
         />
       </div>
-      <div className="text-white text-sm ml-5">
+      <div className="text-white text-xs sm:text-sm ml-5 shrink max-w-[200px]">
         <a
           href={QR_CODE_VALUE}
           target="_blank"
           rel="noopener noreferrer"
           className="underline hover:text-white"
         >
-          Send {MIN_CIRCLES_TO_JOIN} CRC to join the Circles leaderboard
+          Send {MIN_CIRCLES_TO_JOIN} CRC <br />
+          to join the Circles leaderboard
         </a>
       </div>
     </div>

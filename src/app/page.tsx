@@ -9,6 +9,8 @@ import dynamic from 'next/dynamic';
 import QRcodeBanner from '@/components/QRcodeBanner';
 import ScoreTable from '@/components/ScoreTable';
 import MobileScores from '@/components/MobileScores';
+import Rewards from '@/components/Rewards';
+import Countdown from '@/components/Countdown';
 
 const RocketCanvas = dynamic(() => import('@/components/RocketCanvas'), {
   ssr: false,
@@ -70,7 +72,7 @@ export default function Home() {
   ]);
 
   return (
-    <div className="relative w-full h-screen min-h-screen">
+    <div className="relative w-full h-screen min-h-screen max-h-[100vh]">
       <div className="absolute inset-0 z-0 w-full h-full">
         <RocketCanvas
           leftTableWidth={leftTableWidth}
@@ -78,15 +80,17 @@ export default function Home() {
         />
       </div>
       <div className="relative z-10 w-full h-full flex flex-col flex-1">
-        <main className="flex flex-col justify-between flex-1 h-full z-10 min-w-screen">
+        <main className="flex flex-col justify-between flex-1 z-10 min-w-screen max-h-[100vh] h-screen">
           {loading && <div>Loading players...</div>}
           {error && <div className="text-red-500">Error: {error}</div>}
           {!loading && !error && (
-            <div className="text-white flex-1 flex flex-row justify-between w-full">
-              <ScoreTable setTableWidth={setLeftTableWidth} type="invites" />
+            <div className="text-white flex flex-row w-full flex-1">
+              <div className="self-start">
+                <ScoreTable setTableWidth={setLeftTableWidth} type="invites" />
+              </div>
 
               <div className="flex flex-col justify-between flex-1">
-                <div className="flex flex-row justify-evenly flex-1 w-full">
+                <div className="flex flex-row justify-evenly w-full h-full">
                   <div className="border-r border-dashed border-white/80 w-1/2 mt-4">
                     <h1 className="text-lg sm:text-2xl mt-4 font-bold text-center text-[#00e2ff]">
                       Top inviters
@@ -98,19 +102,27 @@ export default function Home() {
                     </h1>
                   </div>
                 </div>
-
-                <QRcodeBanner />
               </div>
 
-              <ScoreTable setTableWidth={setRightTableWidth} type="trusts" />
+              <div>
+                <ScoreTable setTableWidth={setRightTableWidth} type="trusts" />
+              </div>
             </div>
           )}
+          <div className="w-full flex flex-row items-center justify-between">
+            <QRcodeBanner />
+            <div className="hidden sm:flex flex-row">
+              {' '}
+              <Rewards />{' '}
+            </div>
+            <Countdown />
+          </div>
           <button
             className="sm:hidden h-10 border-t border-white/80 flex items-center justify-center text-white"
             style={{ fontSize: '0.5rem' }}
             onClick={() => setShowScores(true)}
           >
-            see scores
+            see scores & rewards
           </button>
         </main>
       </div>

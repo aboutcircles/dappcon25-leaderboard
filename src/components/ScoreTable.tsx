@@ -87,13 +87,11 @@ const ScoreTable: React.FC<{
 
   return (
     <div
-      className={`${
-        forceShow ? 'flex' : 'hidden'
-      } sm:flex flex-col overflow-y-scroll max-h-[100vh]`}
+      className={`${forceShow ? 'flex' : 'hidden'} sm:flex flex-col`}
       style={{ fontSize: '10px', fontFamily: 'monospace' }}
       ref={tableRef}
     >
-      <div className="flex-1 overflow-y-scroll">
+      <div className="overflow-y-auto max-h-[80vh]">
         {type === 'invites'
           ? renderTable(inviteScores, 'invites')
           : renderTable(trustScores, 'trusts')}

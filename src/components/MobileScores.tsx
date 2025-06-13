@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import ScoreTable from './ScoreTable';
+import Rewards from './Rewards';
 
 export default function MobileScores({
   setShowScores,
@@ -7,7 +8,7 @@ export default function MobileScores({
   setShowScores: (show: boolean) => void;
 }) {
   const startY = useRef<number | null>(null);
-  const [tab, setTab] = useState<'invites' | 'trusts'>('invites');
+  const [tab, setTab] = useState<'invites' | 'trusts' | 'rewards'>('invites');
 
   const handleTouchStart = () => {
     setShowScores(true);
@@ -60,6 +61,7 @@ export default function MobileScores({
               <ScoreTable type="invites" forceShow={true} />
             )}
             {tab === 'trusts' && <ScoreTable type="trusts" forceShow={true} />}
+            {tab === 'rewards' && <Rewards />}
           </div>
           <div
             className="flex flex-row w-full justify-center border-t border-white/80 text-white z-50 fixed bottom-0 h-10"
@@ -74,12 +76,20 @@ export default function MobileScores({
               invites
             </button>
             <button
-              className={`flex-1 py-2 text-center font-bold transition bg-black ${
+              className={`flex-1 py-2 text-center font-bold transition border-r border-white/40 bg-black ${
                 tab === 'trusts' ? 'text-[#71ff49]' : ''
               }`}
               onClick={() => setTab('trusts')}
             >
               trusts
+            </button>
+            <button
+              className={`flex-1 py-2 text-center font-bold transition bg-black ${
+                tab === 'rewards' ? 'text-yellow-400' : ''
+              }`}
+              onClick={() => setTab('rewards')}
+            >
+              rewards
             </button>
           </div>
         </div>
