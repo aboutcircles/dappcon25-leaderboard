@@ -24,7 +24,7 @@ export function drawRocketGroup<T extends RocketData | TrustData>(
 ) {
   if (!imagesLoaded) return;
 
-  const centerX = (width - (tableWidth ?? 0)) / 2;
+  const centerX = width / 2;
 
   // 1. Group by score bucket
   const scoreGroups: Record<number, T[]> = {};
@@ -50,7 +50,7 @@ export function drawRocketGroup<T extends RocketData | TrustData>(
 
   let maxN = 0;
 
-  const xStart = left ? 0 : centerX;
+  const xStart = left ? tableWidth ?? 0 : centerX;
   const xEnd = left ? centerX : width - (tableWidth ?? 0);
 
   sortedScores.forEach(score => {

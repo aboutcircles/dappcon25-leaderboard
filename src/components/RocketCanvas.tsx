@@ -25,13 +25,17 @@ type P5WithCustomHandler = p5 & {
   }) => void;
 };
 
-const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
+const RocketCanvas: React.FC<{
+  leftTableWidth: number;
+  rightTableWidth: number;
+}> = ({ leftTableWidth, rightTableWidth }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const p5Instance = useRef<p5 | null>(null);
   const resizeTimeout = useRef<NodeJS.Timeout | null>(null);
   const rocketImgRef = useRef<p5.Image | null>(null);
   const placeholderImgRef = useRef<p5.Image | null>(null);
-  const prevTableWidth = useRef<number | null>(null);
+  const prevLeftTableWidth = useRef<number | null>(null);
+  const prevRightTableWidth = useRef<number | null>(null);
 
   const top10Invites = useInvitesStore(state => state.top10);
   const top10Trusts = useTrustsStore(state => state.top10);
@@ -279,7 +283,7 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
           data => data.image,
           true,
           width,
-          tableWidth,
+          leftTableWidth,
           height,
           ROCKET_SIZE,
           TOP_MARGIN,
@@ -299,7 +303,7 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
           data => data.image,
           false,
           width,
-          tableWidth,
+          rightTableWidth,
           height,
           ROCKET_SIZE,
           TOP_MARGIN,
@@ -358,7 +362,11 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
             const w = containerNode.offsetWidth;
             const h = containerNode.offsetHeight;
             // Reset if width or tableWidth changed
-            if (w !== width || prevTableWidth.current !== tableWidth) {
+            if (
+              w !== width ||
+              prevLeftTableWidth.current !== leftTableWidth ||
+              prevRightTableWidth.current !== rightTableWidth
+            ) {
               inviteData.forEach(d => {
                 d.randomXBase = undefined;
               });
@@ -366,7 +374,8 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
                 d.randomXBase = undefined;
               });
             }
-            prevTableWidth.current = tableWidth;
+            prevLeftTableWidth.current = leftTableWidth;
+            prevRightTableWidth.current = rightTableWidth;
             width = w;
             height = h;
 
@@ -391,7 +400,7 @@ const RocketCanvas: React.FC<{ tableWidth: number }> = ({ tableWidth }) => {
         canvases.forEach(canvas => canvas.remove());
       }
     };
-  }, [tableWidth, top10Invites, top10Trusts]);
+  }, [leftTableWidth, rightTableWidth, top10Invites, top10Trusts]);
 
   useEffect(() => {
     if (
