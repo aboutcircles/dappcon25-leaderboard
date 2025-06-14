@@ -103,9 +103,13 @@ async function getTrustInits(addresses: string[]): Promise<TrustMap> {
     const json = await response.json();
     const result = json?.result || [];
     const rows = result.rows || [];
+    // console.log('rows', rows);
     for (const rel of rows) {
       const truster = rel[4].toLowerCase();
       const trustee = rel[3].toLowerCase();
+      if (truster === trustee) {
+        continue;
+      }
       if (trustMap[truster] && !trustMap[truster].out.includes(trustee)) {
         trustMap[truster].out.push(trustee);
 

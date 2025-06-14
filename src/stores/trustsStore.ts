@@ -57,7 +57,6 @@ export const useTrustsStore = create<TrustsStore>(set => {
       const playerAddresses = players.map(p => p.address.toLowerCase());
       try {
         const _trustMap = await getTrustInits(playerAddresses);
-
         const _stats: Record<string, TrustsStats> =
           useTrustsStore.getState().stats;
         players.forEach(player => {
