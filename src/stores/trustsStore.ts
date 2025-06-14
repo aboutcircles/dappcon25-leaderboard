@@ -58,17 +58,18 @@ export const useTrustsStore = create<TrustsStore>(set => {
       try {
         const _trustMap = await getTrustInits(playerAddresses);
 
-        const stats: Record<string, TrustsStats> = {};
+        const _stats: Record<string, TrustsStats> =
+          useTrustsStore.getState().stats;
         players.forEach(player => {
           const addr = player.address.toLowerCase();
-          stats[player.address] = {
+          _stats[player.address] = {
             player: player.address,
             trusts: _trustMap[addr].out.length,
             mutualTrusts: _trustMap[addr].mutual.length,
           };
         });
-        set({ stats, loading: false, trustMap: _trustMap });
-        await updateTop10(stats);
+        set({ stats: _stats, loading: false, trustMap: _trustMap });
+        await updateTop10(_stats);
       } catch (error) {
         set({
           error: error instanceof Error ? error.message : String(error),
@@ -83,8 +84,8 @@ export const useTrustsStore = create<TrustsStore>(set => {
         async (trusts: Trust[]) => {
           const _trustMap = useTrustsStore.getState().trustMap;
           trusts.forEach(t => {
-            const truster = t.truster.id;
-            const trustee = t.trustee.id;
+            const truster = t.truster.id.toLowerCase();
+            const trustee = t.trustee.id.toLowerCase();
             if (
               _trustMap[truster] &&
               !_trustMap[truster].out.includes(trustee)
@@ -113,18 +114,18 @@ export const useTrustsStore = create<TrustsStore>(set => {
             }
           });
 
-          const stats: Record<string, TrustsStats> = {};
+          const _stats = useTrustsStore.getState().stats;
           const _players = usePlayersStore.getState().players;
           _players.forEach(player => {
             const addr = player.address.toLowerCase();
-            stats[player.address] = {
+            _stats[player.address] = {
               player: player.address,
-              trusts: _trustMap[addr].out.length,
-              mutualTrusts: _trustMap[addr].mutual.length,
+              trusts: _trustMap[addr]?.out?.length,
+              mutualTrusts: _trustMap[addr]?.mutual?.length,
             };
           });
-          set({ stats, loading: false, trustMap: _trustMap });
-          await updateTop10(stats);
+          set({ stats: _stats, loading: false, trustMap: _trustMap });
+          await updateTop10(_stats);
         }
       );
       return subscription;

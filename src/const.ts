@@ -8,9 +8,9 @@ export const MIN_CIRCLES = parseEther(minCirclesValue);
 export const MIN_CIRCLES_TO_JOIN = process.env.NEXT_PUBLIC_MIN_CIRCLES;
 
 export const ORG_ADDRESS = process.env.NEXT_PUBLIC_ORG_ADDRESS as `0x${string}`;
-export const START_BLOCK = parseInt(
-  process.env.NEXT_PUBLIC_START_BLOCK || '40407277'
-);
+// export const START_BLOCK = parseInt(
+//   process.env.NEXT_PUBLIC_START_BLOCK || '40407277'
+// );
 
 export const TIMESTAMP_START = parseInt(
   process.env.NEXT_PUBLIC_TIMESTAMP_START || '1748736000'

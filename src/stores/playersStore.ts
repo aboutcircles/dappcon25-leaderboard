@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import circlesData from '@/lib/circlesData';
 import { CirclesEvent, TransactionHistoryRow } from '@circles-sdk/data';
 import { CrcV2_StreamCompleted } from '@circles-sdk/data/dist/events/events';
-import { MIN_CIRCLES, ORG_ADDRESS, START_BLOCK } from '@/const';
+import { MIN_CIRCLES, ORG_ADDRESS, TIMESTAMP_START } from '@/const';
 import { getAddress } from 'ethers';
 import { Player } from '@/types';
 import { getProfiles } from '@/lib/getProfiles';
@@ -45,7 +45,7 @@ export const usePlayersStore = create<PlayersStore>(set => ({
           const from = getAddress(row.from);
           if (
             row.attoCircles >= MIN_CIRCLES &&
-            row.blockNumber >= START_BLOCK
+            row.timestamp >= TIMESTAMP_START
           ) {
             if (!playerMap.has(from)) {
               playerMap.set(from, {
@@ -99,7 +99,7 @@ export const usePlayersStore = create<PlayersStore>(set => ({
             typeof amount === 'bigint' &&
             typeof timestamp === 'number' &&
             amount >= MIN_CIRCLES &&
-            blockNumber >= START_BLOCK &&
+            timestamp >= TIMESTAMP_START &&
             !usePlayersStore.getState().players.some(p => p.address === from)
           ) {
             // Fetch profile for the new player

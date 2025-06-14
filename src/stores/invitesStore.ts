@@ -58,33 +58,36 @@ export const useInvitesStore = create<InvitesStore>(set => {
         );
         const invitesRedeemedMap = new Map<string, number>();
         invitesRedeemed.forEach(a => {
-          if (a.invitedBy) {
+          const invitedBy = a.invitedBy.toLowerCase();
+          if (invitedBy) {
             invitesRedeemedMap.set(
-              a.invitedBy,
-              (invitesRedeemedMap.get(a.invitedBy) || 0) + 1
+              invitedBy,
+              (invitesRedeemedMap.get(invitedBy) || 0) + 1
             );
           }
         });
 
         const invitesSentMap = new Map<string, number>();
         invitesSent.forEach(a => {
-          if (a.truster_id) {
+          const trusterId = a.truster_id.toLowerCase();
+          if (trusterId) {
             invitesSentMap.set(
-              a.truster_id,
-              (invitesSentMap.get(a.truster_id) || 0) + 1
+              trusterId,
+              (invitesSentMap.get(trusterId) || 0) + 1
             );
           }
         });
-        const stats: Record<string, InvitesStats> = {};
+        const _stats: Record<string, InvitesStats> =
+          useInvitesStore.getState().stats;
         playerAddresses.forEach(addr => {
-          stats[addr] = {
+          _stats[addr] = {
             player: addr,
-            invitesRedeemed: invitesRedeemedMap.get(addr) || 0,
-            invitesSent: invitesSentMap.get(addr) || 0,
+            invitesRedeemed: invitesRedeemedMap.get(addr.toLowerCase()) || 0,
+            invitesSent: invitesSentMap.get(addr.toLowerCase()) || 0,
           };
         });
-        set({ stats, loading: false });
-        await updateTop10(stats);
+        set({ stats: _stats, loading: false });
+        await updateTop10(_stats);
       } catch (error) {
         set({
           error: error instanceof Error ? error.message : String(error),
@@ -99,20 +102,22 @@ export const useInvitesStore = create<InvitesStore>(set => {
         async ({ invitesRedeemed, invitesSent }) => {
           const invitesRedeemedMap = new Map<string, number>();
           invitesRedeemed.forEach(a => {
-            if (a.invitedBy) {
+            const invitedBy = a.invitedBy.toLowerCase();
+            if (invitedBy) {
               invitesRedeemedMap.set(
-                a.invitedBy,
-                (invitesRedeemedMap.get(a.invitedBy) || 0) + 1
+                invitedBy,
+                (invitesRedeemedMap.get(invitedBy) || 0) + 1
               );
             }
           });
 
           const invitesSentMap = new Map<string, number>();
           invitesSent.forEach(a => {
-            if (a.truster_id) {
+            const trusterId = a.truster_id.toLowerCase();
+            if (trusterId) {
               invitesSentMap.set(
-                a.truster_id,
-                (invitesSentMap.get(a.truster_id) || 0) + 1
+                trusterId,
+                (invitesSentMap.get(trusterId) || 0) + 1
               );
             }
           });
@@ -121,8 +126,8 @@ export const useInvitesStore = create<InvitesStore>(set => {
           playerAddresses.forEach(addr => {
             stats[addr] = {
               player: addr,
-              invitesRedeemed: invitesRedeemedMap.get(addr) || 0,
-              invitesSent: invitesSentMap.get(addr) || 0,
+              invitesRedeemed: invitesRedeemedMap.get(addr.toLowerCase()) || 0,
+              invitesSent: invitesSentMap.get(addr.toLowerCase()) || 0,
             };
           });
           set({ stats });
