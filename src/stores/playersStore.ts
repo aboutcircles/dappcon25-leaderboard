@@ -71,7 +71,6 @@ export const usePlayersStore = create<PlayersStore>(set => ({
         };
       });
       playersWithProfiles.sort((a, b) => b.blockNumber - a.blockNumber);
-
       set({ players: playersWithProfiles, loading: false });
     } catch (error: unknown) {
       set({

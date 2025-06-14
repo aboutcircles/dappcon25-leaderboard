@@ -15,6 +15,7 @@ export const INVITES_QUERY = gql`
     ) {
       profile {
         name
+        id
       }
       timestamp
       invitedBy
@@ -62,26 +63,6 @@ export const INVITES_SUBSCRIPTION = gql`
       timestamp
       invitedBy
     }
-    invitesSent: TrustRelation(
-      where: {
-        truster_id: { _in: $addressList }
-        trustee: { avatarType: { _eq: "Invite" } }
-        limit: { _neq: 0 }
-        expiryTime: { _neq: 0 }
-        version: { _eq: 2 }
-        timestamp: { _gte: $fromTime, _lte: $toTime }
-      }
-    ) {
-      trustee {
-        profile {
-          name
-          id
-        }
-        transactionHash
-      }
-      truster_id
-      timestamp
-    }
   }
 `;
 
@@ -96,7 +77,6 @@ export async function fetchInvites(addressList: string[]): Promise<{
       toTime: TIMESTAMP_END,
     })
     .toPromise();
-
   if (result.error) throw result.error;
   return {
     invitesRedeemed: result.data?.invitesRedeemed || [],
@@ -106,10 +86,7 @@ export async function fetchInvites(addressList: string[]): Promise<{
 
 export function subscribeToInvites(
   addressList: string[],
-  handler: (data: {
-    invitesRedeemed: InvitesRedeemed[];
-    invitesSent: InviteSent[];
-  }) => void
+  handler: (data: { invitesRedeemed: InvitesRedeemed[] }) => void
 ) {
   return urqlClient
     .subscription(INVITES_SUBSCRIPTION, {
@@ -121,7 +98,6 @@ export function subscribeToInvites(
       if (result.data) {
         handler({
           invitesRedeemed: result.data.invitesRedeemed || [],
-          invitesSent: result.data.invitesSent || [],
         });
       }
     });
