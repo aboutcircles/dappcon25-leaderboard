@@ -10,7 +10,8 @@ import QRcodeBanner from '@/components/QRcodeBanner';
 import ScoreTable from '@/components/ScoreTable';
 import MobileScores from '@/components/MobileScores';
 import Rewards from '@/components/Rewards';
-import Countdown from '@/components/Countdown';
+// import Countdown from '@/components/Countdown';
+import Instructions from '@/components/Instructions';
 
 const RocketCanvas = dynamic(() => import('@/components/RocketCanvas'), {
   ssr: false,
@@ -40,6 +41,8 @@ export default function Home() {
   const playerAddressesString = playerAddresses.join(',');
 
   const [showScores, setShowScores] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_tick, setTick] = useState(0);
 
   useEffect(() => {
     const init = async () => {
@@ -71,6 +74,13 @@ export default function Home() {
     playerAddressesString,
   ]);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTick(t => t + 1);
+    }, 10000); // 10 seconds
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="relative w-full h-screen min-h-screen max-h-[100vh]">
       <div className="absolute inset-0 z-0 w-full h-full">
@@ -98,7 +108,7 @@ export default function Home() {
                   </div>
                   <div className="w-1/2 mt-4">
                     <h1 className="text-lg sm:text-2xl mt-4 font-bold text-center text-[#71ff49]">
-                      Top trusters
+                      Top mutual trust
                     </h1>
                   </div>
                 </div>
@@ -115,8 +125,11 @@ export default function Home() {
               <Rewards />
             </div>
             <div className="hidden sm:flex flex-row items-end h-full">
-              <Countdown />
+              <Instructions />
             </div>
+            {/* <div className="hidden sm:flex flex-row items-end h-full">
+              <Countdown />
+            </div> */}
           </div>
           <button
             className="sm:hidden h-10 border-t border-white/80 flex items-center justify-center text-white"

@@ -5,10 +5,16 @@ export default function Rewards() {
       style={{ fontSize: '0.5rem' }}
     >
       <div className="text-yellow-400">Rewards (for each leaderboard)</div>
-      <div className="flex flex-row items-center justify-center gap-3">
-        <p>🥇 300 EURe</p>
-        <p>🥈 200 EURe</p>
-        <p>🥉 100 EURe</p>
+      <div className="flex flex-row items-center justify-center gap-2 mb-2">
+        <p className="flex flex-row no-wrap items-baseline">
+          <span className="text-2xl">🥇</span> 300 EURe
+        </p>
+        <p className="flex flex-row no-wrap items-baseline">
+          <span className="text-2xl">🥈</span> 200 EURe
+        </p>
+        <p className="flex flex-row no-wrap items-baseline">
+          <span className="text-2xl">🥉</span> 100 EURe
+        </p>
       </div>
       <div>#4-#10 50 EURe + T-shirt</div>
       <div>#11-#30 Mistery swag</div>

@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import ScoreTable from './ScoreTable';
 import Rewards from './Rewards';
+import Instructions from './Instructions';
 
 export default function MobileScores({
   setShowScores,
@@ -61,7 +62,12 @@ export default function MobileScores({
               <ScoreTable type="invites" forceShow={true} />
             )}
             {tab === 'trusts' && <ScoreTable type="trusts" forceShow={true} />}
-            {tab === 'rewards' && <Rewards />}
+            {tab === 'rewards' && (
+              <div className="flex flex-col min-h-[70vh] justify-around">
+                <Rewards />
+                <Instructions />
+              </div>
+            )}
           </div>
           <div
             className="flex flex-row w-full justify-center border-t border-white/80 text-white z-50 fixed bottom-0 h-10"
