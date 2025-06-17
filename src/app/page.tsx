@@ -82,7 +82,7 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  console.log(TIMESTAMP_START, TIMESTAMP_END);
+  console.log('start', TIMESTAMP_START, 'end', TIMESTAMP_END);
 
   return (
     <div className="relative w-full h-screen min-h-screen max-h-[100vh]">
