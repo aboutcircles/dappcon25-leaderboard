@@ -17,7 +17,7 @@ export default function Rewards() {
         </p>
       </div>
       <div>#4-#10 50 EURe + T-shirt</div>
-      <div>#11-#30 Mistery swag</div>
+      <div>#11-#30 Mystery swag</div>
       <div>
         Top-3 winners also receive
         <br />a ETHCC Full Pass 😍

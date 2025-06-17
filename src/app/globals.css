@@ -34,3 +34,20 @@ body {
   overflow: hidden;
   z-index: -1;
 }
+
+.beam {
+  animation: bounceLight 2s ease-in-out infinite alternate;
+  transform-origin: center;
+}
+
+@keyframes bounceLight {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}

@@ -6,13 +6,12 @@ import { useInvitesStore } from '@/stores/invitesStore';
 import { useTrustsStore } from '@/stores/trustsStore';
 
 import dynamic from 'next/dynamic';
-import QRcodeBanner from '@/components/QRcodeBanner';
 import ScoreTable from '@/components/ScoreTable';
 import MobileScores from '@/components/MobileScores';
 import Rewards from '@/components/Rewards';
-// import Countdown from '@/components/Countdown';
 import Instructions from '@/components/Instructions';
-import { TIMESTAMP_END, TIMESTAMP_START } from '@/const';
+import QRcodeUFO from '@/components/QRcodeUFO';
+import QRcodeBanner from '@/components/QRcodeBanner';
 
 const RocketCanvas = dynamic(() => import('@/components/RocketCanvas'), {
   ssr: false,
@@ -82,8 +81,6 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  console.log('start', TIMESTAMP_START, 'end', TIMESTAMP_END);
-
   return (
     <div className="relative w-full h-screen min-h-screen max-h-[100vh]">
       <div className="absolute inset-0 z-0 w-full h-full">
@@ -122,8 +119,13 @@ export default function Home() {
               </div>
             </div>
           )}
-          <div className="w-full flex flex-row items-center justify-between">
-            <QRcodeBanner />
+          <div className="w-full flex flex-row items-end justify-between">
+            <div className="flex sm:hidden">
+              <QRcodeBanner />
+            </div>
+            <div className="hidden sm:flex">
+              <QRcodeUFO />
+            </div>
             <div className="hidden sm:flex flex-row items-end h-full">
               <Rewards />
             </div>
