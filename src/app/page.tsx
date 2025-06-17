@@ -81,8 +81,6 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  console.log(trustsJoe.data.TrustRelation.length);
-
   return (
     <div className="relative w-full h-screen min-h-screen max-h-[100vh]">
       <div className="absolute inset-0 z-0 w-full h-full">
