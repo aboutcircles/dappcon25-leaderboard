@@ -65,9 +65,14 @@ const ScoreTable: React.FC<{
                 width={12}
                 className="rounded-full object-cover border border-white/80 bg-white/10"
               />
-              <span className="truncate max-w-[120px] sm:max-w-[180px]">
+              <a
+                href={`https://app.metri.xyz/${profile.address}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="truncate max-w-[120px] sm:max-w-[180px]"
+              >
                 {profile.name}
-              </span>
+              </a>
             </td>
             {type === 'invites' && (
               <td className="px-1 py-1  text-white align-middle">

@@ -67,6 +67,8 @@ export const useTrustsStore = create<TrustsStore>(set => {
             mutualTrusts: _trustMap[addr].mutual.length,
           };
         });
+        console.log(_stats['0x861043f68af47890b55f3f58e6bf4628b67218ec']);
+        console.log(_trustMap['0x861043f68af47890b55f3f58e6bf4628b67218ec']);
         set({ stats: _stats, loading: false, trustMap: _trustMap });
         await updateTop10(_stats);
       } catch (error) {

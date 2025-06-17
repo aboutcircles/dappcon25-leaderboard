@@ -13,6 +13,8 @@ import Rewards from '@/components/Rewards';
 // import Countdown from '@/components/Countdown';
 import Instructions from '@/components/Instructions';
 
+import trustsJoe from '@/stores/trusts.joe.json';
+
 const RocketCanvas = dynamic(() => import('@/components/RocketCanvas'), {
   ssr: false,
   loading: () => null,
@@ -80,6 +82,8 @@ export default function Home() {
     }, 10000); // 10 seconds
     return () => clearInterval(interval);
   }, []);
+
+  console.log(trustsJoe.data.TrustRelation.length);
 
   return (
     <div className="relative w-full h-screen min-h-screen max-h-[100vh]">
