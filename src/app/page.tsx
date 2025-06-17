@@ -13,8 +13,6 @@ import Rewards from '@/components/Rewards';
 // import Countdown from '@/components/Countdown';
 import Instructions from '@/components/Instructions';
 
-import trustsJoe from '@/stores/trusts.joe.json';
-
 const RocketCanvas = dynamic(() => import('@/components/RocketCanvas'), {
   ssr: false,
   loading: () => null,
