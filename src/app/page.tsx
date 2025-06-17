@@ -12,6 +12,7 @@ import MobileScores from '@/components/MobileScores';
 import Rewards from '@/components/Rewards';
 // import Countdown from '@/components/Countdown';
 import Instructions from '@/components/Instructions';
+import { TIMESTAMP_END, TIMESTAMP_START } from '@/const';
 
 const RocketCanvas = dynamic(() => import('@/components/RocketCanvas'), {
   ssr: false,
@@ -80,6 +81,8 @@ export default function Home() {
     }, 10000); // 10 seconds
     return () => clearInterval(interval);
   }, []);
+
+  console.log(TIMESTAMP_START, TIMESTAMP_END);
 
   return (
     <div className="relative w-full h-screen min-h-screen max-h-[100vh]">

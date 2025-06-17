@@ -87,6 +87,7 @@ export const useTrustsStore = create<TrustsStore>(set => {
           trusts.forEach(t => {
             const truster = t.truster.id.toLowerCase();
             const trustee = t.trustee.id.toLowerCase();
+            if (truster === trustee) return;
             if (
               _trustMap[truster] &&
               !_trustMap[truster].out.includes(trustee)
