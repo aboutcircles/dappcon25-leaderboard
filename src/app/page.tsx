@@ -12,6 +12,7 @@ import Rewards from '@/components/Rewards';
 import Instructions from '@/components/Instructions';
 import QRcodeUFO from '@/components/QRcodeUFO';
 import QRcodeBanner from '@/components/QRcodeBanner';
+import Winners from '@/components/Winners';
 
 const RocketCanvas = dynamic(() => import('@/components/RocketCanvas'), {
   ssr: false,
@@ -145,6 +146,10 @@ export default function Home() {
           </button>
         </main>
       </div>
+      <Winners
+        leftTableWidth={leftTableWidth}
+        rightTableWidth={rightTableWidth}
+      />
       {/* Modal for mobile scores */}
       {showScores && <MobileScores setShowScores={setShowScores} />}
     </div>
