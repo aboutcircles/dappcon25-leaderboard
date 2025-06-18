@@ -43,6 +43,7 @@ export const usePlayersStore = create<PlayersStore>(set => ({
         const rows = query.currentPage.results;
         rows.forEach((row: TransactionHistoryRow) => {
           const from = getAddress(row.from);
+
           if (
             row.attoCircles >= MIN_CIRCLES &&
             row.timestamp >= TIMESTAMP_START

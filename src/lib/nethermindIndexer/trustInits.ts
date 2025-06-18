@@ -1,6 +1,5 @@
 import { TIMESTAMP_START, TIMESTAMP_END } from '@/const';
 
-// Type for a TrustRelation row
 export type TrustRelation = {
   blockNumber: number;
   timestamp: number;
@@ -103,7 +102,6 @@ async function getTrustInits(addresses: string[]): Promise<TrustMap> {
     const json = await response.json();
     const result = json?.result || [];
     const rows = result.rows || [];
-    // console.log('rows', rows);
     for (const rel of rows) {
       const truster = rel[4].toLowerCase();
       const trustee = rel[3].toLowerCase();
@@ -131,8 +129,8 @@ async function getTrustInits(addresses: string[]): Promise<TrustMap> {
         }
       }
     }
-    if (result.length === 1000) {
-      queryTimestamp = result[result.length - 1].timestamp;
+    if (result.rows.length === 1000) {
+      queryTimestamp = result.rows[result.rows.length - 1][1];
     } else {
       keepFetching = false;
     }
