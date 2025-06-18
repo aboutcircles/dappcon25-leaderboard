@@ -6,7 +6,7 @@ export default function QRcodeBanner() {
     <div className="flex flex-col p-2 items-end shrink">
       <Image
         className="absolute bottom-10 left-3 beam"
-        src="/images/qr.png"
+        src="/images/_qr.png"
         alt="QR"
         width={280}
         height={200}

@@ -77,7 +77,7 @@ export default function Home() {
   useEffect(() => {
     const interval = setInterval(() => {
       setTick(t => t + 1);
-    }, 10000); // 10 seconds
+    }, 10000);
     return () => clearInterval(interval);
   }, []);
 
