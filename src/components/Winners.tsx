@@ -15,15 +15,15 @@ function WinnersInner({
         right: `${rightTableWidth}px`,
       }}
     >
-      <div className="text-2xl font-bold bg-amber-600 p-6">
+      {/* <div className="text-2xl font-bold bg-amber-600 p-6">
         The contest is over. Top 30 can now come to the Circles booth to collect
         the prizes!
-      </div>
+      </div> */}
     </div>
   );
 }
 
-const SHOW_WINNERS_TIMESTAMP = 1750248000000;
+const SHOW_WINNERS_TIMESTAMP = 1750248000;
 export default function Winners(props: {
   leftTableWidth: number;
   rightTableWidth: number;

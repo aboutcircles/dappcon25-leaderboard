@@ -13,10 +13,10 @@ export const ORG_ADDRESS = process.env.NEXT_PUBLIC_ORG_ADDRESS as `0x${string}`;
 // );
 
 export const TIMESTAMP_START = parseInt(
-  process.env.NEXT_PUBLIC_TIMESTAMP_START || '1748736000'
+  process.env.NEXT_PUBLIC_TIMESTAMP_START || '1750057200'
 );
 export const TIMESTAMP_END = parseInt(
-  process.env.NEXT_PUBLIC_TIMESTAMP_END || '1750262400' // Wednesday, June 18, 2025 6:00:00 PM CEST
+  process.env.NEXT_PUBLIC_TIMESTAMP_END || '1750248000' // Wednesday, June 18, 2025 2:00:00 PM CEST
 );
 
 // export const QR_CODE_VALUE = `https://app.metri.xyz/transfer/${process.env.NEXT_PUBLIC_ORG_ADDRESS}/crc`;
