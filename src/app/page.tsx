@@ -29,13 +29,15 @@ export default function Home() {
     state => state.subscribeToPlayersUpdates
   );
 
-  const fetchInvitesStats = useInvitesStore(state => state.fetchStats);
+  const fetchInvitesStats = useInvitesStore(state => state.fetchInvitesStats);
   const subscribeToInvitesStats = useInvitesStore(
-    state => state.subscribeToStats
+    state => state.subscribeToInvitesStats
   );
 
-  const fetchTrustStats = useTrustsStore(state => state.fetchStats);
-  const subscribeToTrustStats = useTrustsStore(state => state.subscribeToStats);
+  const fetchTrustsStats = useTrustsStore(state => state.fetchTrustsStats);
+  const subscribeToTrustsStats = useTrustsStore(
+    state => state.subscribeToTrustsStats
+  );
 
   const players = usePlayersStore(state => state.players);
   const playerAddresses = players.map(p => p.address);
@@ -43,13 +45,13 @@ export default function Home() {
 
   const [showScores, setShowScores] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_tick, setTick] = useState(0);
+  // const [_tick, setTick] = useState(0);
 
   useEffect(() => {
     const init = async () => {
       await fetchPlayers();
       await fetchInvitesStats();
-      await fetchTrustStats();
+      await fetchTrustsStats();
     };
     init();
     subscribeToPlayersUpdates();
@@ -57,12 +59,12 @@ export default function Home() {
     fetchPlayers,
     subscribeToPlayersUpdates,
     fetchInvitesStats,
-    fetchTrustStats,
+    fetchTrustsStats,
   ]);
 
   useEffect(() => {
     const subInvites = subscribeToInvitesStats(playerAddresses);
-    const subTrusts = subscribeToTrustStats(playerAddresses);
+    const subTrusts = subscribeToTrustsStats(playerAddresses);
 
     return () => {
       subInvites.unsubscribe();
@@ -70,17 +72,17 @@ export default function Home() {
     };
   }, [
     subscribeToInvitesStats,
-    subscribeToTrustStats,
+    subscribeToTrustsStats,
     playerAddresses,
     playerAddressesString,
   ]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTick(t => t + 1);
-    }, 10000);
-    return () => clearInterval(interval);
-  }, []);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setTick(t => t + 1);
+  //   }, 10000);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   return (
     <div className="relative w-full h-screen min-h-screen max-h-[100vh]">

@@ -3,22 +3,25 @@ import { fetchInvites, subscribeToInvites } from '@/lib/envio/invites';
 import { usePlayersStore } from '@/stores/playersStore';
 import { TopPlayer, InvitesStats } from '@/types';
 import { getProfiles } from '@/lib/getProfiles';
-import { devtools } from 'zustand/middleware';
+// import { devtools } from 'zustand/middleware';
 
 interface InvitesStore {
-  stats: Record<string, InvitesStats>;
-  loading: boolean;
-  error: string | null;
-  top10: TopPlayer[];
-  scores: TopPlayer[];
+  invitesStats: Record<string, InvitesStats>;
+  invitesLoading: boolean;
+  invitesError: string | null;
+  invitesTop10: TopPlayer[];
+  invitesScores: TopPlayer[];
 
-  fetchStats: () => Promise<void>;
-  subscribeToStats: (playerAddresses: string[]) => { unsubscribe: () => void };
+  fetchInvitesStats: () => Promise<void>;
+  subscribeToInvitesStats: (playerAddresses: string[]) => {
+    unsubscribe: () => void;
+  };
 }
 
 export const useInvitesStore = create<InvitesStore>()(
-  devtools(set => {
-    async function updateTop10(stats: Record<string, InvitesStats>) {
+  // devtools(set => {
+  set => {
+    async function updateInvitesTop10(stats: Record<string, InvitesStats>) {
       const sorted = Object.values(stats)
         .map(player => ({
           address: player.player,
@@ -30,12 +33,12 @@ export const useInvitesStore = create<InvitesStore>()(
 
       const profiles = await getProfiles(sorted.map(player => player.address));
       set({
-        top10: top10.map(player => ({
+        invitesTop10: top10.map(player => ({
           ...player,
           name: profiles.get(player.address)?.name,
           image: profiles.get(player.address)?.image,
         })),
-        scores: sorted.map(player => ({
+        invitesScores: sorted.map(player => ({
           ...player,
           name: profiles.get(player.address)?.name,
           image: profiles.get(player.address)?.image,
@@ -44,14 +47,14 @@ export const useInvitesStore = create<InvitesStore>()(
     }
 
     return {
-      stats: {},
-      loading: false,
-      error: null,
-      top10: [],
-      scores: [],
+      invitesStats: {},
+      invitesLoading: false,
+      invitesError: null,
+      invitesTop10: [],
+      invitesScores: [],
 
-      fetchStats: async () => {
-        set({ loading: true, error: null });
+      fetchInvitesStats: async () => {
+        set({ invitesLoading: true, invitesError: null });
         const players = usePlayersStore.getState().players;
         const playerAddresses = players.map(p => p.address);
         try {
@@ -66,8 +69,9 @@ export const useInvitesStore = create<InvitesStore>()(
               );
             }
           });
-          const _stats: Record<string, InvitesStats> =
-            useInvitesStore.getState().stats;
+          const _stats: Record<string, InvitesStats> = {
+            ...useInvitesStore.getState().invitesStats,
+          };
           playerAddresses.forEach(addr => {
             _stats[addr] = {
               player: addr,
@@ -75,17 +79,18 @@ export const useInvitesStore = create<InvitesStore>()(
               invitesSent: 0,
             };
           });
-          set({ stats: _stats, loading: false });
-          await updateTop10(_stats);
+          set({ invitesStats: _stats, invitesLoading: false });
+          await updateInvitesTop10(_stats);
         } catch (error) {
           set({
-            error: error instanceof Error ? error.message : String(error),
-            loading: false,
+            invitesError:
+              error instanceof Error ? error.message : String(error),
+            invitesLoading: false,
           });
         }
       },
 
-      subscribeToStats: (playerAddresses: string[]) => {
+      subscribeToInvitesStats: (playerAddresses: string[]) => {
         const subscription = subscribeToInvites(
           playerAddresses,
           async ({ invitesRedeemed }) => {
@@ -100,8 +105,9 @@ export const useInvitesStore = create<InvitesStore>()(
               }
             });
 
-            const _stats: Record<string, InvitesStats> =
-              useInvitesStore.getState().stats;
+            const _stats: Record<string, InvitesStats> = {
+              ...useInvitesStore.getState().invitesStats,
+            };
             playerAddresses.forEach(addr => {
               _stats[addr] = {
                 player: addr,
@@ -110,12 +116,13 @@ export const useInvitesStore = create<InvitesStore>()(
                 invitesSent: 0,
               };
             });
-            set({ stats: _stats });
-            await updateTop10(_stats);
+            set({ invitesStats: _stats });
+            await updateInvitesTop10(_stats);
           }
         );
         return subscription;
       },
     };
-  })
+  }
 );
+// );

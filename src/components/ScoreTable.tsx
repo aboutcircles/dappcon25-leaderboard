@@ -10,11 +10,11 @@ const ScoreTable: React.FC<{
   forceShow?: boolean;
   type: 'invites' | 'trusts';
 }> = ({ setTableWidth, forceShow = false, type }) => {
-  const invites = useInvitesStore(state => state.stats);
-  const trusts = useTrustsStore(state => state.stats);
+  const invites = useInvitesStore(state => state.invitesStats);
+  const trusts = useTrustsStore(state => state.trustsStats);
 
-  const inviteScores = useInvitesStore(state => state.scores);
-  const trustScores = useTrustsStore(state => state.scores);
+  const inviteScores = useInvitesStore(state => state.invitesScores);
+  const trustScores = useTrustsStore(state => state.trustsScores);
   const tableRef = useRef<HTMLTableElement>(null);
 
   useEffect(() => {
@@ -81,7 +81,8 @@ const ScoreTable: React.FC<{
             )}
             {type === 'trusts' && (
               <td className="px-1 py-1  text-white align-middle">
-                {trusts[profile.address]?.mutualTrusts || ''}
+                {/* {trusts[profile.address]?.mutualTrusts || ''} */}
+                {trusts[profile.address]?.trusts || ''}
               </td>
             )}
           </tr>

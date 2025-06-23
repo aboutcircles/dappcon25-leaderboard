@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { SHOW_WINNERS_TIMESTAMP } from '@/const';
 
 function WinnersInner({
   leftTableWidth,
@@ -23,14 +24,11 @@ function WinnersInner({
   );
 }
 
-const SHOW_WINNERS_TIMESTAMP = 1750248000000;
 export default function Winners(props: {
   leftTableWidth: number;
   rightTableWidth: number;
 }) {
   const [show, setShow] = useState(Date.now() >= SHOW_WINNERS_TIMESTAMP);
-
-  console.log('show', show, Date.now(), SHOW_WINNERS_TIMESTAMP);
 
   useEffect(() => {
     if (show) return;

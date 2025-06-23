@@ -37,8 +37,8 @@ const RocketCanvas: React.FC<{
   const prevLeftTableWidth = useRef<number | null>(null);
   const prevRightTableWidth = useRef<number | null>(null);
 
-  const top10Invites = useInvitesStore(state => state.top10);
-  const top10Trusts = useTrustsStore(state => state.top10);
+  const top10Invites = useInvitesStore(state => state.invitesTop10);
+  const top10Trusts = useTrustsStore(state => state.trustsTop10);
 
   useEffect(() => {
     const containerNode = containerRef.current;
@@ -211,7 +211,7 @@ const RocketCanvas: React.FC<{
           height = containerNode.offsetHeight;
         }
         recalcSizes(width, height);
-        p.createCanvas(width, height);
+        p.createCanvas(width, height, p.P2D);
         p.noStroke();
 
         pressStartFont = await new Promise<p5.Font>(resolve => {

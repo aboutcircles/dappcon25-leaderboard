@@ -105,7 +105,10 @@ async function getTrustInits(addresses: string[]): Promise<TrustMap> {
     for (const rel of rows) {
       const truster = rel[4].toLowerCase();
       const trustee = rel[3].toLowerCase();
-      if (truster === trustee) {
+      if (
+        truster === trustee ||
+        trustee === '0xf9E09ABf3918721941bcDd98434cbE2F2Ff13685'.toLowerCase()
+      ) {
         continue;
       }
       if (trustMap[truster] && !trustMap[truster].out.includes(trustee)) {
