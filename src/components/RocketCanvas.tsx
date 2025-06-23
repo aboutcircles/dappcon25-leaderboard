@@ -103,6 +103,7 @@ const RocketCanvas: React.FC<{
         alpha: number;
       }[] = [];
 
+      // These functions will be called by the custom redraw handlers only
       const loadInviteImages = (invites: TopPlayer[]) => {
         let loadedCount = 0;
         inviteData = invites.map(invite => ({
@@ -235,15 +236,7 @@ const RocketCanvas: React.FC<{
           alpha: randomBetween(120, 255),
         }));
 
-        // Sort invites here, once, and load images in same order
-        const sortedInvites = [...top10Invites].sort(
-          (a, b) => a.score - b.score
-        );
-        loadInviteImages(sortedInvites);
-
-        // Sort trust here, once, and load images in same order
-        const sortedTrusts = [...top10Trusts].sort((a, b) => a.score - b.score);
-        loadTrustImages(sortedTrusts);
+        // Do not use top10Invites or top10Trusts here. Data will be set by custom redraw handlers.
       };
 
       p.draw = () => {
@@ -318,7 +311,7 @@ const RocketCanvas: React.FC<{
       (
         p as P5WithCustomHandler
       ).myCustomRedrawAccordingToNewPropsHandlerInvites = (newProps: {
-        invites: typeof top10Invites;
+        invites: TopPlayer[];
       }) => {
         imagesLoadedInvites = false;
         if (newProps.invites && newProps.invites.length > 0) {
@@ -335,7 +328,7 @@ const RocketCanvas: React.FC<{
       (
         p as P5WithCustomHandler
       ).myCustomRedrawAccordingToNewPropsHandlerTrusts = (newProps: {
-        trusts: typeof top10Trusts;
+        trusts: TopPlayer[];
       }) => {
         imagesLoadedTrusts = false;
         if (newProps.trusts && newProps.trusts.length > 0) {
@@ -400,7 +393,7 @@ const RocketCanvas: React.FC<{
         canvases.forEach(canvas => canvas.remove());
       }
     };
-  }, [leftTableWidth, rightTableWidth, top10Invites, top10Trusts]);
+  }, [leftTableWidth, rightTableWidth]);
 
   useEffect(() => {
     if (
@@ -416,6 +409,7 @@ const RocketCanvas: React.FC<{
   }, [top10Invites]);
 
   useEffect(() => {
+    // console.log('top10Trusts changed', top10Trusts);
     if (
       p5Instance.current &&
       'myCustomRedrawAccordingToNewPropsHandlerTrusts' in p5Instance.current

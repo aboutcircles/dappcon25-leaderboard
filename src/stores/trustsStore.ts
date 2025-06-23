@@ -95,12 +95,13 @@ export const useTrustsStore = create<TrustsStore>()(
             trusts.forEach(t => {
               const truster = t.truster.id.toLowerCase();
               const trustee = t.trustee.id.toLowerCase();
-              if (
-                truster === trustee ||
-                trustee ===
-                  '0xf9E09ABf3918721941bcDd98434cbE2F2Ff13685'.toLowerCase()
-              )
-                return;
+              if (truster === trustee) return;
+              if (!_trustMap[truster]) {
+                _trustMap[truster] = { in: [], out: [], mutual: [] };
+              }
+              if (!_trustMap[trustee]) {
+                _trustMap[trustee] = { in: [], out: [], mutual: [] };
+              }
               if (
                 _trustMap[truster] &&
                 !_trustMap[truster].out.includes(trustee)
