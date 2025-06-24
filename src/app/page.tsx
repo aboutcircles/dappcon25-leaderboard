@@ -15,6 +15,7 @@ import QRcodeBanner from '@/components/QRcodeBanner';
 import Winners from '@/components/Winners';
 import { Press_Start_2P } from 'next/font/google';
 import Notifications from '@/components/Notifications';
+import HideButton from '@/components/HideButton';
 
 const pressStart2P = Press_Start_2P({
   variable: '--font-press-start-2p',
@@ -53,6 +54,8 @@ export default function Home() {
 
   const [showScores, setShowScores] = useState(false);
 
+  const [showInvites, setShowInvites] = useState(true);
+
   useEffect(() => {
     const init = async () => {
       await fetchPlayers();
@@ -89,6 +92,7 @@ export default function Home() {
         <RocketCanvas
           leftTableWidth={leftTableWidth}
           rightTableWidth={rightTableWidth}
+          showInvites={showInvites}
         />
       </div>
       <div className="relative z-10 w-full h-full flex flex-col flex-1">
@@ -97,20 +101,28 @@ export default function Home() {
           {error && <div className="text-red-500">Error: {error}</div>}
           {!loading && !error && (
             <div className="text-white flex flex-row w-full flex-1">
-              <div className="self-start">
-                <ScoreTable setTableWidth={setLeftTableWidth} type="invites" />
-              </div>
+              {showInvites && (
+                <div className="self-start">
+                  <ScoreTable
+                    setTableWidth={setLeftTableWidth}
+                    type="invites"
+                  />
+                </div>
+              )}
 
-              <div className="flex flex-col justify-between flex-1">
+              <div className="flex flex-col justify-between flex-1 relative">
+                <HideButton onClick={() => setShowInvites(!showInvites)} />
                 <div className="flex flex-row justify-evenly w-full h-full">
-                  <div className="border-r border-dashed border-white/80 w-1/2 mt-4">
-                    <h1
-                      className={`${pressStart2P.className} text-lg sm:text-2xl mt-4 font-bold text-center text-[#00e2ff]`}
-                      // className="text-lg sm:text-2xl mt-4 font-bold text-center text-[#00e2ff]"
-                    >
-                      Top inviters
-                    </h1>
-                  </div>
+                  {showInvites && (
+                    <div className="border-r border-dashed border-white/80 w-1/2 mt-4">
+                      <h1
+                        className={`${pressStart2P.className} text-lg sm:text-2xl mt-4 font-bold text-center text-[#00e2ff]`}
+                        // className="text-lg sm:text-2xl mt-4 font-bold text-center text-[#00e2ff]"
+                      >
+                        Top inviters
+                      </h1>
+                    </div>
+                  )}
                   <div className="w-1/2 mt-4">
                     <h1
                       className={`${pressStart2P.className} text-lg sm:text-2xl mt-4 font-bold text-center text-[#71ff49]`}

@@ -20,6 +20,7 @@ export function drawRocketGroup<T extends RocketData | TrustData>(
   WINDOW_OFFSET: number,
   rocketImgRef: React.RefObject<p5.Image> | React.RefObject<null> | null,
   placeholderImgRef: React.RefObject<p5.Image> | React.RefObject<null>,
+  showInvites: boolean,
   RANGE: number = 3
 ) {
   if (!imagesLoaded) return;
@@ -50,8 +51,24 @@ export function drawRocketGroup<T extends RocketData | TrustData>(
 
   let maxN = 0;
 
-  const xStart = left ? tableWidth ?? 0 : centerX;
-  const xEnd = left ? centerX : width - (tableWidth ?? 0);
+  const calculateXStart = () => {
+    if (showInvites) {
+      return left ? tableWidth ?? 0 : centerX;
+    } else {
+      return 0;
+    }
+  };
+
+  const calculateXEnd = () => {
+    if (showInvites) {
+      return left ? centerX : width - (tableWidth ?? 0);
+    } else {
+      return width - (tableWidth ?? 0);
+    }
+  };
+
+  const xStart = calculateXStart();
+  const xEnd = calculateXEnd();
 
   sortedScores.forEach(score => {
     const group = scoreGroups[score];

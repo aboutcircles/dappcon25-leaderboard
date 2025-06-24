@@ -28,7 +28,8 @@ type P5WithCustomHandler = p5 & {
 const RocketCanvas: React.FC<{
   leftTableWidth: number;
   rightTableWidth: number;
-}> = ({ leftTableWidth, rightTableWidth }) => {
+  showInvites: boolean;
+}> = ({ leftTableWidth, rightTableWidth, showInvites }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const p5Instance = useRef<p5 | null>(null);
   const resizeTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -269,25 +270,28 @@ const RocketCanvas: React.FC<{
         }
 
         // Draw invites (left)
-        drawRocketGroup<RocketData>(
-          p,
-          imagesLoadedInvites,
-          inviteData,
-          data => data.invite.name || '',
-          data => data.invite.score,
-          data => data.image,
-          true,
-          width,
-          leftTableWidth,
-          height,
-          ROCKET_SIZE,
-          TOP_MARGIN,
-          BOTTOM_MARGIN,
-          WINDOW_SIZE,
-          WINDOW_OFFSET,
-          rocketImgRef,
-          placeholderImgRef
-        );
+        if (showInvites) {
+          drawRocketGroup<RocketData>(
+            p,
+            imagesLoadedInvites,
+            inviteData,
+            data => data.invite.name || '',
+            data => data.invite.score,
+            data => data.image,
+            true,
+            width,
+            leftTableWidth,
+            height,
+            ROCKET_SIZE,
+            TOP_MARGIN,
+            BOTTOM_MARGIN,
+            WINDOW_SIZE,
+            WINDOW_OFFSET,
+            rocketImgRef,
+            placeholderImgRef,
+            showInvites
+          );
+        }
         // Draw trusts (right)
         drawRocketGroup<TrustData>(
           p,
@@ -306,7 +310,8 @@ const RocketCanvas: React.FC<{
           WINDOW_SIZE,
           WINDOW_OFFSET,
           rocketImgRef,
-          placeholderImgRef
+          placeholderImgRef,
+          showInvites
         );
       };
 
@@ -395,7 +400,7 @@ const RocketCanvas: React.FC<{
         canvases.forEach(canvas => canvas.remove());
       }
     };
-  }, [leftTableWidth, rightTableWidth]);
+  }, [leftTableWidth, rightTableWidth, showInvites]);
 
   useEffect(() => {
     if (
