@@ -135,9 +135,9 @@ export function drawRocketGroup<T extends RocketData | TrustData>(
       // Draw name/score below
       p.fill(COLORS[left ? 1 : 2]);
       if (height < 1000) {
-        p.textSize(6);
-      } else {
         p.textSize(12);
+      } else {
+        p.textSize(16);
       }
       p.textAlign(p.CENTER, p.TOP);
       p.text(getName(data) || '', x + ROCKET_SIZE / 2, y + ROCKET_SIZE + 4);

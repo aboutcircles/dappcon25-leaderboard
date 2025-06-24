@@ -216,7 +216,9 @@ const RocketCanvas: React.FC<{
         p.noStroke();
 
         pressStartFont = await new Promise<p5.Font>(resolve => {
-          p.loadFont('/fonts/PressStart2P-Regular.ttf', font => resolve(font));
+          p.loadFont('/fonts/DMSans-VariableFont_opsz,wght.ttf', font =>
+            resolve(font)
+          );
         });
 
         rocketImgRef.current = await new Promise<p5.Image>(resolve => {

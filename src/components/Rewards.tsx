@@ -1,9 +1,6 @@
 export default function Rewards() {
   return (
-    <div
-      className="flex flex-col items-center justify-baseline text-white text-center p-2"
-      style={{ fontSize: '0.5rem' }}
-    >
+    <div className="flex flex-col items-center justify-baseline text-white text-center p-2 text-xs">
       <div className="text-yellow-400">Rewards (for each leaderboard)</div>
       <div className="flex flex-row items-center justify-center gap-2 mb-2">
         <p className="flex flex-row no-wrap items-baseline">

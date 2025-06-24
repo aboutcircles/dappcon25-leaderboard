@@ -1,8 +1,17 @@
 @import 'tailwindcss';
 
+@font-face {
+  font-family: 'DMSans';
+  src: url('/fonts/DMSans-VariableFont_opsz,wght.ttf') format('truetype');
+  font-weight: 1 1000;
+  /* font-style: italic; */
+  font-display: swap;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --font-dmsans: 'DMSans', sans-serif;
 }
 
 @theme inline {
@@ -22,6 +31,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
+  font-family: var(--font-dmsans);
 }
 
 .starry-bg {

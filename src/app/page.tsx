@@ -10,9 +10,16 @@ import ScoreTable from '@/components/ScoreTable';
 import MobileScores from '@/components/MobileScores';
 import Rewards from '@/components/Rewards';
 import Instructions from '@/components/Instructions';
-import QRcodeUFO from '@/components/QRcodeUFO';
+import QRcodeAlien from '@/components/QRcodeAlien';
 import QRcodeBanner from '@/components/QRcodeBanner';
 import Winners from '@/components/Winners';
+import { Press_Start_2P } from 'next/font/google';
+
+const pressStart2P = Press_Start_2P({
+  variable: '--font-press-start-2p',
+  subsets: ['latin'],
+  weight: '400',
+});
 
 const RocketCanvas = dynamic(() => import('@/components/RocketCanvas'), {
   ssr: false,
@@ -96,12 +103,18 @@ export default function Home() {
               <div className="flex flex-col justify-between flex-1">
                 <div className="flex flex-row justify-evenly w-full h-full">
                   <div className="border-r border-dashed border-white/80 w-1/2 mt-4">
-                    <h1 className="text-lg sm:text-2xl mt-4 font-bold text-center text-[#00e2ff]">
+                    <h1
+                      className={`${pressStart2P.className} text-lg sm:text-2xl mt-4 font-bold text-center text-[#00e2ff]`}
+                      // className="text-lg sm:text-2xl mt-4 font-bold text-center text-[#00e2ff]"
+                    >
                       Top inviters
                     </h1>
                   </div>
                   <div className="w-1/2 mt-4">
-                    <h1 className="text-lg sm:text-2xl mt-4 font-bold text-center text-[#71ff49]">
+                    <h1
+                      className={`${pressStart2P.className} text-lg sm:text-2xl mt-4 font-bold text-center text-[#71ff49]`}
+                      // className="text-lg sm:text-2xl mt-4 font-bold text-center text-[#71ff49]"
+                    >
                       Top mutual trust
                     </h1>
                   </div>
@@ -118,7 +131,7 @@ export default function Home() {
               <QRcodeBanner />
             </div>
             <div className="hidden sm:flex">
-              <QRcodeUFO />
+              <QRcodeAlien />
             </div>
             <div className="hidden sm:flex flex-row items-end h-full">
               <Rewards />

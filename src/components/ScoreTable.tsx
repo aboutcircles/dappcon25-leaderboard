@@ -36,16 +36,16 @@ const ScoreTable: React.FC<{
 
   // Helper to render the table
   const renderTable = (scores: TopPlayer[], type: 'invites' | 'trusts') => (
-    <table className="border border-white/80 border-collapse bg-transparent w-full">
+    <table className="border border-white/80 border-collapse bg-transparent w-full text-xs">
       <thead>
         <tr>
-          <th className="px-1 py-1 border-b border-white/80 text-left text-white font-semibold">
+          <th className="px-1 py-1 border-b border-white/80 text-left text-white">
             #
           </th>
-          <th className="px-1 py-1 border-b border-white/80 text-left text-white font-semibold">
+          <th className="px-1 py-1 border-b border-white/80 text-left text-white">
             Name
           </th>
-          <th className="px-1 py-1 border-b border-white/80 text-left text-white font-semibold">
+          <th className="px-1 py-1 border-b border-white/80 text-left text-white">
             {type === 'invites' ? 'Invites' : 'Trusts'}
           </th>
         </tr>
@@ -94,7 +94,6 @@ const ScoreTable: React.FC<{
   return (
     <div
       className={`${forceShow ? 'flex' : 'hidden'} sm:flex flex-col`}
-      style={{ fontSize: '10px', fontFamily: 'monospace' }}
       ref={tableRef}
     >
       <div className="overflow-y-auto max-h-[80vh]">

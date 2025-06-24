@@ -1,17 +1,7 @@
 import QRCode from 'react-qr-code';
 import { MIN_CIRCLES_TO_JOIN, QR_CODE_VALUE } from '@/const';
-// import { useEffect } from 'react';
-// import { useInvitesStore } from '@/stores/invitesStore';
 
 export default function QRcodeBanner() {
-  // const changeStats = useInvitesStore(state => state.changeStats);
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     changeStats();
-  //   }, 2000);
-
-  //   return () => clearInterval(interval);
-  // }, [changeStats]);
   return (
     <div className="flex flex-row p-2 items-end shrink">
       <div
