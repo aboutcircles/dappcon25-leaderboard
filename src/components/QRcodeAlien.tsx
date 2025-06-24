@@ -3,9 +3,9 @@ import Image from 'next/image';
 
 export default function QRcodeAlien() {
   return (
-    <div className="flex flex-col p-2 items-end shrink">
+    <div className="flex flex-col p-2 items-end shrink beam ">
       <Image
-        className="absolute bottom-10 left-3 beam"
+        className="absolute bottom-10 left-3"
         src="/images/qr.png"
         alt="QR"
         width={280}

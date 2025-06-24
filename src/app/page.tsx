@@ -14,6 +14,7 @@ import QRcodeAlien from '@/components/QRcodeAlien';
 import QRcodeBanner from '@/components/QRcodeBanner';
 import Winners from '@/components/Winners';
 import { Press_Start_2P } from 'next/font/google';
+import Notifications from '@/components/Notifications';
 
 const pressStart2P = Press_Start_2P({
   variable: '--font-press-start-2p',
@@ -139,9 +140,6 @@ export default function Home() {
             <div className="hidden sm:flex flex-row items-end h-full">
               <Instructions />
             </div>
-            {/* <div className="hidden sm:flex flex-row items-end h-full">
-              <Countdown />
-            </div> */}
           </div>
           <button
             className="sm:hidden h-10 border-t border-white/80 flex items-center justify-center text-white"
@@ -156,6 +154,7 @@ export default function Home() {
         leftTableWidth={leftTableWidth}
         rightTableWidth={rightTableWidth}
       />
+      <Notifications />
       {/* Modal for mobile scores */}
       {showScores && <MobileScores setShowScores={setShowScores} />}
     </div>

@@ -13,6 +13,9 @@ interface PlayersStore {
   error: string | null;
   fetchPlayers: () => Promise<void>;
   subscribeToPlayersUpdates: () => Promise<void>;
+  newPlayersQueue: Player[];
+  enqueueNewPlayer: (player: Player) => void;
+  dequeueNewPlayer: () => void;
 }
 
 function isTransferEvent(event: CirclesEvent) {
@@ -26,6 +29,7 @@ export const usePlayersStore = create<PlayersStore>(set => ({
   players: [],
   loading: false,
   error: null,
+  newPlayersQueue: [],
 
   fetchPlayers: async () => {
     set({ loading: true, error: null });
@@ -106,25 +110,37 @@ export const usePlayersStore = create<PlayersStore>(set => ({
             const _from = getAddress(from);
             const profilesMap = await getProfiles([_from]);
             const profile = profilesMap.get(_from);
+            const newPlayer = {
+              address: _from,
+              transactionHash,
+              amount,
+              blockNumber,
+              name: profile?.name || undefined,
+              image: profile?.image || undefined,
+              timestamp: timestamp,
+            };
             set(state => ({
-              players: [
-                {
-                  address: _from,
-                  transactionHash,
-                  amount,
-                  blockNumber,
-                  name: profile?.name || undefined,
-                  image: profile?.image || undefined,
-                  timestamp: timestamp,
-                },
-                ...state.players,
-              ],
+              players: [newPlayer, ...state.players],
             }));
+            // Enqueue new player for notifications
+            usePlayersStore.getState().enqueueNewPlayer(newPlayer);
           }
         }
       });
     } catch (error) {
       set({ error: error instanceof Error ? error.message : String(error) });
     }
+  },
+
+  enqueueNewPlayer: (player: Player) => {
+    set(state => ({
+      newPlayersQueue: [...state.newPlayersQueue, player],
+    }));
+  },
+
+  dequeueNewPlayer: () => {
+    set(state => ({
+      newPlayersQueue: state.newPlayersQueue.slice(1),
+    }));
   },
 }));
