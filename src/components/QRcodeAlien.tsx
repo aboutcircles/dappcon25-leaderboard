@@ -19,7 +19,7 @@ export default function QRcodeAlien() {
           href={QR_CODE_VALUE}
           target="_blank"
           rel="noopener noreferrer"
-          className="underline hover:text-white"
+          className="underline hover:text-white font-bold text-yellow-400"
         >
           Send {MIN_CIRCLES_TO_JOIN} CRC to join the Circles leaderboard
         </a>
