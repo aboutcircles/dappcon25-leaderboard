@@ -81,8 +81,8 @@ const ScoreTable: React.FC<{
             )}
             {type === 'trusts' && (
               <td className="px-1 py-1  text-white align-middle">
-                {/* {trusts[profile.address]?.mutualTrusts || ''} */}
-                {trusts[profile.address]?.trusts || ''}
+                {trusts[profile.address]?.mutualTrusts || ''}
+                {/* {trusts[profile.address]?.trusts || ''} */}
               </td>
             )}
           </tr>

@@ -44,8 +44,6 @@ export default function Home() {
   const playerAddressesString = playerAddresses.join(',');
 
   const [showScores, setShowScores] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // const [_tick, setTick] = useState(0);
 
   useEffect(() => {
     const init = async () => {
@@ -76,13 +74,6 @@ export default function Home() {
     playerAddresses,
     playerAddressesString,
   ]);
-
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setTick(t => t + 1);
-  //   }, 10000);
-  //   return () => clearInterval(interval);
-  // }, []);
 
   return (
     <div className="relative w-full h-screen min-h-screen max-h-[100vh]">
