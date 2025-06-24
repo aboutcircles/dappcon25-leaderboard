@@ -2,8 +2,8 @@ import Countdown from './Countdown';
 
 export default function Instructions() {
   return (
-    <div className="flex flex-col items-center justify-center text-white shrink px-2 text-xs">
-      <h5 className="text-yellow-400 font-bold">Instructions & Rules</h5>
+    <div className="flex flex-col items-center justify-center text-white shrink px-2 text-xs max-w-xl">
+      <h5 className="text-yellow-400 font-bold px-2">Instructions & Rules</h5>
       <ol className="list-decimal mt-1">
         <li>
           An invite is counted when you invite someone and they accept your

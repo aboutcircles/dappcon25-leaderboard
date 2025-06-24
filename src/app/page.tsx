@@ -137,7 +137,7 @@ export default function Home() {
             <div className="hidden sm:flex flex-row items-end h-full">
               <Rewards />
             </div>
-            <div className="hidden sm:flex flex-row items-end h-full">
+            <div className="hidden sm:flex items-end h-full">
               <Instructions />
             </div>
           </div>
@@ -155,7 +155,6 @@ export default function Home() {
         rightTableWidth={rightTableWidth}
       />
       <Notifications />
-      {/* Modal for mobile scores */}
       {showScores && <MobileScores setShowScores={setShowScores} />}
     </div>
   );
