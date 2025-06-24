@@ -72,7 +72,7 @@ export const usePlayersStore = create<PlayersStore>(set => ({
         return {
           ...player,
           name: profile?.name || undefined,
-          image: profile?.image || undefined,
+          // image: profile?.image || undefined,
         };
       });
       playersWithProfiles.sort((a, b) => b.blockNumber - a.blockNumber);
@@ -116,7 +116,7 @@ export const usePlayersStore = create<PlayersStore>(set => ({
               amount,
               blockNumber,
               name: profile?.name || undefined,
-              image: profile?.image || undefined,
+              // image: profile?.image || undefined,
               timestamp: timestamp,
             };
             set(state => ({

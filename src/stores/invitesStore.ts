@@ -36,12 +36,12 @@ export const useInvitesStore = create<InvitesStore>()(
         invitesTop10: top10.map(player => ({
           ...player,
           name: profiles.get(player.address)?.name,
-          image: profiles.get(player.address)?.image,
+          // image: profiles.get(player.address)?.image,
         })),
         invitesScores: sorted.map(player => ({
           ...player,
           name: profiles.get(player.address)?.name,
-          image: profiles.get(player.address)?.image,
+          // image: profiles.get(player.address)?.image,
         })),
       });
     }

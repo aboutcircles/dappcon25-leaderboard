@@ -37,3 +37,19 @@ export async function setProfilesToDB(profiles: Profile[]) {
     tx.onerror = () => reject(tx.error);
   });
 }
+
+export async function getProfileImages(
+  addressList: string[]
+): Promise<Map<string, string>> {
+  const foundProfiles: Profile[] = [];
+  for (const address of addressList) {
+    const profile = await getProfileFromDB(address);
+    if (profile) {
+      foundProfiles.push(profile);
+    }
+  }
+
+  return new Map(
+    foundProfiles.map(profile => [profile.address, profile.image])
+  ) as Map<string, string>;
+}

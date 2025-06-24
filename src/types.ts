@@ -6,7 +6,7 @@ export interface Player {
   blockNumber: number;
   amount: bigint;
   name?: string;
-  image?: string;
+  // image?: string;
   timestamp: number;
 }
 
@@ -25,7 +25,7 @@ export interface TrustsStats {
 export interface TopPlayer {
   address: string;
   name?: string;
-  image?: string;
+  // image?: string;
   score: number;
 }
 

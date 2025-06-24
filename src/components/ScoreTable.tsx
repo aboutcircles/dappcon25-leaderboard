@@ -1,9 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 // import { usePlayersStore } from '@/stores/playersStore';
 import { useTrustsStore } from '@/stores/trustsStore';
 import { useInvitesStore } from '@/stores/invitesStore';
 import Image from 'next/image';
 import { TopPlayer } from '@/types';
+import { getProfileImages } from '@/lib/profileDb';
 
 const ScoreTable: React.FC<{
   setTableWidth?: (width: number) => void;
@@ -16,6 +17,18 @@ const ScoreTable: React.FC<{
   const inviteScores = useInvitesStore(state => state.invitesScores);
   const trustScores = useTrustsStore(state => state.trustsScores);
   const tableRef = useRef<HTMLTableElement>(null);
+
+  const [profileImages, setProfileImages] = useState<Map<string, string>>(
+    new Map()
+  );
+
+  useEffect(() => {
+    getProfileImages(
+      type === 'invites'
+        ? inviteScores.map(score => score.address)
+        : trustScores.map(score => score.address)
+    ).then(setProfileImages);
+  }, [inviteScores, trustScores, type]);
 
   useEffect(() => {
     const table = tableRef.current;
@@ -59,7 +72,9 @@ const ScoreTable: React.FC<{
             <td className="px-1 py-1 text-white align-middle">{idx + 1}</td>
             <td className="px-1 py-1 text-white flex items-center gap-2 align-middle">
               <Image
-                src={profile.image || '/images/circles.png'}
+                src={
+                  profileImages.get(profile.address) || '/images/circles.png'
+                }
                 alt={profile.name || ''}
                 height={12}
                 width={12}

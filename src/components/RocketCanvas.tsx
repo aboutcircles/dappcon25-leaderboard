@@ -5,6 +5,7 @@ import { useInvitesStore } from '@/stores/invitesStore';
 import type { RocketData, TopPlayer, TrustData } from '@/types';
 import { useTrustsStore } from '@/stores/trustsStore';
 import { drawRocketGroup } from '@/lib/draw/drawRocketGroup';
+import { getProfileFromDB } from '@/lib/profileDb';
 
 const STAR_COUNT = 120;
 const STAR_MIN_RADIUS = 0.5;
@@ -123,11 +124,12 @@ const RocketCanvas: React.FC<{
           return;
         }
 
-        inviteData.forEach((data, index) => {
+        inviteData.forEach(async (data, index) => {
           const { invite } = data;
-          if (invite.image) {
+          const profile = await getProfileFromDB(invite.address);
+          if (profile?.image) {
             p.loadImage(
-              invite.image,
+              profile.image,
               img => {
                 inviteData[index].image = img;
                 loadedCount++;
@@ -174,11 +176,12 @@ const RocketCanvas: React.FC<{
           return;
         }
 
-        trustData.forEach((data, index) => {
+        trustData.forEach(async (data, index) => {
           const { trust } = data;
-          if (trust.image) {
+          const profile = await getProfileFromDB(trust.address);
+          if (profile?.image) {
             p.loadImage(
-              trust.image,
+              profile.image,
               img => {
                 trustData[index].image = img;
                 loadedCount++;

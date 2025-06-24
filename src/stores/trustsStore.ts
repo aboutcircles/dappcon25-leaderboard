@@ -39,12 +39,12 @@ export const useTrustsStore = create<TrustsStore>()(
         trustsTop10: top10.map(player => ({
           ...player,
           name: profiles.get(player.address)?.name,
-          image: profiles.get(player.address)?.image,
+          // image: profiles.get(player.address)?.image,
         })),
         trustsScores: sorted.map(player => ({
           ...player,
           name: profiles.get(player.address)?.name,
-          image: profiles.get(player.address)?.image,
+          // image: profiles.get(player.address)?.image,
         })),
       });
     }
