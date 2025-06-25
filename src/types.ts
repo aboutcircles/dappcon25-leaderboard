@@ -2,12 +2,12 @@ import p5 from 'p5';
 
 export interface Player {
   address: string;
-  transactionHash: string;
-  blockNumber: number;
+  // transactionHash: string;
+  // blockNumber: number;
   amount: bigint;
   name?: string;
   image?: string;
-  timestamp: number;
+  // timestamp: number;
 }
 
 export interface InvitesStats {
@@ -77,4 +77,13 @@ export type TrustData = {
   singleGroupXOffset: number;
   randomXOffset?: number;
   randomXBase?: number;
+};
+
+export type TransferData = {
+  from: string;
+  to: string;
+  token: string;
+  value: string;
+  transferType: string;
+  db_write_timestamp: string;
 };
