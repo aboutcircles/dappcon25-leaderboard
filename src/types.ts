@@ -6,7 +6,7 @@ export interface Player {
   blockNumber: number;
   amount: bigint;
   name?: string;
-  // image?: string;
+  image?: string;
   timestamp: number;
 }
 
