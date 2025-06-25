@@ -70,6 +70,7 @@ export async function fetchInvites(addressList: string[]): Promise<{
   invitesRedeemed: InvitesRedeemed[];
   invitesSent: InviteSent[];
 }> {
+  console.log('Fetching invites:', addressList, TIMESTAMP_START, TIMESTAMP_END);
   const result = await urqlClient
     .query(INVITES_QUERY, {
       addressList,
@@ -77,6 +78,7 @@ export async function fetchInvites(addressList: string[]): Promise<{
       toTime: TIMESTAMP_END,
     })
     .toPromise();
+  console.log('Invites fetched:', result.data);
   if (result.error) throw result.error;
   return {
     invitesRedeemed: result.data?.invitesRedeemed || [],

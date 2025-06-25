@@ -41,6 +41,7 @@ export const usePlayersStore = create<PlayersStore>(set => ({
 
       let hasResults = true;
       const playerMap = new Map<string, Player>();
+      console.log('Init fetch players:');
       while (hasResults) {
         hasResults = await query.queryNextPage();
         if (!hasResults || !query.currentPage) break;
@@ -53,6 +54,7 @@ export const usePlayersStore = create<PlayersStore>(set => ({
             row.timestamp >= TIMESTAMP_START
           ) {
             if (!playerMap.has(from)) {
+              console.log('adding player:', from);
               playerMap.set(from, {
                 address: from,
                 transactionHash: row.transactionHash,
@@ -67,6 +69,7 @@ export const usePlayersStore = create<PlayersStore>(set => ({
 
       const players = Array.from(playerMap.values());
       const profilesMap = await getProfiles(players.map(p => p.address));
+      console.log('Getting profiles for initial players:', profilesMap);
       const playersWithProfiles = players.map(player => {
         const profile = profilesMap.get(player.address);
         return {
@@ -97,6 +100,7 @@ export const usePlayersStore = create<PlayersStore>(set => ({
         if (event && isTransferEvent(event)) {
           const { from, transactionHash, amount, timestamp, blockNumber } =
             event as CrcV2_StreamCompleted;
+          console.log('New transfer event:', from);
           if (
             typeof from === 'string' &&
             typeof transactionHash === 'string' &&
@@ -107,9 +111,11 @@ export const usePlayersStore = create<PlayersStore>(set => ({
             !usePlayersStore.getState().players.some(p => p.address === from)
           ) {
             // Fetch profile for the new player
+            console.log('Fetching profile for new player:', from);
             const _from = getAddress(from);
             const profilesMap = await getProfiles([_from]);
             const profile = profilesMap.get(_from);
+            console.log('Profile for new player:', profile);
             const newPlayer = {
               address: _from,
               transactionHash,

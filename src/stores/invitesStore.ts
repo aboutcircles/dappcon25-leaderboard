@@ -59,6 +59,7 @@ export const useInvitesStore = create<InvitesStore>()(
         const playerAddresses = players.map(p => p.address);
         try {
           const { invitesRedeemed } = await fetchInvites(playerAddresses);
+          console.log('Init invites fetched:', invitesRedeemed);
           const invitesRedeemedMap = new Map<string, number>();
           invitesRedeemed.forEach(a => {
             const invitedBy = a.invitedBy.toLowerCase();
@@ -94,6 +95,7 @@ export const useInvitesStore = create<InvitesStore>()(
         const subscription = subscribeToInvites(
           playerAddresses,
           async ({ invitesRedeemed }) => {
+            console.log('Invites redeemed subscription:', invitesRedeemed);
             const invitesRedeemedMap = new Map<string, number>();
             invitesRedeemed.forEach(a => {
               const invitedBy = a.invitedBy.toLowerCase();

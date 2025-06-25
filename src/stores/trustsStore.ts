@@ -62,6 +62,7 @@ export const useTrustsStore = create<TrustsStore>()(
         const playerAddresses = players.map(p => p.address.toLowerCase());
         try {
           const _trustMap = await getTrustInits(playerAddresses);
+          console.log('Init trusts fetched:', _trustMap);
           const _stats: Record<string, TrustsStats> = {
             ...useTrustsStore.getState().trustsStats,
           };
@@ -92,6 +93,7 @@ export const useTrustsStore = create<TrustsStore>()(
           playerAddresses,
           async (trusts: Trust[]) => {
             const _trustMap = { ...useTrustsStore.getState().trustMap };
+            console.log('Trusts subscription:', trusts);
             trusts.forEach(t => {
               const truster = t.truster.id.toLowerCase();
               const trustee = t.trustee.id.toLowerCase();
