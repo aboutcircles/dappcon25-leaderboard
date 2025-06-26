@@ -69,7 +69,18 @@ const ScoreTable: React.FC<{
             key={profile.address}
             className="hover:bg-white/10 transition border-b border-white/80"
           >
-            <td className="px-1 py-1 text-white align-middle">{idx + 1}</td>
+            {type === 'invites' && (
+              <td className="px-1 py-1  text-white align-middle">
+                {invites[profile.address]?.invitesRedeemed > 0 ? idx + 1 : ''}
+              </td>
+            )}
+            {type === 'trusts' && (
+              <td className="px-1 py-1  text-white align-middle">
+                {/* {trusts[profile.address]?.mutualTrusts > 0 ? idx + 1 : ''} */}
+                {trusts[profile.address]?.trusts > 0 ? idx + 1 : ''}
+              </td>
+            )}
+
             <td className="px-1 py-1 text-white flex items-center gap-2 align-middle">
               <Image
                 src={
