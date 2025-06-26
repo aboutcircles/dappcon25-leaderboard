@@ -127,6 +127,7 @@ export default function Home() {
                           width={20}
                           height={20}
                           className="mx-1"
+                          style={{ height: 'auto', width: 'auto' }}
                         />{' '}
                         inviters
                       </h1>
@@ -144,6 +145,7 @@ export default function Home() {
                         width={20}
                         height={20}
                         className="mx-1"
+                        style={{ height: 'auto', width: 'auto' }}
                       />{' '}
                       <span>mutual</span>
                       <span>trusts</span>
