@@ -40,7 +40,7 @@ export default function QRcodeAlien() {
       </div>
 
       {/* CTA Text */}
-      <div className="text-white text-xs sm:text-sm ml-5 min-w-[300px] self-end">
+      <div className="text-white text-sm sm:text-sm ml-5 min-w-[300px] self-end">
         <a
           href={QR_CODE_VALUE}
           target="_blank"

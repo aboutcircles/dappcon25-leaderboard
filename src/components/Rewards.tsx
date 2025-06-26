@@ -1,6 +1,6 @@
 export default function Rewards() {
   return (
-    <div className="flex flex-col items-center justify-baseline text-white text-center p-2 text-xs">
+    <div className="flex flex-col items-center justify-baseline text-white text-center p-2 text-sm">
       <div className="text-yellow-400 font-bold">
         Rewards (for each leaderboard)
       </div>

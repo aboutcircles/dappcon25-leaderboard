@@ -20,7 +20,7 @@ export default function QRcodeBanner() {
           viewBox={`0 0 256 256`}
         />
       </div>
-      <div className="text-white text-xs sm:text-sm ml-5 shrink max-w-[200px]">
+      <div className="text-white text-sm sm:text-sm ml-5 shrink max-w-[200px]">
         <a
           href={QR_CODE_VALUE}
           target="_blank"

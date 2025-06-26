@@ -2,7 +2,7 @@ import Countdown from './Countdown';
 
 export default function Instructions() {
   return (
-    <div className="flex flex-col items-center justify-center text-white shrink px-2 text-xs max-w-xl">
+    <div className="flex flex-col items-center justify-center text-white shrink px-2 text-sm max-w-xl">
       <h5 className="text-yellow-400 font-bold px-2">Instructions & Rules</h5>
       <ol className="list-decimal mt-1">
         <li>

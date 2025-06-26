@@ -128,7 +128,7 @@ export default function Home() {
                       className={`${pressStart2P.className} text-lg sm:text-2xl mt-4 font-bold text-center text-[#71ff49]`}
                       // className="text-lg sm:text-2xl mt-4 font-bold text-center text-[#71ff49]"
                     >
-                      Top mutual trust
+                      Top mutual trusts
                     </h1>
                   </div>
                 </div>

@@ -30,7 +30,7 @@ function formatEndDate(timestamp: number) {
 
 export default function Countdown() {
   return (
-    <div className="text-yellow-400 font-bold text-xs p-2 text-center w-full">
+    <div className="text-yellow-400 font-bold text-sm p-2 text-center w-full">
       Contest ends on {formatEndDate(TIMESTAMP_END)}
     </div>
   );

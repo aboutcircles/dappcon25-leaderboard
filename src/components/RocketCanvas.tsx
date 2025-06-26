@@ -35,6 +35,7 @@ const RocketCanvas: React.FC<{
   const p5Instance = useRef<p5 | null>(null);
   const resizeTimeout = useRef<NodeJS.Timeout | null>(null);
   const rocketImgRef = useRef<p5.Image | null>(null);
+  const crcImgRef = useRef<p5.Image | null>(null);
   const placeholderImgRef = useRef<p5.Image | null>(null);
   const prevLeftTableWidth = useRef<number | null>(null);
   const prevRightTableWidth = useRef<number | null>(null);
@@ -104,6 +105,16 @@ const RocketCanvas: React.FC<{
         speed: number;
         alpha: number;
       }[] = [];
+
+      // Circles-white images as moving stars
+      type CircleStar = {
+        x: number;
+        y: number;
+        size: number;
+        speed: number;
+        alpha: number;
+      };
+      let circleStars: CircleStar[] = [];
 
       // These functions will be called by the custom redraw handlers only
       const loadInviteImages = (invites: TopPlayer[]) => {
@@ -233,6 +244,10 @@ const RocketCanvas: React.FC<{
           p.loadImage('images/circles.png', img => resolve(img));
         });
 
+        crcImgRef.current = await new Promise<p5.Image>(resolve => {
+          p.loadImage('images/circles-logo-text.png', img => resolve(img));
+        });
+
         // Stars
         stars = Array.from({ length: STAR_COUNT }, () => ({
           x: Math.random() * width,
@@ -242,7 +257,18 @@ const RocketCanvas: React.FC<{
           alpha: randomBetween(120, 255),
         }));
 
-        // Do not use top10Invites or top10Trusts here. Data will be set by custom redraw handlers.
+        // Circles-white images as moving stars
+        const CIRCLE_STAR_COUNT = Math.floor(randomBetween(3, 8));
+        circleStars = [];
+        for (let i = 0; i < CIRCLE_STAR_COUNT; i++) {
+          circleStars.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            size: randomBetween(30, 40),
+            speed: randomBetween(0.2, 0.8),
+            alpha: 255,
+          });
+        }
       };
 
       p.draw = () => {
@@ -269,6 +295,30 @@ const RocketCanvas: React.FC<{
             star.r = randomBetween(STAR_MIN_RADIUS, STAR_MAX_RADIUS);
             star.speed = randomBetween(STAR_MIN_SPEED, STAR_MAX_SPEED);
             star.alpha = randomBetween(120, 255);
+          }
+        }
+
+        // Draw moving circles-white images as stars
+        if (circleStars && crcImgRef.current) {
+          for (const cStar of circleStars) {
+            p.push();
+            p.tint(255, cStar.alpha);
+            p.image(
+              crcImgRef.current,
+              cStar.x,
+              cStar.y,
+              cStar.size,
+              cStar.size
+            );
+            p.pop();
+            cStar.y += cStar.speed;
+            if (cStar.y > height + cStar.size) {
+              cStar.x = Math.random() * width;
+              cStar.y = -cStar.size;
+              cStar.size = randomBetween(30, 40);
+              cStar.speed = randomBetween(0.2, 0.8);
+              cStar.alpha = 255;
+            }
           }
         }
 
