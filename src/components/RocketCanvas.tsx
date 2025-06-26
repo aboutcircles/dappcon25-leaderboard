@@ -66,8 +66,6 @@ const RocketCanvas: React.FC<{
     let imagesLoadedInvites = false;
     let imagesLoadedTrusts = false;
 
-    let pressStartFont: p5.Font | null = null;
-
     // Store sizes here
     let sizes = {
       IMAGE_SIZE: 0,
@@ -94,7 +92,6 @@ const RocketCanvas: React.FC<{
         TOP_MARGIN,
         BOTTOM_MARGIN,
       };
-      // console.log('=============h, sizes', h, sizes);
     }
 
     const sketch = (p: p5) => {
@@ -230,11 +227,6 @@ const RocketCanvas: React.FC<{
         p.createCanvas(width, height, p.P2D);
         p.noStroke();
 
-        pressStartFont = await new Promise<p5.Font>(resolve => {
-          p.loadFont('/fonts/DMSans-VariableFont_opsz,wght.ttf', font =>
-            resolve(font)
-          );
-        });
         rocketImgRef.current = await new Promise<p5.Image>(resolve => {
           p.loadImage('images/rocket-crc.png', img => resolve(img));
           // or we could use 'images/rocket-circles'
@@ -280,9 +272,6 @@ const RocketCanvas: React.FC<{
           BOTTOM_MARGIN,
         } = sizes;
         p.clear();
-        if (pressStartFont) {
-          p.textFont(pressStartFont);
-        }
 
         // Draw stars
         for (const star of stars) {
@@ -469,7 +458,6 @@ const RocketCanvas: React.FC<{
   }, [top10Invites]);
 
   useEffect(() => {
-    // console.log('top10Trusts changed', top10Trusts);
     if (
       p5Instance.current &&
       'myCustomRedrawAccordingToNewPropsHandlerTrusts' in p5Instance.current
