@@ -11,6 +11,7 @@ export const wsUrl = url.replace('https://', 'wss://');
 
 const wsClient: WSClient = createWSClient({
   url: wsUrl,
+  shouldRetry: () => true,
 });
 
 export const urqlClient = createClient({
