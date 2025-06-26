@@ -1,3 +1,4 @@
+import { MIN_CIRCLES_TO_JOIN } from '@/const';
 import Countdown from './Countdown';
 
 export default function Instructions() {
@@ -6,11 +7,14 @@ export default function Instructions() {
       <h5 className="text-yellow-400 font-bold px-2">Instructions & Rules</h5>
       <ol className="list-decimal mt-1">
         <li>
-          An invite is counted when you invite someone and they accept your
-          invite.{' '}
+          {`Scan the QR code on screen and send ${MIN_CIRCLES_TO_JOIN} CRC to join the competition.`}
         </li>
         <li>
-          You need a minimum of 5 invites to be eligible for prizes regardless
+          An invite is counted when you invite someone and they accept your
+          invite.
+        </li>
+        <li>
+          You need a minimum of 3 invites to be eligible for prizes regardless
           of the ranking.
         </li>
         <li>
@@ -20,6 +24,9 @@ export default function Instructions() {
         <li>
           You need a minimum of 5 mutual trusts to be eligible for prizes
           regardless of the ranking.
+        </li>
+        <li>
+          Users untrusting after the competition is over will be disqualified
         </li>
       </ol>
       <Countdown />

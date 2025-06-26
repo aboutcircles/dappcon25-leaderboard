@@ -4,25 +4,34 @@ export default function Rewards() {
       <div className="text-yellow-400 font-bold">
         Rewards (for each leaderboard)
       </div>
-      <div className="flex flex-row items-center justify-center gap-2 mb-2 font-bold text-left">
-        <p className="flex flex-row no-wrap items-end">
+      <div className="flex flex-row items-center justify-center gap-2 mb-2 text-left">
+        <p className="flex flex-row no-wrap items-center">
           <span className="text-2xl">🥇</span>
-          <span className="pb-1">300 EURe</span>
+          <div className="flex flex-col items-start">
+            <span className="">500 EURe</span>
+            <span>+ special swag</span>
+          </div>
         </p>
-        <p className="flex flex-row no-wrap items-end">
+        <p className="flex flex-row no-wrap items-center">
           <span className="text-2xl">🥈</span>
-          <span className="pb-1">200 EURe</span>
+          <div className="flex flex-col items-start">
+            <span className="">250 EURe</span>
+            <span>+ special swag</span>
+          </div>
         </p>
-        <p className="flex flex-row no-wrap items-end">
+        <p className="flex flex-row no-wrap items-center">
           <span className="text-2xl">🥉</span>
-          <span className="pb-1">100 EURe</span>
+          <div className="flex flex-col items-start">
+            <span className="">100 EURe</span>
+            <span>+ special swag</span>
+          </div>
         </p>
       </div>
-      <div>#4-#10 50 EURe + T-shirt</div>
-      <div>#11-#30 Mystery swag</div>
       <div>
-        Top-3 winners also receive
-        <br />a ETHCC Full Pass 😍
+        <span className="font-bold">#4-#10:</span> 50 EURe + swag
+      </div>
+      <div>
+        <span className="font-bold">#11-#30:</span> swag
       </div>
     </div>
   );
