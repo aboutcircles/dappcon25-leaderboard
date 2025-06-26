@@ -344,6 +344,28 @@ const RocketCanvas: React.FC<{
 
     p5Instance.current = new p5(sketch, containerNode!);
 
+    // Call redraw handlers immediately after p5 instance creation
+    if (
+      p5Instance.current &&
+      'myCustomRedrawAccordingToNewPropsHandlerInvites' in p5Instance.current
+    ) {
+      (
+        p5Instance.current as P5WithCustomHandler
+      ).myCustomRedrawAccordingToNewPropsHandlerInvites({
+        invites: top10Invites,
+      });
+    }
+    if (
+      p5Instance.current &&
+      'myCustomRedrawAccordingToNewPropsHandlerTrusts' in p5Instance.current
+    ) {
+      (
+        p5Instance.current as P5WithCustomHandler
+      ).myCustomRedrawAccordingToNewPropsHandlerTrusts({
+        trusts: top10Trusts,
+      });
+    }
+
     // Resize observer
     let resizeObserver: ResizeObserver | null = null;
     if (containerNode && 'ResizeObserver' in window) {
@@ -392,6 +414,7 @@ const RocketCanvas: React.FC<{
         canvases.forEach(canvas => canvas.remove());
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [leftTableWidth, rightTableWidth, showInvites]);
 
   useEffect(() => {
