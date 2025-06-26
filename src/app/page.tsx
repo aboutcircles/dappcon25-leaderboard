@@ -146,7 +146,7 @@ export default function Home() {
                         className="mx-1"
                       />{' '}
                       <span>mutual</span>
-                      <span>trust</span>
+                      <span>trusts</span>
                     </h1>
                   </div>
                 </div>

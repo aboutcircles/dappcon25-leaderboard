@@ -55,28 +55,34 @@ export interface InviteSent {
 
 export type RocketData = {
   invite: TopPlayer;
+  address: string;
   image: p5.Image | null;
+  imageUrl: string | null;
+  imageLoading: boolean;
   xOffset: number;
   yOffset: number;
   xSpeed: number;
   ySpeed: number;
   groupYOffset: number;
   singleGroupXOffset: number;
-  randomXOffset?: number;
   randomXBase?: number;
+  randomXOffset?: number;
 };
 
 export type TrustData = {
   trust: TopPlayer;
+  address: string;
   image: p5.Image | null;
+  imageUrl: string | null;
+  imageLoading: boolean;
   xOffset: number;
   yOffset: number;
   xSpeed: number;
   ySpeed: number;
   groupYOffset: number;
   singleGroupXOffset: number;
-  randomXOffset?: number;
   randomXBase?: number;
+  randomXOffset?: number;
 };
 
 export type TransferData = {

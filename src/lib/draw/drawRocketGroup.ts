@@ -21,10 +21,9 @@ export function drawRocketGroup<T extends RocketData | TrustData>(
   rocketImgRef: React.RefObject<p5.Image> | React.RefObject<null> | null,
   placeholderImgRef: React.RefObject<p5.Image> | React.RefObject<null>,
   showInvites: boolean,
+  imageCache: Map<string, p5.Image>,
   RANGE: number = 3
 ) {
-  if (!imagesLoaded) return;
-
   const centerX = width / 2;
 
   // 1. Group by score bucket
@@ -97,8 +96,7 @@ export function drawRocketGroup<T extends RocketData | TrustData>(
 
     group.forEach((data: T, i: number) => {
       // Use the calculated base position and persistent random offset
-      let x = basePositions[i]; // + data.randomXOffset!;
-      // x = Math.max(xStart, Math.min(x, xEnd - ROCKET_SIZE));
+      let x = basePositions[i];
 
       // Update rocket position
       data.xOffset += data.xSpeed;
@@ -123,7 +121,13 @@ export function drawRocketGroup<T extends RocketData | TrustData>(
         2 * Math.PI
       );
       p.drawingContext.clip();
-      const img = getImage(data);
+      // Lazy load and cache images
+      const cacheKey = data.address;
+      let img = data.image;
+      if (!img && cacheKey && imageCache.has(cacheKey)) {
+        img = imageCache.get(cacheKey)!;
+        data.image = img;
+      }
       if (img) {
         p.image(
           img,
@@ -132,14 +136,33 @@ export function drawRocketGroup<T extends RocketData | TrustData>(
           WINDOW_SIZE,
           WINDOW_SIZE
         );
-      } else if (placeholderImgRef.current) {
-        p.image(
-          placeholderImgRef.current,
-          x + WINDOW_OFFSET,
-          y + WINDOW_OFFSET,
-          WINDOW_SIZE,
-          WINDOW_SIZE
-        );
+      } else {
+        // If not loading, start loading
+        if (data.imageUrl && !data.imageLoading) {
+          data.imageLoading = true;
+          p.loadImage(
+            data.imageUrl,
+            loadedImg => {
+              data.image = loadedImg;
+              imageCache.set(cacheKey, loadedImg);
+              data.imageLoading = false;
+            },
+            () => {
+              data.image = null;
+              data.imageLoading = false;
+            }
+          );
+        }
+        // Always draw placeholder if image is not ready
+        if (placeholderImgRef.current) {
+          p.image(
+            placeholderImgRef.current,
+            x + WINDOW_OFFSET,
+            y + WINDOW_OFFSET,
+            WINDOW_SIZE,
+            WINDOW_SIZE
+          );
+        }
       }
       p.drawingContext.restore();
       p.pop();

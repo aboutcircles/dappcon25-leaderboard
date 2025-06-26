@@ -26,6 +26,8 @@ type P5WithCustomHandler = p5 & {
   }) => void;
 };
 
+const imageCache = new Map<string, p5.Image>();
+
 const RocketCanvas: React.FC<{
   leftTableWidth: number;
   rightTableWidth: number;
@@ -42,6 +44,9 @@ const RocketCanvas: React.FC<{
 
   const top10Invites = useInvitesStore(state => state.invitesTop10);
   const top10Trusts = useTrustsStore(state => state.trustsTop10);
+
+  console.log('top10Invites', top10Invites);
+  console.log('top10trusts', top10Trusts);
 
   useEffect(() => {
     const containerNode = containerRef.current;
@@ -114,11 +119,13 @@ const RocketCanvas: React.FC<{
       let circleStars: CircleStar[] = [];
 
       // These functions will be called by the custom redraw handlers only
-      const loadInviteImages = (invites: TopPlayer[]) => {
-        let loadedCount = 0;
+      const setupInviteData = (invites: TopPlayer[]) => {
         inviteData = invites.map(invite => ({
           invite,
+          address: invite.address,
           image: null,
+          imageUrl: null, // will be set after fetching profile
+          imageLoading: false,
           xOffset: 0,
           yOffset: 0,
           xSpeed: (Math.random() - 0.5) * 0.08,
@@ -126,51 +133,22 @@ const RocketCanvas: React.FC<{
           groupYOffset: (Math.random() - 0.5) * sizes.ROCKET_SIZE,
           singleGroupXOffset: (Math.random() - 0.5) * sizes.ROCKET_SIZE,
         }));
-
-        if (inviteData.length === 0) {
-          imagesLoadedInvites = true;
-          return;
-        }
-
+        // Fetch profile images asynchronously
         inviteData.forEach(async (data, index) => {
-          const { invite } = data;
-          const profile = await getProfileFromDB(invite.address);
-          if (profile?.image) {
-            p.loadImage(
-              profile.image,
-              img => {
-                inviteData[index].image = img;
-                loadedCount++;
-                if (loadedCount === inviteData.length) {
-                  imagesLoadedInvites = true;
-                }
-              },
-              err => {
-                console.error(
-                  `Failed to load image for invite ${invite.name}:`,
-                  err
-                );
-                inviteData[index].image = null;
-                loadedCount++;
-                if (loadedCount === inviteData.length) {
-                  imagesLoadedInvites = true;
-                }
-              }
-            );
-          } else {
-            loadedCount++;
-            if (loadedCount === inviteData.length) {
-              imagesLoadedInvites = true;
-            }
+          const profile = await getProfileFromDB(data.invite.address);
+          if (typeof profile?.image === 'string') {
+            inviteData[index].imageUrl = profile.image;
           }
         });
       };
 
-      const loadTrustImages = (trusts: TopPlayer[]) => {
-        let loadedCount = 0;
+      const setupTrustData = (trusts: TopPlayer[]) => {
         trustData = trusts.map(trust => ({
           trust,
+          address: trust.address,
           image: null,
+          imageUrl: null, // will be set after fetching profile
+          imageLoading: false,
           xOffset: 0,
           yOffset: 0,
           xSpeed: (Math.random() - 0.5) * 0.06,
@@ -178,42 +156,11 @@ const RocketCanvas: React.FC<{
           groupYOffset: ((Math.random() - 0.7) * sizes.ROCKET_SIZE) / 10,
           singleGroupXOffset: (Math.random() - 0.5) * sizes.ROCKET_SIZE * 2,
         }));
-
-        if (trustData.length === 0) {
-          imagesLoadedTrusts = true;
-          return;
-        }
-
+        // Fetch profile images asynchronously
         trustData.forEach(async (data, index) => {
-          const { trust } = data;
-          const profile = await getProfileFromDB(trust.address);
-          if (profile?.image) {
-            p.loadImage(
-              profile.image,
-              img => {
-                trustData[index].image = img;
-                loadedCount++;
-                if (loadedCount === trustData.length) {
-                  imagesLoadedTrusts = true;
-                }
-              },
-              err => {
-                console.error(
-                  `Failed to load image for trust ${trust.name}:`,
-                  err
-                );
-                trustData[index].image = null;
-                loadedCount++;
-                if (loadedCount === trustData.length) {
-                  imagesLoadedTrusts = true;
-                }
-              }
-            );
-          } else {
-            loadedCount++;
-            if (loadedCount === trustData.length) {
-              imagesLoadedTrusts = true;
-            }
+          const profile = await getProfileFromDB(data.trust.address);
+          if (typeof profile?.image === 'string') {
+            trustData[index].imageUrl = profile.image;
           }
         });
       };
@@ -225,6 +172,7 @@ const RocketCanvas: React.FC<{
         }
         recalcSizes(width, height);
         p.createCanvas(width, height, p.P2D);
+        p.frameRate(20);
         p.noStroke();
 
         rocketImgRef.current = await new Promise<p5.Image>(resolve => {
@@ -331,7 +279,8 @@ const RocketCanvas: React.FC<{
             WINDOW_OFFSET,
             rocketImgRef,
             placeholderImgRef,
-            showInvites
+            showInvites,
+            imageCache
           );
         }
         // Draw trusts (right)
@@ -353,7 +302,8 @@ const RocketCanvas: React.FC<{
           WINDOW_OFFSET,
           rocketImgRef,
           placeholderImgRef,
-          showInvites
+          showInvites,
+          imageCache
         );
       };
 
@@ -367,7 +317,7 @@ const RocketCanvas: React.FC<{
           const sortedInvites = [...newProps.invites].sort(
             (a, b) => a.score - b.score
           );
-          loadInviteImages(sortedInvites);
+          setupInviteData(sortedInvites);
         } else {
           inviteData = [];
           imagesLoadedInvites = true;
@@ -384,7 +334,7 @@ const RocketCanvas: React.FC<{
           const sortedTrusts = [...newProps.trusts].sort(
             (a, b) => a.score - b.score
           );
-          loadTrustImages(sortedTrusts);
+          setupTrustData(sortedTrusts);
         } else {
           trustData = [];
           imagesLoadedTrusts = true;
