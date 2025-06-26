@@ -8,7 +8,7 @@ export default function QRcodeAlien() {
       {/* Fixed to bottom-left corner */}
       <div
         className="absolute bottom-10 left-7 p-2 rounded-xl bg-black border border-white
-        shadow-[0_0_30px_#ffffff] animate-pulse hover:scale-105 transition-transform duration-300 group overflow-hidden"
+        shadow-[0_0_30px_#ffffff] animate-pulse hover:scale-105 transition-transform duration-400 group overflow-hidden"
       >
         <div className="relative w-[180px] h-[180px]">
           {/* QR Code itself */}
@@ -32,10 +32,10 @@ export default function QRcodeAlien() {
           </div>
 
           {/* Scanline overlay */}
-          <div
+          {/* <div
             className="absolute top-0 left-0 w-full h-full pointer-events-none
             bg-gradient-to-b from-transparent via-yellow-300 to-transparent opacity-20 animate-[scan_2s_linear_infinite]"
-          />
+          /> */}
         </div>
       </div>
 

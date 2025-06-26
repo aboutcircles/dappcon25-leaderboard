@@ -172,7 +172,7 @@ const RocketCanvas: React.FC<{
         }
         recalcSizes(width, height);
         p.createCanvas(width, height, p.P2D);
-        p.frameRate(20);
+        p.frameRate(15);
         p.noStroke();
 
         rocketImgRef.current = await new Promise<p5.Image>(resolve => {
