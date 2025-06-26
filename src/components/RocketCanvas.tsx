@@ -224,9 +224,9 @@ const RocketCanvas: React.FC<{
             resolve(font)
           );
         });
-
         rocketImgRef.current = await new Promise<p5.Image>(resolve => {
           p.loadImage('images/rocket.png', img => resolve(img));
+          // or we could use 'images/rocket-circles'
         });
 
         placeholderImgRef.current = await new Promise<p5.Image>(resolve => {

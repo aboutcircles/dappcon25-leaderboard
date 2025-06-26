@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { MIN_CIRCLES_TO_JOIN, QR_CODE_VALUE } from '@/const';
 import QRCode from 'react-qr-code';
 
@@ -6,22 +7,36 @@ export default function QRcodeAlien() {
     <div className="flex flex-col p-2 items-end shrink relative">
       {/* Fixed to bottom-left corner */}
       <div
-        className="absolute bottom-10 left-7 p-2 rounded-xl bg-black border border-yellow-400
-        shadow-[0_0_30px_#facc15] animate-pulse hover:scale-105 transition-transform duration-300 group overflow-hidden"
+        className="absolute bottom-10 left-7 p-2 rounded-xl bg-black border border-white
+        shadow-[0_0_30px_#ffffff] animate-pulse hover:scale-105 transition-transform duration-300 group overflow-hidden"
       >
-        <QRCode
-          value={QR_CODE_VALUE}
-          bgColor="#000000"
-          fgColor="#facc15"
-          size={180}
-          level="H"
-        />
+        <div className="relative w-[180px] h-[180px]">
+          {/* QR Code itself */}
+          <QRCode
+            value={QR_CODE_VALUE}
+            bgColor="transparent"
+            fgColor="#ffffff"
+            size={180}
+            level="H"
+          />
 
-        {/* Scanline overlay */}
-        <div
-          className="absolute top-0 left-0 w-full h-full pointer-events-none
-          bg-gradient-to-b from-transparent via-yellow-300 to-transparent opacity-20 animate-[scan_2s_linear_infinite]"
-        />
+          {/* Embedded logo in the center of the QR code */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <Image
+              src="/images/circles.png"
+              alt="Circles Logo"
+              width={48}
+              height={48}
+              className="rounded-full"
+            />
+          </div>
+
+          {/* Scanline overlay */}
+          <div
+            className="absolute top-0 left-0 w-full h-full pointer-events-none
+            bg-gradient-to-b from-transparent via-yellow-300 to-transparent opacity-20 animate-[scan_2s_linear_infinite]"
+          />
+        </div>
       </div>
 
       {/* CTA Text */}
