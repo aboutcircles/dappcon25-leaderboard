@@ -16,6 +16,7 @@ import Winners from '@/components/Winners';
 import { Press_Start_2P } from 'next/font/google';
 import Notifications from '@/components/Notifications';
 import HideButton from '@/components/HideButton';
+import Image from 'next/image';
 
 const pressStart2P = Press_Start_2P({
   variable: '--font-press-start-2p',
@@ -116,19 +117,36 @@ export default function Home() {
                   {showInvites && (
                     <div className="border-r border-dashed border-white/80 w-1/2 mt-4">
                       <h1
-                        className={`${pressStart2P.className} text-lg sm:text-2xl mt-4 font-bold text-center text-[#00e2ff]`}
+                        className={`${pressStart2P.className} flex flex-row gap-2 flex-wrap items-center justify-center text-lg sm:text-2xl mt-4 font-bold text-center text-[#00e2ff]`}
                         // className="text-lg sm:text-2xl mt-4 font-bold text-center text-[#00e2ff]"
                       >
-                        Top inviters
+                        Top{' '}
+                        <Image
+                          src="/images/crc-logo.png"
+                          alt="crc"
+                          width={20}
+                          height={20}
+                          className="mx-1"
+                        />{' '}
+                        inviters
                       </h1>
                     </div>
                   )}
                   <div className="w-1/2 mt-4">
                     <h1
-                      className={`${pressStart2P.className} text-lg sm:text-2xl mt-4 font-bold text-center text-[#71ff49]`}
+                      className={`${pressStart2P.className} flex flex-row gap-2 flex-wrap items-center justify-center text-lg sm:text-2xl mt-4 font-bold text-center text-[#71ff49]`}
                       // className="text-lg sm:text-2xl mt-4 font-bold text-center text-[#71ff49]"
                     >
-                      Top mutual trusts
+                      Top{' '}
+                      <Image
+                        src="/images/crc-logo.png"
+                        alt="crc"
+                        width={20}
+                        height={20}
+                        className="mx-1"
+                      />{' '}
+                      <span>mutual</span>
+                      <span>trust</span>
                     </h1>
                   </div>
                 </div>
