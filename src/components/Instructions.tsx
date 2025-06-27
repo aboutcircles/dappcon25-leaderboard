@@ -26,7 +26,7 @@ export default function Instructions() {
           regardless of the ranking.
         </li>
         <li>
-          Users untrusting after the competition is over will be disqualified
+          Users untrusting after the competition is over will be disqualified.
         </li>
       </ol>
       <Countdown />
