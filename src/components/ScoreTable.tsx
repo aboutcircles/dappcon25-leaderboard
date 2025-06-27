@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-// import { usePlayersStore } from '@/stores/playersStore';
 import { useTrustsStore } from '@/stores/trustsStore';
 import { useInvitesStore } from '@/stores/invitesStore';
 import Image from 'next/image';
@@ -35,19 +34,14 @@ const ScoreTable: React.FC<{
     if (!table) return;
 
     const handleResize = () => setTableWidth?.(table.clientWidth);
-
-    // Initial measurement
     handleResize();
 
-    // Use ResizeObserver for dynamic changes
     const resizeObserver = new ResizeObserver(handleResize);
     resizeObserver.observe(table);
 
-    // Cleanup
     return () => resizeObserver.disconnect();
   }, [setTableWidth]);
 
-  // Helper to render the table
   const renderTable = (scores: TopPlayer[], type: 'invites' | 'trusts') => (
     <table className="border border-white/80 border-collapse bg-transparent w-full text-xs">
       <thead>
@@ -76,8 +70,8 @@ const ScoreTable: React.FC<{
             )}
             {type === 'trusts' && (
               <td className="px-1 py-1  text-white align-middle">
-                {/* {trusts[profile.address]?.mutualTrusts > 0 ? idx + 1 : ''} */}
-                {trusts[profile.address]?.trusts > 0 ? idx + 1 : ''}
+                {trusts[profile.address]?.mutualTrusts > 0 ? idx + 1 : ''}
+                {/* {trusts[profile.address]?.trusts > 0 ? idx + 1 : ''} */}
               </td>
             )}
 
@@ -107,8 +101,8 @@ const ScoreTable: React.FC<{
             )}
             {type === 'trusts' && (
               <td className="px-1 py-1  text-white align-middle">
-                {/* {trusts[profile.address]?.mutualTrusts || ''} */}
-                {trusts[profile.address]?.trusts || ''}
+                {trusts[profile.address]?.mutualTrusts || ''}
+                {/* {trusts[profile.address]?.trusts || ''} */}
               </td>
             )}
           </tr>

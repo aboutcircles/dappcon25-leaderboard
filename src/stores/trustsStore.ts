@@ -27,8 +27,8 @@ export const useTrustsStore = create<TrustsStore>()(
       const sorted = Object.values(stats)
         .map(player => ({
           address: player.player,
-          // score: player.mutualTrusts,
-          score: player.trusts,
+          score: player.mutualTrusts,
+          // score: player.trusts,
         }))
         .sort((a, b) => b.score - a.score);
 
@@ -39,12 +39,10 @@ export const useTrustsStore = create<TrustsStore>()(
         trustsTop10: top10.map(player => ({
           ...player,
           name: profiles.get(player.address)?.name,
-          // image: profiles.get(player.address)?.image,
         })),
         trustsScores: sorted.map(player => ({
           ...player,
           name: profiles.get(player.address)?.name,
-          // image: profiles.get(player.address)?.image,
         })),
       });
     }
