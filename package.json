@@ -23,6 +23,8 @@
     "next": "15.3.3",
     "notistack": "^3.0.2",
     "p5": "^2.0.3",
+    "qr-code-with-logo": "^1.1.0",
+    "qrcode.react": "^4.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-qr-code": "^2.0.16",

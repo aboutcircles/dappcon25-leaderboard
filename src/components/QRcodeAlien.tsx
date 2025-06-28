@@ -6,21 +6,16 @@ export default function QRcodeAlien() {
   return (
     <div className="flex flex-col p-2 items-end shrink relative">
       {/* Fixed to bottom-left corner */}
-      <div
-        className="absolute bottom-10 left-7 p-2 rounded-xl bg-black border border-white
-        shadow-[0_0_30px_#ffffff] animate-pulse hover:scale-105 transition-transform duration-400 group overflow-hidden"
-      >
+      <div className="absolute bottom-10 left-7 p-2 rounded-xl bg-white border border-black shadow-[0_0_30px_#000000] animate-pulse-glow hover:scale-105 transition-transform duration-400 group overflow-hidden">
         <div className="relative w-[180px] h-[180px]">
-          {/* QR Code itself */}
           <QRCode
             value={QR_CODE_VALUE}
-            bgColor="transparent"
-            fgColor="#ffffff"
+            bgColor="#ffffff"
+            fgColor="#000000"
             size={180}
             level="H"
           />
 
-          {/* Embedded logo in the center of the QR code */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <Image
               src="/images/circles.png"
@@ -30,17 +25,11 @@ export default function QRcodeAlien() {
               className="rounded-full"
             />
           </div>
-
-          {/* Scanline overlay */}
-          {/* <div
-            className="absolute top-0 left-0 w-full h-full pointer-events-none
-            bg-gradient-to-b from-transparent via-yellow-300 to-transparent opacity-20 animate-[scan_2s_linear_infinite]"
-          /> */}
         </div>
       </div>
 
       {/* CTA Text */}
-      <div className="text-white text-sm sm:text-sm ml-5 min-w-[300px] self-end">
+      <div className="text-black text-sm sm:text-sm ml-5 min-w-[300px] self-end">
         <a
           href={QR_CODE_VALUE}
           target="_blank"
