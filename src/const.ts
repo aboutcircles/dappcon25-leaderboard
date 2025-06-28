@@ -21,7 +21,7 @@ export const TIMESTAMP_END = parseInt(
   process.env.NEXT_PUBLIC_TIMESTAMP_END || '1751536800' // Thursday, July 3, 2025 2:00:00 PM GMT+02:00
 );
 
-export const QR_CODE_VALUE = `https://app.metri.xyz/transfer/${process.env.NEXT_PUBLIC_ORG_ADDRESS}/crc/${process.env.NEXT_PUBLIC_MIN_CIRCLES}`;
+export const QR_CODE_VALUE = `https://app.metri.xyz/transfer/${process.env.NEXT_PUBLIC_ORG_ADDRESS}/crc/${process.env.NEXT_PUBLIC_MIN_CIRCLES}?context=ethcc`;
 
 export const COLORS = {
   1: '#00e2ff',
