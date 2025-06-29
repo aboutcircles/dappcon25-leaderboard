@@ -21,30 +21,30 @@ interface InvitesStore {
 export const useInvitesStore = create<InvitesStore>()(
   // devtools(set => {
   set => {
-    async function updateInvitesTop10(stats: Record<string, InvitesStats>) {
-      const sorted = Object.values(stats)
-        .map(player => ({
-          address: player.player,
-          score: player.invitesRedeemed,
-        }))
-        .sort((a, b) => b.score - a.score);
+    // async function updateInvitesTop10(stats: Record<string, InvitesStats>) {
+    //   const sorted = Object.values(stats)
+    //     .map(player => ({
+    //       address: player.player,
+    //       score: player.invitesRedeemed,
+    //     }))
+    //     .sort((a, b) => b.score - a.score);
 
-      const top10 = sorted.slice(0, 10).filter(player => player.score > 0);
+    //   const top10 = sorted.slice(0, 10).filter(player => player.score > 0);
 
-      const profiles = await getProfiles(sorted.map(player => player.address));
-      set({
-        invitesTop10: top10.map(player => ({
-          ...player,
-          name: profiles.get(player.address)?.name,
-          // image: profiles.get(player.address)?.image,
-        })),
-        invitesScores: sorted.map(player => ({
-          ...player,
-          name: profiles.get(player.address)?.name,
-          // image: profiles.get(player.address)?.image,
-        })),
-      });
-    }
+    //   const profiles = await getProfiles(sorted.map(player => player.address));
+    //   set({
+    //     invitesTop10: top10.map(player => ({
+    //       ...player,
+    //       name: profiles.get(player.address)?.name,
+    //       // image: profiles.get(player.address)?.image,
+    //     })),
+    //     invitesScores: sorted.map(player => ({
+    //       ...player,
+    //       name: profiles.get(player.address)?.name,
+    //       // image: profiles.get(player.address)?.image,
+    //     })),
+    //   });
+    // }
 
     return {
       invitesStats: {},
@@ -80,8 +80,37 @@ export const useInvitesStore = create<InvitesStore>()(
               invitesSent: 0,
             };
           });
-          set({ invitesStats: _stats, invitesLoading: false });
-          await updateInvitesTop10(_stats);
+
+          const sorted = Object.values(_stats)
+            .map(player => ({
+              address: player.player,
+              score: player.invitesRedeemed,
+            }))
+            .sort((a, b) => b.score - a.score);
+
+          const top10 = sorted.slice(0, 10).filter(player => player.score > 0);
+
+          const profiles = await getProfiles(
+            sorted.map(player => player.address)
+          );
+          set({
+            invitesTop10: top10.map(player => ({
+              ...player,
+              name: profiles.get(player.address)?.name,
+              // image: profiles.get(player.address)?.image,
+            })),
+            invitesScores: sorted.map(player => ({
+              ...player,
+              name: profiles.get(player.address)?.name,
+              // image: profiles.get(player.address)?.image,
+            })),
+            invitesStats: _stats,
+            invitesLoading: false,
+          });
+
+          ///////
+          // set({ invitesStats: _stats, invitesLoading: false });
+          // await updateInvitesTop10(_stats);
         } catch (error) {
           set({
             invitesError:
@@ -118,8 +147,35 @@ export const useInvitesStore = create<InvitesStore>()(
                 invitesSent: 0,
               };
             });
-            set({ invitesStats: _stats });
-            await updateInvitesTop10(_stats);
+            // set({ invitesStats: _stats });
+
+            const sorted = Object.values(_stats)
+              .map(player => ({
+                address: player.player,
+                score: player.invitesRedeemed,
+              }))
+              .sort((a, b) => b.score - a.score);
+
+            const top10 = sorted
+              .slice(0, 10)
+              .filter(player => player.score > 0);
+
+            const profiles = await getProfiles(
+              sorted.map(player => player.address)
+            );
+            set({
+              invitesTop10: top10.map(player => ({
+                ...player,
+                name: profiles.get(player.address)?.name,
+                // image: profiles.get(player.address)?.image,
+              })),
+              invitesScores: sorted.map(player => ({
+                ...player,
+                name: profiles.get(player.address)?.name,
+                // image: profiles.get(player.address)?.image,
+              })),
+              invitesStats: _stats,
+            });
           }
         );
         return subscription;

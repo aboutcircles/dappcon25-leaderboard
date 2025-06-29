@@ -93,82 +93,46 @@ export const usePlayersStore = create<PlayersStore>(set => ({
   },
 
   subscribeToPlayersUpdates: () => {
-    const subscription = subscribeToTransfers(
-      async (transfers: TransferData[]) => {
-        console.log('Transfers subscription:', transfers);
-        for (const transfer of transfers) {
-          const { from, value } = transfer;
-          if (
-            BigInt(value) >= MIN_CIRCLES &&
-            !usePlayersStore
-              .getState()
-              .players.some(p => p.address.toLowerCase() === from.toLowerCase())
-          ) {
-            // Fetch profile for the new player
-            console.log('Fetching profile for new player:', from);
-            const _from = getAddress(from);
-            const profilesMap = await getProfiles([_from]);
-            const profile = profilesMap.get(_from);
-            console.log('Profile for new player:', profile);
-            const newPlayer = {
-              address: _from,
-              amount: BigInt(value),
-              name: profile?.name || undefined,
-              // image: profile?.image || undefined,
-            };
-            set(state => ({
-              players: [newPlayer, ...state.players],
-            }));
-            usePlayersStore.getState().enqueueNewPlayer(newPlayer);
+    console.log('Subscribing to players updates');
+    try {
+      const subscription = subscribeToTransfers(
+        async (transfers: TransferData[]) => {
+          console.log('Transfers subscription:', transfers);
+          for (const transfer of transfers) {
+            const { from, value } = transfer;
+            if (
+              BigInt(value) >= MIN_CIRCLES &&
+              !usePlayersStore
+                .getState()
+                .players.some(
+                  p => p.address.toLowerCase() === from.toLowerCase()
+                )
+            ) {
+              // Fetch profile for the new player
+              console.log('Fetching profile for new player:', from);
+              const _from = getAddress(from);
+              const profilesMap = await getProfiles([_from]);
+              const profile = profilesMap.get(_from);
+              console.log('Profile for new player:', profile);
+              const newPlayer = {
+                address: _from,
+                amount: BigInt(value),
+                name: profile?.name || undefined,
+                // image: profile?.image || undefined,
+              };
+              set(state => ({
+                players: [newPlayer, ...state.players],
+              }));
+              usePlayersStore.getState().enqueueNewPlayer(newPlayer);
+            }
           }
         }
-      }
-    );
-    return subscription;
-    // try {
-    //   const avatarEvents = await circlesData.subscribeToEvents(
-    //     ORG_ADDRESS as `0x${string}`
-    //   );
-    //   avatarEvents.subscribe(async (event: CirclesEvent) => {
-    //     if (event && isTransferEvent(event)) {
-    //       const { from, transactionHash, amount, timestamp, blockNumber } =
-    //         event as CrcV2_StreamCompleted;
-    //       console.log('New transfer event:', from);
-    //       if (
-    //         typeof from === 'string' &&
-    //         typeof transactionHash === 'string' &&
-    //         typeof amount === 'bigint' &&
-    //         typeof timestamp === 'number' &&
-    //         amount >= MIN_CIRCLES &&
-    //         timestamp >= TIMESTAMP_START &&
-    //         !usePlayersStore.getState().players.some(p => p.address === from)
-    //       ) {
-    //         // Fetch profile for the new player
-    //         console.log('Fetching profile for new player:', from);
-    //         const _from = getAddress(from);
-    //         const profilesMap = await getProfiles([_from]);
-    //         const profile = profilesMap.get(_from);
-    //         console.log('Profile for new player:', profile);
-    //         const newPlayer = {
-    //           address: _from,
-    //           transactionHash,
-    //           amount,
-    //           blockNumber,
-    //           name: profile?.name || undefined,
-    //           // image: profile?.image || undefined,
-    //           timestamp: timestamp,
-    //         };
-    //         set(state => ({
-    //           players: [newPlayer, ...state.players],
-    //         }));
-    //         // Enqueue new player for notifications
-    //         usePlayersStore.getState().enqueueNewPlayer(newPlayer);
-    //       }
-    //     }
-    //   });
-    // } catch (error) {
-    //   set({ error: error instanceof Error ? error.message : String(error) });
-    // }
+      );
+      return subscription;
+    } catch (error) {
+      console.error('Error subscribing to players updates:', error);
+      return { unsubscribe: () => {} };
+    }
   },
 
   enqueueNewPlayer: (player: Player) => {

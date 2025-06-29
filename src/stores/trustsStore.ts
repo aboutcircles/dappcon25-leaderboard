@@ -13,6 +13,8 @@ interface TrustsStore {
   trustsTop10: TopPlayer[];
   trustsScores: TopPlayer[];
 
+  trustSubsTimestamp: number;
+
   trustMap: Record<string, { in: string[]; out: string[]; mutual: string[] }>;
 
   fetchTrustsStats: () => Promise<void>;
@@ -23,29 +25,30 @@ interface TrustsStore {
 
 export const useTrustsStore = create<TrustsStore>()(
   devtools(set => {
-    async function updateTop10(stats: Record<string, TrustsStats>) {
-      const sorted = Object.values(stats)
-        .map(player => ({
-          address: player.player,
-          score: player.mutualTrusts,
-          // score: player.trusts,
-        }))
-        .sort((a, b) => b.score - a.score);
+    // async function updateTop10(stats: Record<string, TrustsStats>) {
+    //   console.log('updating top 10 trusts');
+    //   const sorted = Object.values(stats)
+    //     .map(player => ({
+    //       address: player.player,
+    //       // score: player.mutualTrusts,
+    //       score: player.trusts,
+    //     }))
+    //     .sort((a, b) => b.score - a.score);
 
-      const top10 = sorted.slice(0, 10).filter(player => player.score > 0);
+    //   const top10 = sorted.slice(0, 10).filter(player => player.score > 0);
 
-      const profiles = await getProfiles(sorted.map(player => player.address));
-      set({
-        trustsTop10: top10.map(player => ({
-          ...player,
-          name: profiles.get(player.address)?.name,
-        })),
-        trustsScores: sorted.map(player => ({
-          ...player,
-          name: profiles.get(player.address)?.name,
-        })),
-      });
-    }
+    //   const profiles = await getProfiles(sorted.map(player => player.address));
+    //   set({
+    //     trustsTop10: top10.map(player => ({
+    //       ...player,
+    //       name: profiles.get(player.address)?.name,
+    //     })),
+    //     trustsScores: sorted.map(player => ({
+    //       ...player,
+    //       name: profiles.get(player.address)?.name,
+    //     })),
+    //   });
+    // }
     return {
       trustsStats: {},
       trustsLoading: false,
@@ -53,6 +56,7 @@ export const useTrustsStore = create<TrustsStore>()(
       trustsTop10: [],
       trustsScores: [],
       trustMap: {},
+      trustSubsTimestamp: new Date().getTime(),
 
       fetchTrustsStats: async () => {
         set({ trustsLoading: true, trustsError: null });
@@ -72,12 +76,38 @@ export const useTrustsStore = create<TrustsStore>()(
               mutualTrusts: _trustMap[addr].mutual.length,
             };
           });
+          const sorted = Object.values(_stats)
+            .map(player => ({
+              address: player.player,
+              score: player.mutualTrusts,
+              // score: player.trusts,
+            }))
+            .sort((a, b) => b.score - a.score);
+
+          const top10 = sorted.slice(0, 10).filter(player => player.score > 0);
+
+          const profiles = await getProfiles(
+            sorted.map(player => player.address)
+          );
           set({
+            trustsTop10: top10.map(player => ({
+              ...player,
+              name: profiles.get(player.address)?.name,
+            })),
+            trustsScores: sorted.map(player => ({
+              ...player,
+              name: profiles.get(player.address)?.name,
+            })),
             trustsStats: _stats,
             trustsLoading: false,
             trustMap: _trustMap,
           });
-          await updateTop10(_stats);
+          // set({
+          //   trustsStats: _stats,
+          //   trustsLoading: false,
+          //   trustMap: _trustMap,
+          // });
+          // await updateTop10(_stats);
         } catch (error) {
           set({
             trustsError: error instanceof Error ? error.message : String(error),
@@ -90,8 +120,19 @@ export const useTrustsStore = create<TrustsStore>()(
         const subscription = subscribeToTrusts(
           playerAddresses,
           async (trusts: Trust[]) => {
-            const _trustMap = { ...useTrustsStore.getState().trustMap };
+            // const _trustMap = { ...useTrustsStore.getState().trustMap };
+            const _trustMap = {} as Record<
+              string,
+              { in: string[]; out: string[]; mutual: string[] }
+            >;
             console.log('Trusts subscription:', trusts);
+            if (
+              new Date().getTime() -
+                useTrustsStore.getState().trustSubsTimestamp <
+              7000
+            ) {
+              return;
+            }
             trusts.forEach(t => {
               const truster = t.truster.id.toLowerCase();
               const trustee = t.trustee.id.toLowerCase();
@@ -102,30 +143,55 @@ export const useTrustsStore = create<TrustsStore>()(
               if (!_trustMap[trustee]) {
                 _trustMap[trustee] = { in: [], out: [], mutual: [] };
               }
-              if (
-                _trustMap[truster] &&
-                !_trustMap[truster].out.includes(trustee)
-              ) {
-                _trustMap[truster].out.push(trustee);
 
-                if (
-                  _trustMap[truster].in.includes(trustee) &&
-                  !_trustMap[truster].mutual.includes(trustee)
-                ) {
-                  _trustMap[truster].mutual.push(trustee);
+              if (t.expiryTime === '0') {
+                console.log('Untrusted:', t);
+                if (_trustMap[truster].out.includes(trustee)) {
+                  _trustMap[truster].out = _trustMap[truster].out.filter(
+                    t => t !== trustee
+                  );
                 }
-              }
-              if (
-                _trustMap[trustee] &&
-                !_trustMap[trustee].in.includes(truster)
-              ) {
-                _trustMap[trustee].in.push(truster);
-
+                if (_trustMap[trustee].in.includes(truster)) {
+                  _trustMap[trustee].in = _trustMap[trustee].in.filter(
+                    t => t !== truster
+                  );
+                }
+                if (_trustMap[trustee].mutual.includes(truster)) {
+                  _trustMap[trustee].mutual = _trustMap[trustee].mutual.filter(
+                    t => t !== truster
+                  );
+                }
+                if (_trustMap[truster].mutual.includes(trustee)) {
+                  _trustMap[truster].mutual = _trustMap[truster].mutual.filter(
+                    t => t !== trustee
+                  );
+                }
+              } else {
                 if (
-                  _trustMap[trustee].out.includes(truster) &&
-                  !_trustMap[trustee].mutual.includes(truster)
+                  _trustMap[truster] &&
+                  !_trustMap[truster].out.includes(trustee)
                 ) {
-                  _trustMap[trustee].mutual.push(truster);
+                  _trustMap[truster].out.push(trustee);
+
+                  if (
+                    _trustMap[truster].in.includes(trustee) &&
+                    !_trustMap[truster].mutual.includes(trustee)
+                  ) {
+                    _trustMap[truster].mutual.push(trustee);
+                  }
+                }
+                if (
+                  _trustMap[trustee] &&
+                  !_trustMap[trustee].in.includes(truster)
+                ) {
+                  _trustMap[trustee].in.push(truster);
+
+                  if (
+                    _trustMap[trustee].out.includes(truster) &&
+                    !_trustMap[trustee].mutual.includes(truster)
+                  ) {
+                    _trustMap[trustee].mutual.push(truster);
+                  }
                 }
               }
             });
@@ -140,12 +206,43 @@ export const useTrustsStore = create<TrustsStore>()(
                 mutualTrusts: _trustMap[addr]?.mutual?.length,
               };
             });
+            console.log('trustMap', _trustMap);
+            console.log('stats', _stats);
+
+            const sorted = Object.values(_stats)
+              .map(player => ({
+                address: player.player,
+                score: player.mutualTrusts,
+                // score: player.trusts,
+              }))
+              .sort((a, b) => b.score - a.score);
+
+            const top10 = sorted
+              .slice(0, 10)
+              .filter(player => player.score > 0);
+
+            const profiles = await getProfiles(
+              sorted.map(player => player.address)
+            );
             set({
+              trustsTop10: top10.map(player => ({
+                ...player,
+                name: profiles.get(player.address)?.name,
+              })),
+              trustsScores: sorted.map(player => ({
+                ...player,
+                name: profiles.get(player.address)?.name,
+              })),
               trustsStats: _stats,
-              trustsLoading: false,
               trustMap: _trustMap,
+              trustSubsTimestamp: new Date().getTime(),
             });
-            await updateTop10(_stats);
+
+            // set({
+            //   trustsStats: _stats,
+            //   trustMap: _trustMap,
+            // });
+            // await updateTop10(_stats);
           }
         );
         return subscription;

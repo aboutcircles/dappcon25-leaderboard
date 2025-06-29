@@ -345,26 +345,26 @@ const RocketCanvas: React.FC<{
     p5Instance.current = new p5(sketch, containerNode!);
 
     // Call redraw handlers immediately after p5 instance creation
-    if (
-      p5Instance.current &&
-      'myCustomRedrawAccordingToNewPropsHandlerInvites' in p5Instance.current
-    ) {
-      (
-        p5Instance.current as P5WithCustomHandler
-      ).myCustomRedrawAccordingToNewPropsHandlerInvites({
-        invites: top10Invites,
-      });
-    }
-    if (
-      p5Instance.current &&
-      'myCustomRedrawAccordingToNewPropsHandlerTrusts' in p5Instance.current
-    ) {
-      (
-        p5Instance.current as P5WithCustomHandler
-      ).myCustomRedrawAccordingToNewPropsHandlerTrusts({
-        trusts: top10Trusts,
-      });
-    }
+    // if (
+    //   p5Instance.current &&
+    //   'myCustomRedrawAccordingToNewPropsHandlerInvites' in p5Instance.current
+    // ) {
+    //   (
+    //     p5Instance.current as P5WithCustomHandler
+    //   ).myCustomRedrawAccordingToNewPropsHandlerInvites({
+    //     invites: top10Invites,
+    //   });
+    // }
+    // if (
+    //   p5Instance.current &&
+    //   'myCustomRedrawAccordingToNewPropsHandlerTrusts' in p5Instance.current
+    // ) {
+    //   (
+    //     p5Instance.current as P5WithCustomHandler
+    //   ).myCustomRedrawAccordingToNewPropsHandlerTrusts({
+    //     trusts: top10Trusts,
+    //   });
+    // }
 
     // Resize observer
     let resizeObserver: ResizeObserver | null = null;
@@ -428,9 +428,7 @@ const RocketCanvas: React.FC<{
         invites: top10Invites,
       });
     }
-  }, [top10Invites]);
 
-  useEffect(() => {
     if (
       p5Instance.current &&
       'myCustomRedrawAccordingToNewPropsHandlerTrusts' in p5Instance.current
@@ -438,6 +436,34 @@ const RocketCanvas: React.FC<{
       (
         p5Instance.current as P5WithCustomHandler
       ).myCustomRedrawAccordingToNewPropsHandlerTrusts({ trusts: top10Trusts });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (
+      p5Instance.current &&
+      'myCustomRedrawAccordingToNewPropsHandlerInvites' in p5Instance.current
+    ) {
+      (
+        p5Instance.current as P5WithCustomHandler
+      ).myCustomRedrawAccordingToNewPropsHandlerInvites({
+        invites: top10Invites,
+      });
+    }
+  }, [top10Invites]);
+
+  useEffect(() => {
+    console.log('useEffect top10Trusts', top10Trusts, new Date());
+    if (
+      p5Instance.current &&
+      'myCustomRedrawAccordingToNewPropsHandlerTrusts' in p5Instance.current
+    ) {
+      (
+        p5Instance.current as P5WithCustomHandler
+      ).myCustomRedrawAccordingToNewPropsHandlerTrusts({ trusts: top10Trusts });
+    } else {
+      console.log('no p5Instance.current');
     }
   }, [top10Trusts]);
 

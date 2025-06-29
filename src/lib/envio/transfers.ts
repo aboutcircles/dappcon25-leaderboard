@@ -34,21 +34,27 @@ const orgAddress = getAddress(ORG_ADDRESS);
 const startTimeDb = formatUnixTimestampToISO(TIMESTAMP_START);
 const endTimeDb = formatUnixTimestampToISO(TIMESTAMP_END);
 
-console.log(orgAddress, startTimeDb, endTimeDb);
+// console.log(orgAddress, startTimeDb, endTimeDb);
 
 export function subscribeToTransfers(
   handler: (transfers: TransferData[]) => void
 ) {
-  const subscription = urqlClient
-    .subscription(TRANSFERS_SUBSCRIPTION, {
-      orgAddress,
-      startTimeDb,
-      endTimeDb,
-    })
-    .subscribe(result => {
-      if (result.data) {
-        handler(result.data.Transfer || []);
-      }
-    });
-  return subscription;
+  try {
+    const subscription = urqlClient
+      .subscription(TRANSFERS_SUBSCRIPTION, {
+        orgAddress,
+        startTimeDb,
+        endTimeDb,
+      })
+      .subscribe(result => {
+        console.log('Transfers subscription:', result);
+        if (result.data) {
+          handler(result.data.Transfer || []);
+        }
+      });
+    return subscription;
+  } catch (error) {
+    console.log('Error subscribing to transfers:', error);
+    return { unsubscribe: () => {} };
+  }
 }

@@ -64,7 +64,12 @@ export default function Home() {
       await fetchTrustsStats();
     };
     init();
-    subscribeToPlayersUpdates();
+    const subPlayers = subscribeToPlayersUpdates();
+
+    return () => {
+      console.log('Unsubscribing from players updates');
+      subPlayers.unsubscribe();
+    };
   }, [
     fetchPlayers,
     subscribeToPlayersUpdates,

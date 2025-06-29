@@ -43,8 +43,6 @@ export const TRUSTS_SUBSCRIPTION = gql`
           { truster_id: { _in: $addressList } }
           { trustee_id: { _in: $addressList } }
         ]
-        limit: { _neq: 0 }
-        expiryTime: { _neq: 0 }
         version: { _eq: 2 }
       }
     ) {
@@ -61,6 +59,7 @@ export const TRUSTS_SUBSCRIPTION = gql`
           name
         }
       }
+      expiryTime
     }
   }
 `;
@@ -80,6 +79,7 @@ export interface Trust {
       name: string;
     };
   };
+  expiryTime: string;
 }
 
 export interface TrustsResult {
