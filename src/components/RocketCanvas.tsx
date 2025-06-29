@@ -45,9 +45,6 @@ const RocketCanvas: React.FC<{
   const top10Invites = useInvitesStore(state => state.invitesTop10);
   const top10Trusts = useTrustsStore(state => state.trustsTop10);
 
-  console.log('top10Invites', top10Invites);
-  console.log('top10trusts', top10Trusts);
-
   useEffect(() => {
     const containerNode = containerRef.current;
 
@@ -414,33 +411,10 @@ const RocketCanvas: React.FC<{
         canvases.forEach(canvas => canvas.remove());
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [leftTableWidth, rightTableWidth, showInvites]);
 
   useEffect(() => {
-    if (
-      p5Instance.current &&
-      'myCustomRedrawAccordingToNewPropsHandlerInvites' in p5Instance.current
-    ) {
-      (
-        p5Instance.current as P5WithCustomHandler
-      ).myCustomRedrawAccordingToNewPropsHandlerInvites({
-        invites: top10Invites,
-      });
-    }
-
-    if (
-      p5Instance.current &&
-      'myCustomRedrawAccordingToNewPropsHandlerTrusts' in p5Instance.current
-    ) {
-      (
-        p5Instance.current as P5WithCustomHandler
-      ).myCustomRedrawAccordingToNewPropsHandlerTrusts({ trusts: top10Trusts });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
+    console.log('useEffect top10Invites', top10Invites, new Date());
     if (
       p5Instance.current &&
       'myCustomRedrawAccordingToNewPropsHandlerInvites' in p5Instance.current
@@ -462,8 +436,6 @@ const RocketCanvas: React.FC<{
       (
         p5Instance.current as P5WithCustomHandler
       ).myCustomRedrawAccordingToNewPropsHandlerTrusts({ trusts: top10Trusts });
-    } else {
-      console.log('no p5Instance.current');
     }
   }, [top10Trusts]);
 
