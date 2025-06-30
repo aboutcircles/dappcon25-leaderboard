@@ -11,6 +11,7 @@ interface InvitesStore {
   invitesError: string | null;
   invitesTop10: TopPlayer[];
   invitesScores: TopPlayer[];
+  invitesSubsTimestamp: number;
 
   fetchInvitesStats: () => Promise<void>;
   subscribeToInvitesStats: (playerAddresses: string[]) => {
@@ -52,6 +53,7 @@ export const useInvitesStore = create<InvitesStore>()(
       invitesError: null,
       invitesTop10: [],
       invitesScores: [],
+      invitesSubsTimestamp: 0,
 
       fetchInvitesStats: async () => {
         set({ invitesLoading: true, invitesError: null });
@@ -125,6 +127,13 @@ export const useInvitesStore = create<InvitesStore>()(
           playerAddresses,
           async ({ invitesRedeemed }) => {
             console.log('Invites redeemed subscription:', invitesRedeemed);
+            if (
+              new Date().getTime() -
+                useInvitesStore.getState().invitesSubsTimestamp <
+              7000
+            ) {
+              return;
+            }
             const invitesRedeemedMap = new Map<string, number>();
             invitesRedeemed.forEach(a => {
               const invitedBy = a.invitedBy.toLowerCase();
@@ -175,6 +184,7 @@ export const useInvitesStore = create<InvitesStore>()(
                 // image: profiles.get(player.address)?.image,
               })),
               invitesStats: _stats,
+              invitesSubsTimestamp: Date.now(),
             });
           }
         );
