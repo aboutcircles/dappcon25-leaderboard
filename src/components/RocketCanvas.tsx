@@ -81,7 +81,7 @@ const RocketCanvas: React.FC<{
     function recalcSizes(w: number, h: number) {
       const IMAGE_SIZE = h / 100;
       const ROCKET_SCALE = 10;
-      const BOTTOM_MARGIN = h < 900 ? (h / 10) * 3 : h / 10;
+      const BOTTOM_MARGIN = h < 900 ? (h / 10) * 4 : h / 10;
       const TOP_MARGIN = (h / 10) * 2;
       const ROCKET_SIZE = IMAGE_SIZE * ROCKET_SCALE;
       const WINDOW_SIZE = ROCKET_SIZE * 0.2;
