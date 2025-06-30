@@ -79,10 +79,10 @@ export const useTrustsStore = create<TrustsStore>()(
           const sorted = Object.values(_stats)
             .map(player => ({
               address: player.player,
-              score: player.mutualTrusts,
+              score: Number(player.mutualTrusts) || 0,
               // score: player.trusts,
             }))
-            .sort((a, b) => b.score - a.score);
+            .sort((a, b) => Number(b.score) - Number(a.score));
 
           const top10 = sorted.slice(0, 10).filter(player => player.score > 0);
 
@@ -212,10 +212,10 @@ export const useTrustsStore = create<TrustsStore>()(
             const sorted = Object.values(_stats)
               .map(player => ({
                 address: player.player,
-                score: player.mutualTrusts,
+                score: player.mutualTrusts || 0,
                 // score: player.trusts,
               }))
-              .sort((a, b) => b.score - a.score);
+              .sort((a, b) => Number(b.score) - Number(a.score));
 
             const top10 = sorted
               .slice(0, 10)
