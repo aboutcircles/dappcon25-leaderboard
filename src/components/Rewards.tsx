@@ -31,7 +31,7 @@ export default function Rewards() {
         <span className="font-bold">#4-#10:</span> 50 EURe + swag
       </div>
       <div>
-        <span className="font-bold">#11-#30:</span> swag
+        <span className="font-bold">#11-#20:</span> swag
       </div>
     </div>
   );
