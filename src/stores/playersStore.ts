@@ -7,6 +7,7 @@ import { getAddress } from 'ethers';
 import { Player, TransferData } from '@/types';
 import { getProfiles } from '@/lib/getProfiles';
 import { subscribeToTransfers } from '@/lib/envio/transfers';
+import { TEAM } from '@/team';
 
 interface PlayersStore {
   players: Player[];
@@ -21,13 +22,6 @@ interface PlayersStore {
   enqueueNewPlayer: (player: Player) => void;
   dequeueNewPlayer: () => void;
 }
-
-// function isTransferEvent(event: CirclesEvent) {
-//   if (event.$event === 'CrcV2_StreamCompleted') {
-//     return true;
-//   }
-//   return false;
-// }
 
 export const usePlayersStore = create<PlayersStore>(set => ({
   players: [],
@@ -55,10 +49,10 @@ export const usePlayersStore = create<PlayersStore>(set => ({
 
           if (
             row.attoCircles >= MIN_CIRCLES &&
-            row.timestamp >= TIMESTAMP_START
+            row.timestamp >= TIMESTAMP_START &&
+            !TEAM.includes(from)
           ) {
             if (!playerMap.has(from)) {
-              console.log('adding player:', from);
               playerMap.set(from, {
                 address: from,
                 amount: row.attoCircles,

@@ -53,7 +53,7 @@ export interface InviteSent {
   timestamp: number;
 }
 
-export type RocketData = {
+export type InviteData = {
   invite: TopPlayer;
   address: string;
   image: p5.Image | null;

@@ -5,12 +5,14 @@ import { ORG_ADDRESS } from '@/const';
 import { getAddress } from 'ethers';
 import { formatUnixTimestampToISO } from '../utils/formatTimestampToISO';
 import { TransferData } from '@/types';
+import { TEAM } from '@/team';
 
 export const TRANSFERS_SUBSCRIPTION = gql`
   subscription onTransfersData(
     $orgAddress: String
     $startTimeDb: timestamp
     $endTimeDb: timestamp
+    $teamAddresses: [String!]!
   ) {
     Transfer(
       where: {
@@ -18,6 +20,7 @@ export const TRANSFERS_SUBSCRIPTION = gql`
         db_write_timestamp: { _gte: $startTimeDb, _lte: $endTimeDb }
         transferType: { _eq: "StreamCompleted" }
         isPartOfStreamOrHub: { _eq: false }
+        from: { _nin: $teamAddresses }
       }
     ) {
       from
@@ -45,6 +48,7 @@ export function subscribeToTransfers(
         orgAddress,
         startTimeDb,
         endTimeDb,
+        teamAddresses: TEAM,
       })
       .subscribe(result => {
         console.log('Transfers subscription:', result);

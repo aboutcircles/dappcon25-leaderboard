@@ -1,8 +1,8 @@
 import { COLORS } from '@/const';
-import { RocketData, TrustData } from '@/types';
+import { InviteData, TrustData } from '@/types';
 import p5 from 'p5';
 
-export function drawRocketGroup<T extends RocketData | TrustData>(
+export function drawRocketGroup<T extends InviteData | TrustData>(
   p: p5,
   imagesLoaded: boolean,
   dataArray: T[],
@@ -25,6 +25,13 @@ export function drawRocketGroup<T extends RocketData | TrustData>(
   RANGE: number = 3
 ) {
   const centerX = width / 2;
+
+  const smallestScore =
+    left && dataArray[0]
+      ? (dataArray[0] as InviteData).invite?.score
+      : dataArray[0]
+      ? (dataArray[0] as TrustData).trust?.score
+      : 0;
 
   // 1. Group by score bucket
   const scoreGroups: Record<number, T[]> = {};
@@ -75,8 +82,8 @@ export function drawRocketGroup<T extends RocketData | TrustData>(
     maxN = Math.max(maxN, n);
 
     // Start at TOP_MARGIN
-    const yBase = TOP_MARGIN + availableHeight - score * verticalSpacing; // +
-    // (sortedScores.length > 1 ? 0 : availableHeight / 2);
+    const yBase =
+      TOP_MARGIN + availableHeight - (score - smallestScore) * verticalSpacing;
 
     // Assign a persistent random x value for each element in the group
     group.forEach((data: T) => {

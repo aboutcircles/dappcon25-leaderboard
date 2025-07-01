@@ -2,7 +2,7 @@
 import React, { useRef, useEffect } from 'react';
 import p5 from 'p5';
 import { useInvitesStore } from '@/stores/invitesStore';
-import type { RocketData, TopPlayer, TrustData } from '@/types';
+import type { InviteData, TopPlayer, TrustData } from '@/types';
 import { useTrustsStore } from '@/stores/trustsStore';
 import { drawRocketGroup } from '@/lib/draw/drawRocketGroup';
 import { getProfileFromDB } from '@/lib/profileDb';
@@ -62,7 +62,7 @@ const RocketCanvas: React.FC<{
     let height = 200;
 
     // Holds { invite, image, xOffset, yOffset, xSpeed, ySpeed }
-    let inviteData: RocketData[] = [];
+    let inviteData: InviteData[] = [];
     let trustData: TrustData[] = [];
 
     let imagesLoadedInvites = false;
@@ -258,7 +258,7 @@ const RocketCanvas: React.FC<{
 
         // Draw invites (left)
         if (showInvites) {
-          drawRocketGroup<RocketData>(
+          drawRocketGroup<InviteData>(
             p,
             imagesLoadedInvites,
             inviteData,
@@ -300,7 +300,8 @@ const RocketCanvas: React.FC<{
           rocketImgRef,
           placeholderImgRef,
           showInvites,
-          imageCache
+          imageCache,
+          1
         );
       };
 
