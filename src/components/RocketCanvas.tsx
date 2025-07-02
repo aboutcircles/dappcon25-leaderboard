@@ -433,7 +433,7 @@ const RocketCanvas: React.FC<{
   }, [top10Invites]);
 
   useEffect(() => {
-    // console.log('useEffect top10Trusts', top10Trusts, new Date());
+    console.log('useEffect top10Trusts', top10Trusts, new Date());
     if (
       p5Instance.current &&
       'myCustomRedrawAccordingToNewPropsHandlerTrusts' in p5Instance.current

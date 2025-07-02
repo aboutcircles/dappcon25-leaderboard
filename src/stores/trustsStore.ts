@@ -145,7 +145,7 @@ export const useTrustsStore = create<TrustsStore>()(
               }
 
               if (t.expiryTime === '0') {
-                console.log('Untrusted:', t);
+                // console.log('Untrusted:', t);
                 if (_trustMap[truster].out.includes(trustee)) {
                   _trustMap[truster].out = _trustMap[truster].out.filter(
                     t => t !== trustee

@@ -26,6 +26,8 @@ export function drawRocketGroup<T extends InviteData | TrustData>(
 ) {
   const centerX = width / 2;
 
+  if (dataArray.length === 0) return;
+
   const smallestScore =
     left && dataArray[0]
       ? (dataArray[0] as InviteData).invite?.score
