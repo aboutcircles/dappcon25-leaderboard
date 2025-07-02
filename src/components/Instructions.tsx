@@ -28,6 +28,7 @@ export default function Instructions() {
         <li>
           Users untrusting after the competition is over will be disqualified.
         </li>
+        <li>Users inviting fake accounts will be disqualified.</li>
       </ol>
       <Countdown />
     </div>

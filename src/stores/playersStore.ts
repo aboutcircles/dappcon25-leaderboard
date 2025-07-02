@@ -39,7 +39,7 @@ export const usePlayersStore = create<PlayersStore>(set => ({
 
       let hasResults = true;
       const playerMap = new Map<string, Player>();
-      console.log('Init fetch players:');
+      // console.log('Init fetch players:');
       while (hasResults) {
         hasResults = await query.queryNextPage();
         if (!hasResults || !query.currentPage) break;
@@ -64,7 +64,7 @@ export const usePlayersStore = create<PlayersStore>(set => ({
 
       const players = Array.from(playerMap.values());
       const profilesMap = await getProfiles(players.map(p => p.address));
-      console.log('Getting profiles for initial players:', profilesMap);
+      // console.log('Getting profiles for initial players:', profilesMap);
       const playersWithProfiles = players.map(player => {
         const profile = profilesMap.get(player.address);
         return {
@@ -87,11 +87,11 @@ export const usePlayersStore = create<PlayersStore>(set => ({
   },
 
   subscribeToPlayersUpdates: () => {
-    console.log('Subscribing to players updates');
+    // console.log('Subscribing to players updates');
     try {
       const subscription = subscribeToTransfers(
         async (transfers: TransferData[]) => {
-          console.log('Transfers subscription:', transfers);
+          // console.log('Transfers subscription:', transfers);
           for (const transfer of transfers) {
             const { from, value } = transfer;
             if (
@@ -103,11 +103,11 @@ export const usePlayersStore = create<PlayersStore>(set => ({
                 )
             ) {
               // Fetch profile for the new player
-              console.log('Fetching profile for new player:', from);
+              // console.log('Fetching profile for new player:', from);
               const _from = getAddress(from);
               const profilesMap = await getProfiles([_from]);
               const profile = profilesMap.get(_from);
-              console.log('Profile for new player:', profile);
+              // console.log('Profile for new player:', profile);
               const newPlayer = {
                 address: _from,
                 amount: BigInt(value),

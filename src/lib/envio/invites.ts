@@ -78,7 +78,7 @@ export async function fetchInvites(addressList: string[]): Promise<{
       toTime: TIMESTAMP_END,
     })
     .toPromise();
-  console.log('Invites fetched:', result.data);
+  // console.log('Invites fetched:', result.data);
   if (result.error) throw result.error;
   return {
     invitesRedeemed: result.data?.invitesRedeemed || [],

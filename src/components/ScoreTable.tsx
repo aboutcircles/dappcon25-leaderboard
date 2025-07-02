@@ -116,7 +116,7 @@ const ScoreTable: React.FC<{
       className={`${forceShow ? 'flex' : 'hidden'} sm:flex flex-col`}
       ref={tableRef}
     >
-      <div className="overflow-y-auto max-h-[80vh] backdrop-blur-sm">
+      <div className="overflow-y-auto max-h-[70vh] backdrop-blur-sm">
         {type === 'invites'
           ? renderTable(inviteScores, 'invites')
           : renderTable(trustScores, 'trusts')}

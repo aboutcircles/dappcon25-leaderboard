@@ -64,7 +64,7 @@ export const useTrustsStore = create<TrustsStore>()(
         const playerAddresses = players.map(p => p.address.toLowerCase());
         try {
           const _trustMap = await getTrustInits(playerAddresses);
-          console.log('Init trusts fetched:', _trustMap);
+          // console.log('Init trusts fetched:', _trustMap);
           const _stats: Record<string, TrustsStats> = {
             ...useTrustsStore.getState().trustsStats,
           };
@@ -125,7 +125,7 @@ export const useTrustsStore = create<TrustsStore>()(
               string,
               { in: string[]; out: string[]; mutual: string[] }
             >;
-            console.log('Trusts subscription:', trusts);
+            // console.log('Trusts subscription:', trusts);
             if (
               new Date().getTime() -
                 useTrustsStore.getState().trustSubsTimestamp <
@@ -206,8 +206,8 @@ export const useTrustsStore = create<TrustsStore>()(
                 mutualTrusts: _trustMap[addr]?.mutual?.length,
               };
             });
-            console.log('trustMap', _trustMap);
-            console.log('stats', _stats);
+            // console.log('trustMap', _trustMap);
+            // console.log('stats', _stats);
 
             const sorted = Object.values(_stats)
               .map(player => ({

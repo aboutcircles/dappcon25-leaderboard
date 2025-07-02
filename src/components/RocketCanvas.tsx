@@ -81,8 +81,8 @@ const RocketCanvas: React.FC<{
     function recalcSizes(w: number, h: number) {
       const IMAGE_SIZE = h / 100;
       const ROCKET_SCALE = 10;
-      const BOTTOM_MARGIN = h < 900 ? (h / 10) * 4 : h / 10;
-      const TOP_MARGIN = (h / 10) * 2;
+      const BOTTOM_MARGIN = (h / 10) * 3;
+      const TOP_MARGIN = h / 50;
       const ROCKET_SIZE = IMAGE_SIZE * ROCKET_SCALE;
       const WINDOW_SIZE = ROCKET_SIZE * 0.2;
       const WINDOW_OFFSET = (ROCKET_SIZE - WINDOW_SIZE) / 2;
@@ -218,6 +218,8 @@ const RocketCanvas: React.FC<{
         } = sizes;
         p.clear();
 
+        // console.log('Canvas height (p5 coordinates):', height);
+
         // Draw stars
         for (const star of stars) {
           p.fill(255, 255, 255, star.alpha);
@@ -257,6 +259,8 @@ const RocketCanvas: React.FC<{
         }
 
         // Draw invites (left)
+        // console.log('bottom margin:', BOTTOM_MARGIN);
+        // console.log('top margin:', TOP_MARGIN);
         if (showInvites) {
           drawRocketGroup<InviteData>(
             p,
@@ -415,7 +419,7 @@ const RocketCanvas: React.FC<{
   }, [leftTableWidth, rightTableWidth, showInvites]);
 
   useEffect(() => {
-    console.log('useEffect top10Invites', top10Invites, new Date());
+    // console.log('useEffect top10Invites', top10Invites, new Date());
     if (
       p5Instance.current &&
       'myCustomRedrawAccordingToNewPropsHandlerInvites' in p5Instance.current
@@ -429,7 +433,7 @@ const RocketCanvas: React.FC<{
   }, [top10Invites]);
 
   useEffect(() => {
-    console.log('useEffect top10Trusts', top10Trusts, new Date());
+    // console.log('useEffect top10Trusts', top10Trusts, new Date());
     if (
       p5Instance.current &&
       'myCustomRedrawAccordingToNewPropsHandlerTrusts' in p5Instance.current
@@ -443,7 +447,7 @@ const RocketCanvas: React.FC<{
   return (
     <div
       ref={containerRef}
-      className="starry-bg"
+      className="starry-bg border-2"
       style={{
         width: '100%',
         height: '100%',
